@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import it.app.backend.model.LoginRequest;
 import it.app.backend.model.Utente;
 import it.app.backend.service.UtenteService;
 
@@ -41,7 +42,7 @@ public class UtenteController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<String> verifyUtente(@RequestBody Utente credenziali){
+    public ResponseEntity<String> verifyUtente(@RequestBody LoginRequest credenziali){
         if(!service.verifyLogin(credenziali.getUsername(), credenziali.getPassword()))
             // mando un messaggio d'errore generico (per sicurezza) al frontend 
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("username o password errati");

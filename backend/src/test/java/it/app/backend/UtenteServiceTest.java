@@ -33,7 +33,7 @@ public class UtenteServiceTest {
     @InjectMocks
     private UtenteService service;
 
-    // inizializzazione mocks prima di ogni test
+    // reset mocks prima di ogni test
     @BeforeEach
     void setUp(){
         MockitoAnnotations.openMocks(this);
