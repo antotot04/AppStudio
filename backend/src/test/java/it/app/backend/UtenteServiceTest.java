@@ -1,20 +1,24 @@
 package it.app.backend;
 
-import java.time.OffsetDateTime;
-
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import static org.mockito.ArgumentMatchers.any;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 import org.mockito.MockitoAnnotations;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
-
-import it.app.backend.model.Utente; 
-import it.app.backend.service.UtenteService;
+import it.app.backend.model.Utente;
 import it.app.backend.repository.UtenteRepository;
+import it.app.backend.service.UtenteService;
 
 // testing del service utente
 public class UtenteServiceTest {
@@ -93,8 +97,8 @@ public class UtenteServiceTest {
         assertEquals("HASH", risultato.getPassword());
         assertNotNull(risultato.getDataCreazione()); // data di creazione assegnata nel register se tutto andato a buon fine
 
-        verify(mockRepo, atLeastOnce()).save(any(Utente.class));
-        verify(mockEncoderPass, atLeastOnce()).encode(utente.getPassword());
+        verify(mockRepo, times(1)).save(any(Utente.class));
+        verify(mockEncoderPass, times(1)).encode("utente1234");
 
     }
 
