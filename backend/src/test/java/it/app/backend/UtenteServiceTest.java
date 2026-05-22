@@ -35,7 +35,7 @@ public class UtenteServiceTest {
         MockitoAnnotations.openMocks(this);
     }
 
-    /* procedure di testing per il service */
+    /* procedure di testing per il register */
 
     @Test // se utente esiste register mi deve ritornare NULL
     void test1(){
@@ -53,12 +53,24 @@ public class UtenteServiceTest {
         Utente registeredUtente = service.register(utente);
 
         // VERIFICA ESITO del test register
-        assertNull(registeredUtente, "test completato. Deve restituire null");
+        assertNull(registeredUtente, "Deve restituire null");
 
         // verifico che il mock non abbia mai chiamato il metodo save() per ulteriore sicurezza
         verify(mockRepo, never()).save(any(Utente.class));
     }
 
+    @Test // la funzione register deve ritornare una IllegalArgumentException quando la password non è valida
+    void test2(){
+        // Utente di testing con password troppo corta e senza numeri 
+        Utente utente = new Utente();
+        utente.setUsername("utente");
+        utente.setEmail("utente@gmail.com");
+        utente.setPassword("ute"); 
 
+        // Test e verifica che sia una IllegalArgumentEzception
+        IllegalArgumentException e = assertThrows(IllegalArgumentException.class, () -> service.register(utente), "deve lanciare una IllegalArgumentException");
+        // verifica che il messaggio dell'eccezione coincida con quello desiderato
+        assertEquals("La password deve contenere più di 6 caratteri e almeno un numero", e.getMessage());
+    }
 
 }
