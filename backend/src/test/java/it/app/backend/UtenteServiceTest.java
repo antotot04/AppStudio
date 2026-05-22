@@ -13,6 +13,9 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+
+import java.util.Optional;
+
 import org.mockito.MockitoAnnotations;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
@@ -100,6 +103,49 @@ public class UtenteServiceTest {
         verify(mockRepo, times(1)).save(any(Utente.class));
         verify(mockEncoderPass, times(1)).encode("utente1234");
 
+    }
+
+    @Test // procedura di aggiornamento ma utente non trovato
+    void test4(){
+        // Utente di testing
+        Utente utente = new Utente();
+        utente.setUsername("utente");
+        utente.setEmail("utente@gmail.com");
+        utente.setPassword("newutente1234"); // nuova password
+
+        // test 
+        when(mockRepo.findById(utente.getUsername())).thenReturn(Optional.empty()); // findById restituisce un Optional
+
+        Utente risultato = service.updatePassword(utente.getUsername(), utente.getPassword());
+
+        assertNull(risultato, "questo esito dovrebbe essere null");
+
+        verify(mockRepo, times(1)).findById(utente.getUsername());
+        
+    }
+
+    @Test // procedura di login username corretto ma password errata 
+    void test5(){
+        // credenziali di testing
+        String username = "user1234";
+        String passwordSbagliata = "qwerty1234";
+
+        // Utente di testing
+        Utente utente = new Utente();
+        utente.setUsername("user1234");
+        utente.setEmail("utente@gmail.com");
+        utente.setPassword("HASH");
+
+        // test
+        when(mockRepo.findById(username)).thenReturn(Optional.of(utente));
+        when(mockEncoderPass.matches(passwordSbagliata, utente.getPassword())).thenReturn(false);
+
+        var risultato = service.verifyLogin(username, passwordSbagliata);
+
+        assertEquals(false, risultato);
+
+        verify(mockRepo, times(1)).findById(username);
+        verify(mockEncoderPass, times(1)).matches(passwordSbagliata, utente.getPassword());
     }
 
 }
