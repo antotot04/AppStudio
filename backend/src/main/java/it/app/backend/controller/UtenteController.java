@@ -57,7 +57,7 @@ public class UtenteController {
             if(registeredUtente != null)
                 return ResponseEntity.status(HttpStatus.CREATED).body(registeredUtente);
             else // utente esiste già
-                return ResponseEntity.badRequest().build(); 
+                return ResponseEntity.status(HttpStatus.CONFLICT).build(); 
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().build(); 
         }
@@ -95,7 +95,7 @@ public class UtenteController {
     }
 
     @DeleteMapping("/profilo")
-    public ResponseEntity<Utente> deleteUtente(@AuthenticationPrincipal Utente utenteToDelete){
+    public ResponseEntity<Void> deleteUtente(@AuthenticationPrincipal Utente utenteToDelete){
         try {
             service.deleteByUsername(utenteToDelete.getUsername());
             return ResponseEntity.status(HttpStatus.NO_CONTENT).build(); 

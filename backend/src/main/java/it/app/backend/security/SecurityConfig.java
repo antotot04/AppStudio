@@ -12,7 +12,7 @@ import org.springframework.security.web.SecurityFilterChain;
 @EnableWebSecurity // Attiva la sicurezza web di Spring
 public class SecurityConfig {
 
-    // definisco l'algoritmo di cifratura utilizzato per le cifrare le password degli utenti
+    // definisco l'algoritmo di cifratura utilizzato per cifrare le password degli utenti
     @Bean 
     public BCryptPasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
