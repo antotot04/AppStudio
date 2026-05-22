@@ -73,4 +73,29 @@ public class UtenteServiceTest {
         assertEquals("La password deve contenere più di 6 caratteri e almeno un numero", e.getMessage());
     }
 
+    @Test // procedura di registrazione avvenuta con successo
+    void test3(){
+        // Utente di testing
+        Utente utente = new Utente();
+        utente.setUsername("utente");
+        utente.setEmail("utente@gmail.com");
+        utente.setPassword("utente1234");
+
+        // test 
+        when(mockRepo.existsById("utente")).thenReturn(false);
+        when(mockEncoderPass.encode(utente.getPassword())).thenReturn("HASH");
+        when(mockRepo.save(any(Utente.class))).thenReturn(utente);
+
+        Utente risultato = service.register(utente);
+
+        // verifiche sul test appena fatto
+        assertNotNull(risultato);
+        assertEquals("HASH", risultato.getPassword());
+        assertNotNull(risultato.getDataCreazione()); // data di creazione assegnata nel register se tutto andato a buon fine
+
+        verify(mockRepo, atLeastOnce()).save(any(Utente.class));
+        verify(mockEncoderPass, atLeastOnce()).encode(utente.getPassword());
+
+    }
+
 }
