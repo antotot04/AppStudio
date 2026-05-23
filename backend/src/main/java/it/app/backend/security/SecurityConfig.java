@@ -25,6 +25,8 @@ public class SecurityConfig {
         http.csrf(csrf -> csrf.disable()).authorizeHttpRequests(auth -> auth
                 // chiunque può fare l'accesso alle api REST di registrazione e di login
                 .requestMatchers("/api/utenti/register", "/api/utenti/login").permitAll()
+                // accesso a http://127.0.0.1:8080/swagger-ui/index.html permesso
+                .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
                 // Qualsiasi altra richiesta non specificata sopra richiede obbligatoriamente l'autenticazione
                 .anyRequest().authenticated()
             );
