@@ -1,5 +1,6 @@
-# database configuration yaml 
 **/application.yaml
+git-hubGUIDA.txt
+**/.vscode/
 
 # Created by https://www.toptal.com/developers/gitignore/api/macos,gradle,java,vs
 # Edit at https://www.toptal.com/developers/gitignore?templates=macos,gradle,java,vs
