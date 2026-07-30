@@ -22,38 +22,38 @@ import it.app.backend.model.LoginRequest;
 import it.app.backend.model.Utente;
 
 @SpringBootTest
-@AutoConfigureMockMvc // mock per simulare chiamate http
+@AutoConfigureMockMvc // mock to simulate HTTP calls
 public class UtenteControllerTest {
     
     @Autowired
     private MockMvc mockMvc; 
 
     @Autowired
-    private ObjectMapper objMapper; // per conversione: JSON <--> oggetto Java
+    private ObjectMapper objMapper; // for JSON <--> Java object conversion
 
     @MockitoBean
     private UtenteService mockService;
 
-    @Test // procedura di login in caso di credenziali sbagliate 
+    @Test // login flow with wrong credentials
     void test1() throws Exception{
-        // oggetto di testing
+        // test object
         LoginRequest usrNoPassSi = new LoginRequest();
-        usrNoPassSi.setUsername("utenteSbagliato");
-        usrNoPassSi.setPassword("passwordCorretta123");
+        usrNoPassSi.setUsername("wrongUser");
+        usrNoPassSi.setPassword("correctPassword123");
 
-        // ordino al service finto di rispondere falso al tentativo di login
-        when(mockService.verifyLogin("utenteSbagliato", "passwordCorretta123")).thenReturn(false);
+        // tell the mocked service to return false for the login attempt
+        when(mockService.verifyLogin("wrongUser", "correctPassword123")).thenReturn(false);
 
-        // simulo una richiesta in post sull'api di login e testo il risultato
+        // simulate a POST request to the login API and verify the result
         mockMvc.perform(MockMvcRequestBuilders.post("/api/utenti/login")
                 .contentType(MediaType.APPLICATION_JSON) 
-                .content(objMapper.writeValueAsString(usrNoPassSi))) // Trasforma l'oggetto in JSON
-                .andExpect(status().isUnauthorized()); // status atteso 
+                .content(objMapper.writeValueAsString(usrNoPassSi))) // Transform the object into JSON
+                .andExpect(status().isUnauthorized()); // expected status
     }
 
-    @Test // procedura di registrazione se utente esiste già
+    @Test // registration flow when the user already exists
     void test2() throws Exception{
-        // utente di testing
+        // test user
         Utente utente = new Utente(); 
         utente.setUsername("utente");
         utente.setEmail("utente@gmail.com");
@@ -67,9 +67,9 @@ public class UtenteControllerTest {
                 .andExpect(status().isConflict());
     }
 
-    @Test // caso utente non trovato nel db 
+    @Test // user not found in the DB
     void test3() throws Exception {
-        // utente di testing
+        // test user
         Utente utente = new Utente();
         utente.setUsername("utente");
         utente.setEmail("utente@gmail.com");
@@ -77,11 +77,11 @@ public class UtenteControllerTest {
 
         when(mockService.update("utente", utente)).thenReturn(null);
 
-        // creo l'utente attualmente loggato nel sistema (per estrarre il suo username successivamente con AuthenticationPrincipal)
+        // create the currently logged-in user in the system (to later extract the username with AuthenticationPrincipal)
         Utente principal = new Utente();
         principal.setUsername("utente");
 
-        // costruisco l'Autentication token per spring security metto dentro il principal appena creato senza credenziali e autorità
+        // build the authentication token for Spring Security and put the newly created principal inside it without credentials or authorities
         var auth = new UsernamePasswordAuthenticationToken(principal, null, java.util.List.of());
 
         mockMvc.perform(MockMvcRequestBuilders.put("/api/utenti/username")
@@ -91,20 +91,20 @@ public class UtenteControllerTest {
                 .andExpect(status().isNotFound());
     }
 
-    @Test // test eliminazione cannata
+    @Test // deletion test
     void test4() throws Exception{
-        // utente loggato di test
+        // test logged-in user
         Utente principal = new Utente();
         principal.setUsername("utenteToDelete");
 
-        // Autentication token
+        // Authentication token
         var auth = new UsernamePasswordAuthenticationToken(principal, null, java.util.List.of());
 
-        // ordino a delteByUsername se chiamata con lo username del principal di lanciare l'eccezzione indicata
-        doThrow(new IllegalArgumentException("username non valido"))
+        // tell deleteByUsername to throw the specified exception when called with the principal username
+        doThrow(new IllegalArgumentException("username not valid"))
             .when(mockService).deleteByUsername(principal.getUsername());
         
-        mockMvc.perform(MockMvcRequestBuilders.delete("/api/utenti/profilo")
+        mockMvc.perform(MockMvcRequestBuilders.delete("/api/utenti/profile")
                 .with(org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.authentication(auth)))
                 .andExpect(status().isBadRequest());
     }

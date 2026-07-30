@@ -29,56 +29,55 @@ public class UtenteService {
         return false;
     }
 
-    /* questo metodo permette di salvare un nuovo utente "newUtente" nel DB
-     * se soddisfa i requisiti di base. Ritorna:
-     * - null: in caso di utente già esistente 
-     * - Utente: in caso di corretto salvataggio di "newUtente" 
-     * Lancia "IllegalArgumentException" in caso di entità Utente non valida. 
-     * Ciò si verifica quando "newUtente" o uno dei seguenti attributi è nullo
+    /* This method saves a new user in the DB if it meets the basic requirements. Returns:
+     * - null: if the user already exists
+     * - Utente: if the new user is saved correctly
+     * Throws IllegalArgumentException if the user entity is invalid.
+     * This happens when newUtente or any of the following attributes are null:
      * [username, email, password, dataCreazione] */
     public Utente register(Utente newUtente) throws IllegalArgumentException {
-        // Controlli di base 
+        // Basic checks
         String username = newUtente.getUsername();
-        String passwordInChiaro = newUtente.getPassword();
+        String passwordInClear = newUtente.getPassword();
         String email = newUtente.getEmail();
         if (newUtente == null || username == null 
-            || email == null || passwordInChiaro == null) {
-            throw new IllegalArgumentException("I campi obbligatori non possono essere nulli");
+            || email == null || passwordInClear == null) {
+            throw new IllegalArgumentException("Required fields cannot be null");
         }
 
         if (username.length() > 30) {
-            throw new IllegalArgumentException("Lo username non può superare i 30 caratteri");
+            throw new IllegalArgumentException("The username cannot exceed 30 characters");
         }
 
         if (email.length() > 320) {
-            throw new IllegalArgumentException("L'email è troppo lunga (max 320 caratteri)");
+            throw new IllegalArgumentException("The email is too long (max 320 characters)");
         }
 
-        // Controllo sicurezza password in chiaro (Prima dell'hashing)
-        if (passwordInChiaro.length() <= 6 || !containsNumbers(passwordInChiaro)) {
-            throw new IllegalArgumentException("La password deve contenere più di 6 caratteri e almeno un numero");
+        // Password security check before hashing
+        if (passwordInClear.length() <= 6 || !containsNumbers(passwordInClear)) {
+            throw new IllegalArgumentException("The password must contain more than 6 characters and at least one number");
         }
 
-        // Cerco se esiste già utente nel db
+        // Check whether the user already exists in the DB
         if (repo.existsById(username)) return null;
 
-        // Cifratura (l'hash risultante sarà di 60 caratteri, perfetto per il db)
-        String passwordCifrata = encoderPassword.encode(passwordInChiaro);
-        newUtente.setPassword(passwordCifrata);
+        // Encryption (the resulting hash will be 60 characters, perfect for the DB)
+        String encryptedPassword = encoderPassword.encode(passwordInClear);
+        newUtente.setPassword(encryptedPassword);
         newUtente.setDataCreazione(OffsetDateTime.now()); 
 
         return repo.save(newUtente);
     }
 
-    /* qui verranno aggiornate le informazioni base (email e foto profilo)
-     * il codice Ritorna:
-     * - null: se utente non trovato
-     * - utente: se trovato
-     * Lancia "IllegalArgumentException" in caso di username nullo */
+    /* This is where the basic user information (email and profile picture) will be updated.
+     * Returns:
+     * - null: if the user is not found
+     * - utente: if found
+     * Throws IllegalArgumentException if the username is null */
     public Utente update(String username, Utente updatedUtente) throws IllegalArgumentException{
 
         if(username == null || username.length() > 30)
-            throw new IllegalArgumentException("username non valido");
+            throw new IllegalArgumentException("username not valid");
         
         Utente utente = repo.findById(username).orElse(null);
         if(utente == null) return null;
@@ -88,7 +87,7 @@ public class UtenteService {
             if(!repo.findByEmail(newEmail).isPresent()){ 
                 utente.setEmail(newEmail); 
             }else
-                throw new IllegalArgumentException("Email già in uso da un altro utente");
+                throw new IllegalArgumentException("Email already in use by another user");
         }
 
         byte[] newFotoProfilo = updatedUtente.getFotoProfilo();
@@ -99,18 +98,17 @@ public class UtenteService {
         return repo.save(utente);
     }
 
-    /* metodo per aggiornamento password. Controlla che la nuova password soddisfi 
-     * i requisiti minimi di sicurezza e ricalcola un nuovo hash da sostituire 
-     * a quello vecchio nel database. Ritorna:
-     * - null: se utente non trovato
-     * - utente: se trovato 
-     * Lancia IllegalArgumentException in caso di username o password non validi */
+    /* Password update method. Checks that the new password satisfies the minimum security requirements
+     * and recalculates a new hash to replace the old one in the database. Returns:
+     * - null: if the user is not found
+     * - utente: if found
+     * Throws IllegalArgumentException if the username or password is invalid */
     public Utente updatePassword(String username, String newPassword) throws IllegalArgumentException{
         if(username == null || username.length() > 30) 
-            throw new IllegalArgumentException("username non valido");
+            throw new IllegalArgumentException("username not valid");
 
         if(newPassword == null || newPassword.length() <= 6 || !containsNumbers(newPassword))
-            throw new IllegalArgumentException("password non valida");
+            throw new IllegalArgumentException("password not valid");
 
         Utente utente = repo.findById(username).orElse(null);
         if(utente == null) return null;
@@ -121,7 +119,7 @@ public class UtenteService {
         return repo.save(utente);
     }
 
-    /* verifica credenziali utente */
+    /* Verify user credentials */
     public boolean verifyLogin(String username, String password){
         if(username == null || password == null) return false;
 
@@ -131,18 +129,18 @@ public class UtenteService {
         return encoderPassword.matches(password, utente.getPassword());
     }
 
-    /* ricerca per email e per username e tutti */
+    /* Search by email and username */
 
     public Optional<Utente> findByUsername(String username)  throws IllegalArgumentException{
         if(username == null) 
-            throw new IllegalArgumentException("username non valido");
+            throw new IllegalArgumentException("username not valid");
 
         return repo.findById(username);
     }
 
     public Optional<Utente> findByEmail(String email) throws IllegalArgumentException{
         if(email == null) 
-            throw new IllegalArgumentException("email non valida");
+            throw new IllegalArgumentException("email not valid");
 
         return repo.findByEmail(email);
     }
@@ -151,10 +149,10 @@ public class UtenteService {
         return repo.findAll();
     }
 
-    /* eliminazione intero utente */
+    /* Delete the entire user */
     public void deleteByUsername(String username)  throws IllegalArgumentException{
         if(username == null) 
-            throw new IllegalArgumentException("username non valido");
+            throw new IllegalArgumentException("username not valid");
 
         repo.deleteById(username);
     }

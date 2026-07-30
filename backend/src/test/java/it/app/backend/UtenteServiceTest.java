@@ -23,114 +23,113 @@ import it.app.backend.model.Utente;
 import it.app.backend.repository.UtenteRepository;
 import it.app.backend.service.UtenteService;
 
-// testing del service utente
+// testing of the user service
 public class UtenteServiceTest {
 
-    // creo i mock per il repository e l'encoder password
+    // create mocks for the repository and password encoder
     @Mock
     private UtenteRepository mockRepo;
     @Mock
     private BCryptPasswordEncoder mockEncoderPass;
 
-    // injection nel service 
+    // inject into the service
     @InjectMocks
     private UtenteService service;
 
-    // reset mocks prima di ogni test
+    // reset mocks before each test
     @BeforeEach
     void setUp(){
         MockitoAnnotations.openMocks(this);
     }
 
-    /* procedure di testing per il register */
+    /* testing procedures for register */
 
-    @Test // se utente esiste register mi deve ritornare NULL
+    @Test // if the user exists, register should return NULL
     void test1(){
-        // Utente di testing 
+        // test user
         Utente utente = new Utente();
         utente.setUsername("utente");
         utente.setEmail("utente@gmail.com");
         utente.setPassword("utente1234");
 
-        // indico al repo finto di ritornare true se nel register avviene
-        // il metodo indicato nella clausola when
+        // tell the mocked repo to return true for the specified method call in the register flow
         when(mockRepo.existsById("utente")).thenReturn(true);
 
-        // TEST del register
+        // register test
         Utente registeredUtente = service.register(utente);
 
-        // VERIFICA ESITO del test register
-        assertNull(registeredUtente, "Deve restituire null");
+        // verify register test outcome
+        assertNull(registeredUtente, "It should return null");
 
-        // verifico che il mock non abbia mai chiamato il metodo save() per ulteriore sicurezza
+        // verify that the mock never called save() for extra safety
         verify(mockRepo, never()).save(any(Utente.class));
     }
 
-    @Test // la funzione register deve ritornare una IllegalArgumentException quando la password non è valida
+    @Test // the register function should throw an IllegalArgumentException when the password is invalid
     void test2(){
-        // Utente di testing con password troppo corta e senza numeri 
+        // test user with a too-short password and without numbers
         Utente utente = new Utente();
         utente.setUsername("utente");
         utente.setEmail("utente@gmail.com");
         utente.setPassword("ute"); 
 
-        // Test e verifica che sia una IllegalArgumentEzception
-        IllegalArgumentException e = assertThrows(IllegalArgumentException.class, () -> service.register(utente), "deve lanciare una IllegalArgumentException");
-        // verifica che il messaggio dell'eccezione coincida con quello desiderato
-        assertEquals("La password deve contenere più di 6 caratteri e almeno un numero", e.getMessage());
+        // test and verify that it is an IllegalArgumentException
+        IllegalArgumentException e = assertThrows(IllegalArgumentException.class, () -> service.register(utente), "it should throw an IllegalArgumentException");
+        // verify that the exception message matches the expected one
+        assertEquals("The password must contain more than 6 characters and at least one number", e.getMessage());
     }
 
-    @Test // procedura di registrazione avvenuta con successo
+    @Test // successful registration flow
     void test3(){
-        // Utente di testing
+        // test user
         Utente utente = new Utente();
         utente.setUsername("utente");
         utente.setEmail("utente@gmail.com");
         utente.setPassword("utente1234");
 
-        // test 
+        // test
         when(mockRepo.existsById("utente")).thenReturn(false);
         when(mockEncoderPass.encode(utente.getPassword())).thenReturn("HASH");
         when(mockRepo.save(any(Utente.class))).thenReturn(utente);
 
         Utente risultato = service.register(utente);
 
-        // verifiche sul test appena fatto
+        // checks on the test just performed
         assertNotNull(risultato);
         assertEquals("HASH", risultato.getPassword());
-        assertNotNull(risultato.getDataCreazione()); // data di creazione assegnata nel register se tutto andato a buon fine
+        assertNotNull(risultato.getDataCreazione()); // creation date assigned in register if everything went well
 
         verify(mockRepo, times(1)).save(any(Utente.class));
         verify(mockEncoderPass, times(1)).encode("utente1234");
 
     }
 
-    @Test // procedura di aggiornamento ma utente non trovato
+    @Test // update flow but user not found
     void test4(){
-        // Utente di testing
+        // test user
         Utente utente = new Utente();
         utente.setUsername("utente");
         utente.setEmail("utente@gmail.com");
-        utente.setPassword("newutente1234"); // nuova password
+        utente.setPassword("newutente1234"); // new password
 
-        // test 
-        when(mockRepo.findById(utente.getUsername())).thenReturn(Optional.empty()); // findById restituisce un Optional
+        // test
+        when(mockRepo.findById(utente.getUsername())).thenReturn(Optional.empty()); // findById returns an Optional
 
         Utente risultato = service.updatePassword(utente.getUsername(), utente.getPassword());
 
-        assertNull(risultato, "questo esito dovrebbe essere null");
+        assertNull(risultato, "this result should be null");
 
         verify(mockRepo, times(1)).findById(utente.getUsername());
         
     }
 
-    @Test // procedura di login username corretto ma password errata 
+    @Test // login flow with the correct username but wrong password
     void test5(){
-        // credenziali di testing
+        // test credentials
         String username = "user1234";
-        String passwordSbagliata = "qwerty1234";
+        String wrongPassword = "qwerty1234";
 
-        // Utente di testing
+        // test user
         Utente utente = new Utente();
         utente.setUsername("user1234");
         utente.setEmail("utente@gmail.com");
@@ -138,14 +137,14 @@ public class UtenteServiceTest {
 
         // test
         when(mockRepo.findById(username)).thenReturn(Optional.of(utente));
-        when(mockEncoderPass.matches(passwordSbagliata, utente.getPassword())).thenReturn(false);
+        when(mockEncoderPass.matches(wrongPassword, utente.getPassword())).thenReturn(false);
 
-        var risultato = service.verifyLogin(username, passwordSbagliata);
+        var risultato = service.verifyLogin(username, wrongPassword);
 
         assertEquals(false, risultato);
 
         verify(mockRepo, times(1)).findById(username);
-        verify(mockEncoderPass, times(1)).matches(passwordSbagliata, utente.getPassword());
+        verify(mockEncoderPass, times(1)).matches(wrongPassword, utente.getPassword());
     }
 
 }

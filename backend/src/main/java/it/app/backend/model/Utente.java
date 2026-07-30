@@ -15,13 +15,13 @@ public class Utente {
 
     @Id
     @Column(name= "\"Username\"", length=30, nullable=false)
-    private String username; // max 30 caratteri (da controllare nel service al salvataggio del dato)
+    private String username; // maximum 30 characters (to be validated in the service when saving the data)
 
     @Column(name= "\"Email\"", length=320, nullable=false, unique=true)
     private String email;
 
     @Column(name="\"Password\"", length=60, nullable=false)
-    @JsonIgnore // Dice a Spring di ignorare questo campo quando trasforma l'oggetto della response in JSON
+    @JsonIgnore // Tells Spring to ignore this field when converting the response object to JSON
     private String password;
 
     @Column(name="\"Data_Creazione\"", nullable=false)
@@ -50,13 +50,13 @@ public class Utente {
         return fotoProfilo;
     }
 
-    /* setter con controlli aggiuntivi per sicurezza */
+    /* setters with additional security checks */
     
     public void setUsername(String username) throws IllegalArgumentException{
         if(username != null && username.length() <= 30){
             this.username = username;
         }else
-            throw new IllegalArgumentException("username non valido");
+            throw new IllegalArgumentException("username not valid");
         
     }
 
@@ -64,14 +64,14 @@ public class Utente {
         if(email != null && email.length() <= 320){
             this.email = email;
         }else
-            throw new IllegalArgumentException("email non valida");
+            throw new IllegalArgumentException("email not valid");
     }
 
     public void setPassword(String password) throws IllegalArgumentException{
         if(password != null && password.length() <= 60){
             this.password = password;
         }else
-            throw new IllegalArgumentException("password non valida");
+            throw new IllegalArgumentException("password not valid");
     }
 
     public void setDataCreazione(OffsetDateTime dataCreazione) {

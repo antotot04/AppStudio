@@ -1,7 +1,7 @@
 package it.app.backend.model;
 
 
-/* DTO per richieste di login */
+/* DTO for login requests */
 public class LoginRequest {
 
     private String username;
@@ -15,7 +15,7 @@ public class LoginRequest {
         if(username != null && username.length() <= 30){
             this.username = username;
         }else
-            throw new IllegalArgumentException("username non valido");
+            throw new IllegalArgumentException("username not valid");
         
     }
 
@@ -27,7 +27,7 @@ public class LoginRequest {
         if(password != null && password.length() <= 60){
             this.password = password;
         }else
-            throw new IllegalArgumentException("password non valida");
+            throw new IllegalArgumentException("password not valid");
     }
 
     

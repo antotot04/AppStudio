@@ -9,25 +9,25 @@ import org.springframework.security.web.SecurityFilterChain;
 
 
 @Configuration
-@EnableWebSecurity // Attiva la sicurezza web di Spring
+@EnableWebSecurity // Enables Spring web security
 public class SecurityConfig {
 
-    // definisco l'algoritmo di cifratura utilizzato per cifrare le password degli utenti
+    // Define the encryption algorithm used to hash user passwords
     @Bean 
     public BCryptPasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
-    // creo una catena di filtri per configurare i permessi sulle richieste HTTP 
+    // Create a filter chain to configure permissions for HTTP requests
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         
         http.csrf(csrf -> csrf.disable()).authorizeHttpRequests(auth -> auth
-                // chiunque può fare l'accesso alle api REST di registrazione e di login
+                // Anyone can access the REST registration and login endpoints
                 .requestMatchers("/api/utenti/register", "/api/utenti/login").permitAll()
-                // accesso a http://127.0.0.1:8080/swagger-ui/index.html permesso
+                // Access to http://127.0.0.1:8080/swagger-ui/index.html is allowed
                 .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
-                // Qualsiasi altra richiesta non specificata sopra richiede obbligatoriamente l'autenticazione
+                // Any other request not specified above requires authentication
                 .anyRequest().authenticated()
             );
 

@@ -26,14 +26,14 @@ public class UtenteController {
     @Autowired
     public UtenteService service;
 
-    @GetMapping("/profilo")
+    @GetMapping("/profile")
     public ResponseEntity<Utente> getByUsername(@AuthenticationPrincipal Utente userDetails){
         try {
-            /*sfrutto AuthenticationPrincipal di Spring Security per estrarre l'utente attualmente loggato
-            evitando di passare lo username via URL. In questo modo un utente non potrà fare GET con
-            Username di altri utenti */
-            String utenteLoggato = userDetails.getUsername();
-            Optional<Utente> utente = service.findByUsername(utenteLoggato);
+            /* Use AuthenticationPrincipal from Spring Security to extract the currently logged-in user,
+            avoiding passing the username via the URL. This way a user cannot perform a GET for
+            another user's username. */
+            String loggedInUser = userDetails.getUsername();
+            Optional<Utente> utente = service.findByUsername(loggedInUser);
             return utente.map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());
         } catch (IllegalArgumentException e) {
@@ -42,10 +42,10 @@ public class UtenteController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<String> verifyUtente(@RequestBody LoginRequest credenziali){
-        if(!service.verifyLogin(credenziali.getUsername(), credenziali.getPassword()))
-            // mando un messaggio d'errore generico (per sicurezza) al frontend 
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("username o password errati");
+    public ResponseEntity<String> verifyUtente(@RequestBody LoginRequest credentials){
+        if(!service.verifyLogin(credentials.getUsername(), credentials.getPassword()))
+            // Send a generic error message (for security) to the frontend
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("incorrect username or password");
         else
             return ResponseEntity.accepted().build();
     }
@@ -56,7 +56,7 @@ public class UtenteController {
             Utente registeredUtente = service.register(newUtente);
             if(registeredUtente != null)
                 return ResponseEntity.status(HttpStatus.CREATED).body(registeredUtente);
-            else // utente esiste già
+            else // user already exists
                 return ResponseEntity.status(HttpStatus.CONFLICT).build(); 
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().build(); 
@@ -66,7 +66,7 @@ public class UtenteController {
     @PutMapping("/username")
     public ResponseEntity<Utente> updateUtente(@AuthenticationPrincipal Utente utente, @RequestBody Utente dataToUpdate){
         try {
-            // per sicurezza, prendo lo username dell'utente attualmente loggato
+            // For security, I take the username of the currently logged-in user
             Utente updatedUtente = service.update(utente.getUsername(), dataToUpdate);
             
             if(updatedUtente == null)
@@ -94,7 +94,7 @@ public class UtenteController {
         }
     }
 
-    @DeleteMapping("/profilo")
+    @DeleteMapping("/profile")
     public ResponseEntity<Void> deleteUtente(@AuthenticationPrincipal Utente utenteToDelete){
         try {
             service.deleteByUsername(utenteToDelete.getUsername());

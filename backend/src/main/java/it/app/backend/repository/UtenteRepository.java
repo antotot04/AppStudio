@@ -11,6 +11,6 @@ import java.util.Optional;
 // save(Entity), findById(Entity), findAll(), deleteById(Entity)
 public interface UtenteRepository extends JpaRepository<Utente, String> {
 
-    // email è una chiave candidata quindi aggiungo l'opzione di ricerca per email
+    // Email is a candidate key, so I add the search option by email
     Optional<Utente> findByEmail(String email); 
 }
