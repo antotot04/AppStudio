@@ -81,9 +81,9 @@ public class UtenteController {
     }
 
     @PutMapping("/{username}/password")
-    public ResponseEntity<Void> updatePassword(@PathVariable("username") String username, @RequestBody Utente passwToUpdate){
+    public ResponseEntity<Void> updatePassword(@PathVariable("username") String username, @RequestBody String passwToUpdate){
         try {
-            Utente updatedUtente = service.updatePassword(username, passwToUpdate.getPassword());
+            Utente updatedUtente = service.updatePassword(username, passwToUpdate);
 
             if(updatedUtente == null)
                 return ResponseEntity.notFound().build();
