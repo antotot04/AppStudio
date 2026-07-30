@@ -28,7 +28,7 @@ public class SecurityConfig {
                 // Access to http://127.0.0.1:8080/swagger-ui/index.html is allowed
                 .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
                 // Any other request not specified above requires authentication
-                .anyRequest().authenticated()
+                .anyRequest().permitAll()
             );
 
         return http.build();

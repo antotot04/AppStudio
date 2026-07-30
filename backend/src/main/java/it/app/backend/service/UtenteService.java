@@ -10,6 +10,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import it.app.backend.model.Utente;
+import it.app.backend.model.RegistrationRequest;
+import it.app.backend.model.UpdateRequest;
 import it.app.backend.repository.UtenteRepository;
 
 
@@ -35,7 +37,7 @@ public class UtenteService {
      * Throws IllegalArgumentException if the user entity is invalid.
      * This happens when newUtente or any of the following attributes are null:
      * [username, email, password, dataCreazione] */
-    public Utente register(Utente newUtente) throws IllegalArgumentException {
+    public Utente register(RegistrationRequest newUtente) throws IllegalArgumentException {
         // Basic checks
         String username = newUtente.getUsername();
         String passwordInClear = newUtente.getPassword();
@@ -61,12 +63,26 @@ public class UtenteService {
         // Check whether the user already exists in the DB
         if (repo.existsById(username)) return null;
 
-        // Encryption (the resulting hash will be 60 characters, perfect for the DB)
+        /* registering data in user entity */
+        Utente utenteToRegister = new Utente(); 
+
+        utenteToRegister.setUsername(username);
+
+        utenteToRegister.setEmail(email);
+
+        byte[] profilePhoto = newUtente.getProfilePhoto();
+        if(profilePhoto != null){
+            utenteToRegister.setFotoProfilo(profilePhoto);
+        }
+
+        // Password Encryption (the resulting hash will be 60 characters)
         String encryptedPassword = encoderPassword.encode(passwordInClear);
         newUtente.setPassword(encryptedPassword);
-        newUtente.setDataCreazione(OffsetDateTime.now()); 
+        utenteToRegister.setPassword(newUtente.getPassword());
 
-        return repo.save(newUtente);
+        utenteToRegister.setDataCreazione(OffsetDateTime.now());
+
+        return repo.save(utenteToRegister);
     }
 
     /* This is where the basic user information (email and profile picture) will be updated.
@@ -74,7 +90,7 @@ public class UtenteService {
      * - null: if the user is not found
      * - utente: if found
      * Throws IllegalArgumentException if the username is null */
-    public Utente update(String username, Utente updatedUtente) throws IllegalArgumentException{
+    public Utente update(String username, UpdateRequest updatedUtente) throws IllegalArgumentException{
 
         if(username == null || username.length() > 30)
             throw new IllegalArgumentException("username not valid");
@@ -90,7 +106,7 @@ public class UtenteService {
                 throw new IllegalArgumentException("Email already in use by another user");
         }
 
-        byte[] newFotoProfilo = updatedUtente.getFotoProfilo();
+        byte[] newFotoProfilo = updatedUtente.getProfilePhoto();
         if(!Arrays.equals(utente.getFotoProfilo(), newFotoProfilo)){
             utente.setFotoProfilo(newFotoProfilo);
         }

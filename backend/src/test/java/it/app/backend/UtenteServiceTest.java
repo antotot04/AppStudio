@@ -1,5 +1,7 @@
 package it.app.backend;
 
+import java.time.OffsetDateTime;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -19,6 +21,7 @@ import java.util.Optional;
 import org.mockito.MockitoAnnotations;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
+import it.app.backend.model.RegistrationRequest;
 import it.app.backend.model.Utente;
 import it.app.backend.repository.UtenteRepository;
 import it.app.backend.service.UtenteService;
@@ -47,7 +50,7 @@ public class UtenteServiceTest {
     @Test // if the user exists, register should return NULL
     void test1(){
         // test user
-        Utente utente = new Utente();
+        RegistrationRequest utente = new RegistrationRequest();
         utente.setUsername("utente");
         utente.setEmail("utente@gmail.com");
         utente.setPassword("utente1234");
@@ -68,7 +71,7 @@ public class UtenteServiceTest {
     @Test // the register function should throw an IllegalArgumentException when the password is invalid
     void test2(){
         // test user with a too-short password and without numbers
-        Utente utente = new Utente();
+        RegistrationRequest utente = new RegistrationRequest();
         utente.setUsername("utente");
         utente.setEmail("utente@gmail.com");
         utente.setPassword("ute"); 
@@ -82,22 +85,26 @@ public class UtenteServiceTest {
     @Test // successful registration flow
     void test3(){
         // test user
-        Utente utente = new Utente();
+        RegistrationRequest utente = new RegistrationRequest();
         utente.setUsername("utente");
         utente.setEmail("utente@gmail.com");
         utente.setPassword("utente1234");
 
+        Utente returnedUtente = new Utente();
+        returnedUtente.setPassword("HASH");
+        returnedUtente.setDataCreazione(OffsetDateTime.now());
+
         // test
         when(mockRepo.existsById("utente")).thenReturn(false);
         when(mockEncoderPass.encode(utente.getPassword())).thenReturn("HASH");
-        when(mockRepo.save(any(Utente.class))).thenReturn(utente);
+        when(mockRepo.save(any(Utente.class))).thenReturn(returnedUtente);
 
-        Utente risultato = service.register(utente);
+        Utente result = service.register(utente);
 
         // checks on the test just performed
-        assertNotNull(risultato);
-        assertEquals("HASH", risultato.getPassword());
-        assertNotNull(risultato.getDataCreazione()); // creation date assigned in register if everything went well
+        assertNotNull(result);
+        assertEquals("HASH", result.getPassword());
+        assertNotNull(result.getDataCreazione()); // creation date assigned in register if everything went well
 
         verify(mockRepo, times(1)).save(any(Utente.class));
         verify(mockEncoderPass, times(1)).encode("utente1234");

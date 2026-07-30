@@ -18,6 +18,8 @@ import org.springframework.web.bind.annotation.RestController;
 import it.app.backend.model.LoginRequest;
 import it.app.backend.model.Utente;
 import it.app.backend.service.UtenteService;
+import it.app.backend.model.RegistrationRequest;
+import it.app.backend.model.UpdateRequest;
 
 
 @RestController
@@ -53,7 +55,7 @@ public class UtenteController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<Void> registerUtente(@RequestBody Utente newUtente){
+    public ResponseEntity<String> registerUtente(@RequestBody RegistrationRequest newUtente){
         try {
             Utente registeredUtente = service.register(newUtente);
             if(registeredUtente != null)
@@ -61,12 +63,12 @@ public class UtenteController {
             else // user already exists
                 return ResponseEntity.status(HttpStatus.CONFLICT).build(); 
         } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().build(); 
+            return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
 
     @PutMapping("/{username}")
-    public ResponseEntity<Void> updateUtente(@PathVariable("username") String username, @RequestBody Utente dataToUpdate){
+    public ResponseEntity<Void> updateUtente(@PathVariable("username") String username, @RequestBody UpdateRequest dataToUpdate){
         try {
             Utente updatedUtente = service.update(username, dataToUpdate);
 

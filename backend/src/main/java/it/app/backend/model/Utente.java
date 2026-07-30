@@ -3,6 +3,7 @@ package it.app.backend.model;
 import java.time.OffsetDateTime;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
@@ -10,25 +11,27 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Table;
 
 @Entity
-@Table(name= "\"UTENTE\"") 
+@Table(name= "UTENTE", schema="public") 
 public class Utente {
 
     @Id
-    @Column(name= "\"Username\"", length=30, nullable=false)
+    @Column(name= "Username", length=30, nullable=false)
     private String username; // maximum 30 characters (to be validated in the service when saving the data)
 
-    @Column(name= "\"Email\"", length=320, nullable=false, unique=true)
+    @Column(name= "Email", length=320, nullable=false, unique=true)
     private String email;
 
-    @Column(name="\"Password\"", length=60, nullable=false)
-    @JsonIgnore // Tells Spring to ignore this field when converting the response object to JSON
+    @Column(name="Password", length=60, nullable=false)
     private String password;
 
-    @Column(name="\"Data_Creazione\"", nullable=false)
+    @Column(name="Data_Creazione", nullable=false)
     private OffsetDateTime dataCreazione;
 
-    @Column(name="\"Foto_Profilo\"")
+    @Column(name="Foto_Profilo")
     private byte[] fotoProfilo;
+
+    // constructors
+    public Utente(){}
 
     public String getUsername() {
         return username;

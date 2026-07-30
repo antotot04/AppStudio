@@ -20,6 +20,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import it.app.backend.service.UtenteService;
 import it.app.backend.model.LoginRequest;
+import it.app.backend.model.RegistrationRequest;
+import it.app.backend.model.UpdateRequest;
 import it.app.backend.model.Utente;
 
 @SpringBootTest
@@ -55,7 +57,7 @@ public class UtenteControllerTest {
     @Test // registration flow when the user already exists
     void test2() throws Exception{
         // test user
-        Utente utente = new Utente(); 
+        RegistrationRequest utente = new RegistrationRequest(); 
         utente.setUsername("utente");
         utente.setEmail("utente@gmail.com");
         utente.setPassword("utente1234");
@@ -76,7 +78,7 @@ public class UtenteControllerTest {
         utente.setEmail("utente@gmail.com");
         utente.setPassword("utente1234");
 
-        when(mockService.update(eq("wrongUtente"), any(Utente.class))).thenReturn(null);
+        when(mockService.update(eq("wrongUtente"), any(UpdateRequest.class))).thenReturn(null);
 
         mockMvc.perform(MockMvcRequestBuilders.put("/api/utenti/wrongUtente")
                     .contentType(MediaType.APPLICATION_JSON)
