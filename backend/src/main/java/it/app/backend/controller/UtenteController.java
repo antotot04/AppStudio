@@ -1,5 +1,6 @@
 package it.app.backend.controller;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +26,11 @@ public class UtenteController {
 
     @Autowired
     public UtenteService service;
+
+    @GetMapping
+    public ResponseEntity<List<Utente>> getAllUsers(){
+        return ResponseEntity.status(HttpStatus.OK).body(service.findAll());
+    }
 
     @GetMapping("/profile")
     public ResponseEntity<Utente> getByUsername(@AuthenticationPrincipal Utente userDetails){
