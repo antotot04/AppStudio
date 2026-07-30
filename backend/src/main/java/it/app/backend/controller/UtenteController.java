@@ -6,9 +6,9 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -32,14 +32,10 @@ public class UtenteController {
         return ResponseEntity.status(HttpStatus.OK).body(service.findAll());
     }
 
-    @GetMapping("/profile")
-    public ResponseEntity<Utente> getByUsername(@AuthenticationPrincipal Utente userDetails){
+    @GetMapping("/{username}")
+    public ResponseEntity<Utente> getByUsername(@PathVariable("username") String username){
         try {
-            /* Use AuthenticationPrincipal from Spring Security to extract the currently logged-in user,
-            avoiding passing the username via the URL. This way a user cannot perform a GET for
-            another user's username. */
-            String loggedInUser = userDetails.getUsername();
-            Optional<Utente> utente = service.findByUsername(loggedInUser);
+            Optional<Utente> utente = service.findByUsername(username);
             return utente.map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());
         } catch (IllegalArgumentException e) {
@@ -57,11 +53,11 @@ public class UtenteController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<Utente> registerUtente(@RequestBody Utente newUtente){
+    public ResponseEntity<Void> registerUtente(@RequestBody Utente newUtente){
         try {
             Utente registeredUtente = service.register(newUtente);
             if(registeredUtente != null)
-                return ResponseEntity.status(HttpStatus.CREATED).body(registeredUtente);
+                return ResponseEntity.status(HttpStatus.CREATED).build();
             else // user already exists
                 return ResponseEntity.status(HttpStatus.CONFLICT).build(); 
         } catch (IllegalArgumentException e) {
@@ -69,41 +65,40 @@ public class UtenteController {
         }
     }
 
-    @PutMapping("/username")
-    public ResponseEntity<Utente> updateUtente(@AuthenticationPrincipal Utente utente, @RequestBody Utente dataToUpdate){
+    @PutMapping("/{username}")
+    public ResponseEntity<Void> updateUtente(@PathVariable("username") String username, @RequestBody Utente dataToUpdate){
         try {
-            // For security, I take the username of the currently logged-in user
-            Utente updatedUtente = service.update(utente.getUsername(), dataToUpdate);
-            
+            Utente updatedUtente = service.update(username, dataToUpdate);
+
             if(updatedUtente == null)
                 return ResponseEntity.notFound().build();
             else
-                return ResponseEntity.ok(updatedUtente);
+                return ResponseEntity.ok().build();
 
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().build();
         }
     }
 
-    @PutMapping("/password")
-    public ResponseEntity<Utente> updatePassword(@AuthenticationPrincipal Utente utente, @RequestBody Utente passwToUpdate){
+    @PutMapping("/{username}/password")
+    public ResponseEntity<Void> updatePassword(@PathVariable("username") String username, @RequestBody Utente passwToUpdate){
         try {
-            Utente updatedUtente = service.updatePassword(utente.getUsername(), passwToUpdate.getPassword());
+            Utente updatedUtente = service.updatePassword(username, passwToUpdate.getPassword());
 
             if(updatedUtente == null)
                 return ResponseEntity.notFound().build();
             else
-                return ResponseEntity.ok(updatedUtente);
+                return ResponseEntity.ok().build();
 
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().build();
         }
     }
 
-    @DeleteMapping("/profile")
-    public ResponseEntity<Void> deleteUtente(@AuthenticationPrincipal Utente utenteToDelete){
+    @DeleteMapping("/{username}")
+    public ResponseEntity<Void> deleteUtente(@PathVariable("username") String username){
         try {
-            service.deleteByUsername(utenteToDelete.getUsername());
+            service.deleteByUsername(username);
             return ResponseEntity.status(HttpStatus.NO_CONTENT).build(); 
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().build();

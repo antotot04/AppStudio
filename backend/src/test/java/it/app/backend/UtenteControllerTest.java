@@ -9,10 +9,11 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.http.MediaType;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -75,37 +76,21 @@ public class UtenteControllerTest {
         utente.setEmail("utente@gmail.com");
         utente.setPassword("utente1234");
 
-        when(mockService.update("utente", utente)).thenReturn(null);
+        when(mockService.update(eq("wrongUtente"), any(Utente.class))).thenReturn(null);
 
-        // create the currently logged-in user in the system (to later extract the username with AuthenticationPrincipal)
-        Utente principal = new Utente();
-        principal.setUsername("utente");
-
-        // build the authentication token for Spring Security and put the newly created principal inside it without credentials or authorities
-        var auth = new UsernamePasswordAuthenticationToken(principal, null, java.util.List.of());
-
-        mockMvc.perform(MockMvcRequestBuilders.put("/api/utenti/username")
-                .with(org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.authentication(auth))
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objMapper.writeValueAsString(utente)))
+        mockMvc.perform(MockMvcRequestBuilders.put("/api/utenti/wrongUtente")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(objMapper.writeValueAsString(utente)))
                 .andExpect(status().isNotFound());
     }
 
     @Test // deletion test
     void test4() throws Exception{
-        // test logged-in user
-        Utente principal = new Utente();
-        principal.setUsername("utenteToDelete");
-
-        // Authentication token
-        var auth = new UsernamePasswordAuthenticationToken(principal, null, java.util.List.of());
-
-        // tell deleteByUsername to throw the specified exception when called with the principal username
+        // tell deleteByUsername to throw the specified exception when called with this username
         doThrow(new IllegalArgumentException("username not valid"))
-            .when(mockService).deleteByUsername(principal.getUsername());
+            .when(mockService).deleteByUsername(eq("userToDelete"));
         
-        mockMvc.perform(MockMvcRequestBuilders.delete("/api/utenti/profile")
-                .with(org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.authentication(auth)))
+        mockMvc.perform(MockMvcRequestBuilders.delete("/api/utenti/userToDelete"))
                 .andExpect(status().isBadRequest());
     }
 

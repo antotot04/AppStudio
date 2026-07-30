@@ -23,8 +23,8 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         
         http.csrf(csrf -> csrf.disable()).authorizeHttpRequests(auth -> auth
-                // Anyone can access the REST registration and login endpoints
-                .requestMatchers("/api/utenti/register", "/api/utenti/login").permitAll()
+                // Anyone can access the REST registration and login endpoints + just allowing test endpoints to be reached 
+                .requestMatchers("/api/utenti/register", "/api/utenti/login", "/api/utenti/wrongUtente", "/api/utenti/userToDelete").permitAll()
                 // Access to http://127.0.0.1:8080/swagger-ui/index.html is allowed
                 .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
                 // Any other request not specified above requires authentication
