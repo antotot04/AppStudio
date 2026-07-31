@@ -83,7 +83,7 @@ public class UtenteController {
     }
 
     @PutMapping("/{username}/password")
-    public ResponseEntity<Void> updatePassword(@PathVariable("username") String username, @RequestBody String passwToUpdate){
+    public ResponseEntity<String> updatePassword(@PathVariable("username") String username, @RequestBody String passwToUpdate){
         try {
             Utente updatedUtente = service.updatePassword(username, passwToUpdate);
 
@@ -93,7 +93,7 @@ public class UtenteController {
                 return ResponseEntity.ok().build();
 
         } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().build();
+            return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
 
