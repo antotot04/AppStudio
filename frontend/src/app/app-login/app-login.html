@@ -1,0 +1,37 @@
+<div>
+    <h2>Login</h2>
+    <div>
+        <form (submit)="onSubmit($event)">
+            <p>Access to your Pomo account</p>
+
+            <label for="username">Username:</label>
+            <input type="text" id="username" [formField]="loginForm.username">
+
+            @if(loginForm.username().invalid()){
+                <ul>
+                    @for(error of loginForm.username().errors(); track error){
+                        <li>{{ error.message }}</li>
+                    }
+                </ul>
+            }
+
+            <label for="password">Password:</label>
+            <input type="password" id="password" [formField]="loginForm.password"> 
+
+            @if(loginForm.password().invalid()){
+                <ul>
+                    @for(error of loginForm.password().errors(); track error){
+                        <li>{{ error.message }}</li>
+                    }
+                </ul>
+            }  
+            <button type="submit">Log In</button>
+        </form>
+
+        <!-- TODO: insert Sign up page and do stuff -->
+        <p>Don't have an account? <a [routerLink]="['/']">Sign Up</a></p>
+
+        <!-- TODO: insert Pomo logo svg image -->
+        <img>
+    </div>
+</div>
