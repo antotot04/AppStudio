@@ -1,6 +1,5 @@
 import { inject, Injectable } from '@angular/core';
 import { LoginForm } from '../dto/login-form';
-import { Observable } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 
 @Injectable({

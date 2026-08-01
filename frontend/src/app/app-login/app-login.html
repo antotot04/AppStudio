@@ -25,11 +25,10 @@
                     }
                 </ul>
             }  
-            <button type="submit">Log In</button>
+            <button type="submit" [class]="isFailed()">Log In</button>
         </form>
 
-        <!-- TODO: insert Sign up page and do stuff -->
-        <p>Don't have an account? <a [routerLink]="['/']">Sign Up</a></p>
+        <p>Don't have an account? <a [routerLink]="['/signup']">Sign Up</a></p>
 
         <img 
         src="/PomoLogo.svg" 

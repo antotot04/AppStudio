@@ -9,8 +9,17 @@ public class RegistrationRequest {
     private String username;
     private String email;
     private String password;
-    private OffsetDateTime creationDate;
     private byte[] profilePhoto; 
+
+
+    public RegistrationRequest(){}
+
+    public RegistrationRequest(String username, String email, String password, byte[] profilePhoto) {
+        this.username = username;
+        this.email = email;
+        this.password = password;
+        this.profilePhoto = profilePhoto;
+    }
 
     /* getters and setters */
 
@@ -24,10 +33,6 @@ public class RegistrationRequest {
 
     public String getPassword() {
         return password;
-    }
-
-    public OffsetDateTime getCreationDate() {
-        return creationDate;
     }
 
     public byte[] getProfilePhoto() {
@@ -56,11 +61,6 @@ public class RegistrationRequest {
             this.password = password;
         }else
             throw new IllegalArgumentException("password not valid");
-    }
-
-    public void setCreationDate(OffsetDateTime creationDate) {
-        if(creationDate != null) 
-            this.creationDate = creationDate;
     }
 
     public void setProfilePhoto(byte[] profilePhoto) {

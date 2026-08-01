@@ -1,5 +1,6 @@
 package it.app.backend.controller;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 
@@ -13,11 +14,14 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
+
+import it.app.backend.service.UtenteService;
 
 import it.app.backend.model.LoginRequest;
 import it.app.backend.model.Utente;
-import it.app.backend.service.UtenteService;
 import it.app.backend.model.RegistrationRequest;
 import it.app.backend.model.UpdateRequest;
 
@@ -54,14 +58,24 @@ public class UtenteController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<String> registerUtente(@RequestBody RegistrationRequest newUtente){
+    public ResponseEntity<String> registerUtente(
+        @RequestParam String username,
+        @RequestParam String email,
+        @RequestParam String password,
+        @RequestParam(required=false) MultipartFile photo){
         try {
-            Utente registeredUtente = service.register(newUtente);
+            byte[] photoContent = null;
+            if(photo != null){
+                photoContent = photo.getBytes();
+            }
+            Utente registeredUtente = service.register( new RegistrationRequest(username, email, password, photoContent));
             if(registeredUtente != null)
                 return ResponseEntity.status(HttpStatus.CREATED).build();
             else // user already exists
                 return ResponseEntity.status(HttpStatus.CONFLICT).build(); 
         } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        } catch(IOException e){
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
