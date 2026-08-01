@@ -1,7 +1,8 @@
-import { Component, signal } from '@angular/core';
+import { Component, signal, inject } from '@angular/core';
 import { LoginForm } from '../dto/login-form'
-import { form, required, max, maxLength, FormField } from '@angular/forms/signals';
-import { Router, RouterLink } from '@angular/router';
+import { form, required, maxLength, FormField } from '@angular/forms/signals';
+import { RouterLink } from '@angular/router';
+import { AuthService } from '../service/auth-service';
 
 @Component({
   selector: 'app-app-login',
@@ -22,14 +23,28 @@ export class AppLogin {
     maxLength(schemaPath.username, 30);
   });
 
+  authService = inject(AuthService);
+
   onSubmit(event: Event){
     event.preventDefault(); 
 
-    let username: string = this.loginForm.username().value();
-    let password: string = this.loginForm.password().value();
+    const credentials: LoginForm = {
+      username: this.loginForm.username().value(),
+      password: this.loginForm.password().value()
+    }
 
+    try{
+      this.authService.verifyLogin(credentials).subscribe({
+        next: (res) => {
+          // TODO: handle 202
+        },
+        error: (res) => {
+          // TODO: handle 401 
+        }
+      });
+    }catch(error){
+      console.error("This is the error: " + error); 
+    }
 
-    // just for testing (gonna remove it)
-    alert("username: " + username + " length: " + username.length + " password : " + password);
   }
 }
