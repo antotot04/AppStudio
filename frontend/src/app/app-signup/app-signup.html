@@ -1,0 +1,22 @@
+<div>
+    <h1>Sign Up</h1>
+    <form (submit)="onSubmit($event)">
+        <label for="username">Username: </label>
+        <input type="text" id="username" placeholder="create your username" [formField]="signupForm.username">
+
+        <label for="email">Email: </label>
+        <input type="email" id="email" placeholder="insert your email" [formField]="signupForm.email">
+
+        <label for="password">Password: </label>
+        <input type="password" id="password" placeholder="create your password" [formField]="signupForm.password">
+
+        <label for="confirm-password">Confirm Password: </label>
+        <input type="password" id="confirm-password" placeholder="confirm password" [formField]="signupForm.confirmPassword">
+
+        <label for="profile-photo">Upload Photo</label>
+        <input type="file" id="profile-photo" accept="image/jpeg, image/png" (change)="onPhotoUpload($event)">
+
+        <button type="submit" [class]="ifMatch()">Sign Up</button>
+    </form>
+    <p>Already have an account? <a>Log In</a></p>
+</div>
