@@ -46,10 +46,9 @@ public class UtenteController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<String> verifyUtente(@RequestBody LoginRequest credentials){
+    public ResponseEntity<Void> verifyUtente(@RequestBody LoginRequest credentials){
         if(!service.verifyLogin(credentials.getUsername(), credentials.getPassword()))
-            // Send a generic error message (for security) to the frontend
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("incorrect username or password");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         else
             return ResponseEntity.accepted().build();
     }
