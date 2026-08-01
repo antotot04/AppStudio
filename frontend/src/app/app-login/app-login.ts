@@ -33,18 +33,15 @@ export class AppLogin {
       password: this.loginForm.password().value()
     }
 
-    try{
-      this.authService.verifyLogin(credentials).subscribe({
-        next: (res) => {
-          // TODO: handle 202
-        },
-        error: (res) => {
-          // TODO: handle 401 
-        }
-      });
-    }catch(error){
-      console.error("This is the error: " + error); 
-    }
+    this.authService.verifyLogin(credentials).subscribe({
+      next: (res) => {
+        // TODO: handle 202
+
+      },
+      error: (res) => {
+        // TODO: handle 401 
+      }
+    });
 
   }
 }
