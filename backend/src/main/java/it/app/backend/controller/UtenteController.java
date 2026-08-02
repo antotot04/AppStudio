@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -62,13 +63,18 @@ public class UtenteController {
         @RequestParam String username,
         @RequestParam String email,
         @RequestParam String password,
-        @RequestParam(required=false) MultipartFile photo){
+        @RequestParam(required=false) MultipartFile photo,
+        @RequestParam(required=false) String photoType){
         try {
             byte[] photoContent = null;
+            String actualPhotoType = null; 
+
             if(photo != null){
                 photoContent = photo.getBytes();
+                actualPhotoType = photoType;
             }
-            Utente registeredUtente = service.register( new RegistrationRequest(username, email, password, photoContent));
+
+            Utente registeredUtente = service.register( new RegistrationRequest(username, email, password, photoContent, actualPhotoType));
             if(registeredUtente != null)
                 return ResponseEntity.status(HttpStatus.CREATED).build();
             else // user already exists
@@ -81,9 +87,19 @@ public class UtenteController {
     }
 
     @PutMapping("/{username}")
-    public ResponseEntity<Void> updateUtente(@PathVariable("username") String username, @RequestBody UpdateRequest dataToUpdate){
+    public ResponseEntity<String> updateUtente(
+        @PathVariable("username") String username, 
+        @RequestParam String email, 
+        @RequestParam MultipartFile photo, 
+        @RequestParam String photoType){
         try {
-            Utente updatedUtente = service.update(username, dataToUpdate);
+            byte[] photoContent = null;
+            String actualPhotoType = null; 
+            if(photo != null){
+                photoContent = photo.getBytes();
+                actualPhotoType = photoType;
+            }
+            Utente updatedUtente = service.update(username, new UpdateRequest(email, photoContent, actualPhotoType));
 
             if(updatedUtente == null)
                 return ResponseEntity.notFound().build();
@@ -91,7 +107,9 @@ public class UtenteController {
                 return ResponseEntity.ok().build();
 
         } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().build();
+            return ResponseEntity.badRequest().body(e.getMessage());
+        } catch (IOException e){
+            return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
 

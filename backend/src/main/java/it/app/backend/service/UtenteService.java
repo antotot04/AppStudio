@@ -73,6 +73,7 @@ public class UtenteService {
         byte[] profilePhoto = newUtente.getProfilePhoto();
         if(profilePhoto != null){
             utenteToRegister.setFotoProfilo(profilePhoto);
+            utenteToRegister.setPhotoType(newUtente.getPhotoType());
         }
 
         // Password Encryption (the resulting hash will be 60 characters)
@@ -109,6 +110,7 @@ public class UtenteService {
         byte[] newFotoProfilo = updatedUtente.getProfilePhoto();
         if(!Arrays.equals(utente.getFotoProfilo(), newFotoProfilo)){
             utente.setFotoProfilo(newFotoProfilo);
+            utente.setPhotoType(updatedUtente.getPhotoType());
         }
 
         return repo.save(utente);
