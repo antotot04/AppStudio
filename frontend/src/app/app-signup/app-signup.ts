@@ -1,16 +1,21 @@
 import { Component, inject, signal } from '@angular/core';
-import { form, FormField } from '@angular/forms/signals';
+import { email, form, FormField, maxLength, required, pattern, schema, minLength } from '@angular/forms/signals';
 import { RouterLink } from "@angular/router";
 import { SignupForm } from '../dto/signup-form';
 import { SignupService } from '../service/signup-service';
 
 @Component({
   selector: 'app-app-signup',
-  imports: [FormField],
+  imports: [FormField, RouterLink],
   templateUrl: './app-signup.html',
   styleUrl: './app-signup.css',
 })
 export class AppSignup {
+
+  signupService = inject(SignupService);
+  ifInvalid = signal<string>("valid");
+  photo = signal<File | null>(null);
+  chars = signal<number>(30);
 
   formModel = signal<SignupForm>({
     username: '',
@@ -19,11 +24,29 @@ export class AppSignup {
     confirmPassword: ''
   })
 
-  signupForm = form(this.formModel); 
-  signupService = inject(SignupService);
-  ifMatch = signal<string>("match");
+  signupForm = form(this.formModel, (schemaPath) => {
 
-  photo = signal<File | null>(null);
+    /* username checks */ 
+    required(schemaPath.username, {message: "username is required"});
+    maxLength(schemaPath.username, 30);
+
+    /* email checks */ 
+    required(schemaPath.email, {message: "email is required"});
+    email(schemaPath.email, {message: "insert a valid email"});
+
+    /* password checks */ 
+    required(schemaPath.password, {message: "password is required"});
+    minLength(schemaPath.password, 6, {message: "password is too short"});
+    pattern(schemaPath.password, new RegExp(/^(?=.*[\d].*)(?=.*[^\d].*)(?=.*[^\n]$)/), {message: "password invalid"});
+  }); 
+
+  lengthLeft(event: Event){
+    const input = event.target as HTMLInputElement;
+
+    if(input){
+      this.chars.set(30 - input.value.length);
+    }
+  }
 
   onPhotoUpload(event: Event){
     const upload = event.target as HTMLInputElement;
@@ -35,12 +58,30 @@ export class AppSignup {
   onSubmit(event: Event){
     event.preventDefault();
 
-    if(this.signupForm.password().value() !== this.signupForm.confirmPassword().value()){
-      this.ifMatch.set("no-match");
+    /* validity checks for additional safety */ 
+
+    if(this.signupForm.username().invalid()){
+      this.ifInvalid.set("invalid");
       return;
     }
 
-    /* passing everything to a formData object so I can handle image file */
+    if(this.signupForm.email().invalid()){
+      this.ifInvalid.set("invalid");
+      return;
+    }
+
+    if(this.signupForm.password().invalid()){
+      this.ifInvalid.set("invalid");
+      return;
+    }
+
+    if(this.signupForm.password().value() !== this.signupForm.confirmPassword().value()){
+      this.ifInvalid.set("invalid");
+      return;
+    }
+
+
+    /* preparing the formData object so I can handle image file */
 
     const data = new FormData();
     data.append("username", this.signupForm.username().value());
