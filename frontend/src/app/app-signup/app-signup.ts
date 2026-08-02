@@ -48,7 +48,7 @@ export class AppSignup {
     data.append("password",  this.signupForm.password().value());
     if(this.photo() !== null){
       data.append("photo", this.photo() as File);
-      data.append("photo_type", this.photo()!.type);
+      data.append("photoType", this.photo()!.type);
     }
 
     this.signupService.registerUser(data).subscribe({

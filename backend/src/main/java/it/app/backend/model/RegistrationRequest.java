@@ -10,15 +10,17 @@ public class RegistrationRequest {
     private String email;
     private String password;
     private byte[] profilePhoto; 
+    private String photoType;
 
 
     public RegistrationRequest(){}
 
-    public RegistrationRequest(String username, String email, String password, byte[] profilePhoto) {
+    public RegistrationRequest(String username, String email, String password, byte[] profilePhoto, String photoType) {
         this.username = username;
         this.email = email;
         this.password = password;
         this.profilePhoto = profilePhoto;
+        this.photoType = photoType;
     }
 
     /* getters and setters */
@@ -37,6 +39,10 @@ public class RegistrationRequest {
 
     public byte[] getProfilePhoto() {
         return profilePhoto;
+    }
+
+    public String getPhotoType() {
+        return photoType;
     }
 
     /* setters with additional security checks */
@@ -65,6 +71,13 @@ public class RegistrationRequest {
 
     public void setProfilePhoto(byte[] profilePhoto) {
         this.profilePhoto = profilePhoto;
+    }
+
+    public void setPhotoType(String photoType) throws IllegalArgumentException{
+        if(photoType.equals("image/png") || photoType.equals("image/jpeg")){
+            this.photoType = photoType;
+        }else
+            throw new IllegalArgumentException("wrong MIME type"); 
     }
 
 }
