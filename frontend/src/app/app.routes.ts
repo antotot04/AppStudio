@@ -6,6 +6,11 @@ import { AppSignup } from './app-signup/app-signup';
 export const routes: Routes = [
     {
         path: '',
+        pathMatch: 'full',
+        redirectTo: 'login'
+    },
+    {
+        path: 'login',
         title: 'Log In Pomo',
         component: AppLogin
     },

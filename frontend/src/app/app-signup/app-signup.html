@@ -2,21 +2,53 @@
     <h1>Sign Up</h1>
     <form (submit)="onSubmit($event)">
         <label for="username">Username: </label>
-        <input type="text" id="username" placeholder="create your username" [formField]="signupForm.username">
+        <input type="text" id="username" placeholder="create your username" (input)="lengthLeft($event)" [formField]="signupForm.username">
+        @if(chars() <= 10){
+            <span>{{ chars() }} left</span>
+        }
+
+        @if(signupForm.username().touched() && signupForm.username().invalid()){
+            <ul>
+                @for(error of signupForm.username().errors(); track error){
+                    <li>{{ error.message }}</li>
+                }
+            </ul>
+        }
 
         <label for="email">Email: </label>
         <input type="email" id="email" placeholder="insert your email" [formField]="signupForm.email">
 
+        @if(signupForm.email().touched() && signupForm.email().invalid()){
+            <ul>
+                @for(error of signupForm.email().errors(); track error){
+                    <li>{{ error.message }}</li>
+                }
+            </ul>
+        }
+
         <label for="password">Password: </label>
-        <input type="password" id="password" placeholder="create your password" [formField]="signupForm.password">
+        <input type="password" id="password" placeholder="e.g. MyPomoPassword1234!" [formField]="signupForm.password">
+
+        @if(signupForm.password().touched() && signupForm.password().invalid()){
+            <ul>
+                @for(error of signupForm.password().errors(); track error){
+                    <li>{{ error.message }}</li>
+                }
+            </ul>
+        }
 
         <label for="confirm-password">Confirm Password: </label>
         <input type="password" id="confirm-password" placeholder="confirm password" [formField]="signupForm.confirmPassword">
 
+        @if(signupForm.confirmPassword().value() !== signupForm.password().value() &&
+            signupForm.confirmPassword().touched()){
+            <span>passwords don't match</span>
+        }
+
         <label for="profile-photo">Upload Photo</label>
         <input type="file" id="profile-photo" accept="image/jpeg, image/png" (change)="onPhotoUpload($event)">
 
-        <button type="submit" [class]="ifMatch()">Sign Up</button>
+        <button type="submit" [class]="ifInvalid()">Sign Up</button>
     </form>
-    <p>Already have an account? <a>Log In</a></p>
+    <p>Already have an account? <a [routerLink]="['']">Log In</a></p>
 </div>
