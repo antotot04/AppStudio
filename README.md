@@ -1,4 +1,7 @@
-# Progetto App Studio
+# App Studio Project
+Pomo is (will be) a study centered application designed to help folks study a little bit better. 
 
-Progetto app studio congiunto tra insegnamenti di ingegneria del software, 
-ingegneria dei sistemi web e basi di dati.
+Features:
+- Pomodoro Timer: a timer based on the famous pomodoro tecnique
+- Activity zone: an area where users can organize their study time to get things done
+- Study zone: an area where users can store their knoledge using flashcards and review them whenever needed
