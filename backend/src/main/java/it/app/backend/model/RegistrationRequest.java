@@ -9,8 +9,19 @@ public class RegistrationRequest {
     private String username;
     private String email;
     private String password;
-    private OffsetDateTime creationDate;
     private byte[] profilePhoto; 
+    private String photoType;
+
+
+    public RegistrationRequest(){}
+
+    public RegistrationRequest(String username, String email, String password, byte[] profilePhoto, String photoType) {
+        this.username = username;
+        this.email = email;
+        this.password = password;
+        this.profilePhoto = profilePhoto;
+        this.photoType = photoType;
+    }
 
     /* getters and setters */
 
@@ -26,12 +37,12 @@ public class RegistrationRequest {
         return password;
     }
 
-    public OffsetDateTime getCreationDate() {
-        return creationDate;
-    }
-
     public byte[] getProfilePhoto() {
         return profilePhoto;
+    }
+
+    public String getPhotoType() {
+        return photoType;
     }
 
     /* setters with additional security checks */
@@ -58,13 +69,15 @@ public class RegistrationRequest {
             throw new IllegalArgumentException("password not valid");
     }
 
-    public void setCreationDate(OffsetDateTime creationDate) {
-        if(creationDate != null) 
-            this.creationDate = creationDate;
-    }
-
     public void setProfilePhoto(byte[] profilePhoto) {
         this.profilePhoto = profilePhoto;
+    }
+
+    public void setPhotoType(String photoType) throws IllegalArgumentException{
+        if(photoType.equals("image/png") || photoType.equals("image/jpeg")){
+            this.photoType = photoType;
+        }else
+            throw new IllegalArgumentException("wrong MIME type"); 
     }
 
 }

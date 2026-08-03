@@ -30,6 +30,9 @@ public class Utente {
     @Column(name="Foto_Profilo")
     private byte[] fotoProfilo;
 
+    @Column(name="Photo_Type", length=60)
+    private String photoType;
+
     // constructors
     public Utente(){}
 
@@ -51,6 +54,10 @@ public class Utente {
 
     public byte[] getFotoProfilo() {
         return fotoProfilo;
+    }
+
+    public String getPhotoType() {
+        return photoType;
     }
 
     /* setters with additional security checks */
@@ -86,5 +93,11 @@ public class Utente {
         this.fotoProfilo = fotoProfilo;
     }
 
+    public void setPhotoType(String photoType) throws IllegalArgumentException{
+        if(photoType.equals("image/png") || photoType.equals("image/jpeg")){
+            this.photoType = photoType;
+        }else
+            throw new IllegalArgumentException("wrong MIME type"); 
+    }
     
 }

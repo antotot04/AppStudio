@@ -59,14 +59,12 @@ public class UtenteControllerTest {
         // test user
         RegistrationRequest utente = new RegistrationRequest(); 
         utente.setUsername("utente");
-        utente.setEmail("utente@gmail.com");
+        utente.setEmail("utentemail.com");
         utente.setPassword("utente1234");
 
         when(mockService.register(utente)).thenReturn(null);
 
-        mockMvc.perform(MockMvcRequestBuilders.post("/api/utenti/register")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objMapper.writeValueAsString(utente)))
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/utenti/register?username=utente&email=utentemail.com&password=utente1234"))
                 .andExpect(status().isConflict());
     }
 

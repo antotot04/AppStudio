@@ -1,7 +1,9 @@
 package it.app.backend.controller;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
+
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -13,11 +15,19 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import it.app.backend.service.UtenteService;
 
 import it.app.backend.model.LoginRequest;
 import it.app.backend.model.Utente;
-import it.app.backend.service.UtenteService;
+import it.app.backend.model.UtenteResponse;
+import it.app.backend.model.responseError;
 import it.app.backend.model.RegistrationRequest;
 import it.app.backend.model.UpdateRequest;
 
@@ -35,42 +45,75 @@ public class UtenteController {
     }
 
     @GetMapping("/{username}")
-    public ResponseEntity<Utente> getByUsername(@PathVariable("username") String username){
+    public ResponseEntity<UtenteResponse> getByUsername(@PathVariable("username") String username){
         try {
             Optional<Utente> utente = service.findByUsername(username);
-            return utente.map(ResponseEntity::ok)
-                .orElseGet(() -> ResponseEntity.notFound().build());
+
+            if(utente.isPresent()){
+                Utente ut = utente.get();
+                return ResponseEntity.ok().body(new UtenteResponse(ut.getEmail(), ut.getFotoProfilo(), ut.getPhotoType()));
+            }else{
+                return ResponseEntity.notFound().build();
+            }
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().build(); 
         }
     }
 
     @PostMapping("/login")
-    public ResponseEntity<String> verifyUtente(@RequestBody LoginRequest credentials){
+    public ResponseEntity<Void> verifyUtente(@RequestBody LoginRequest credentials){
         if(!service.verifyLogin(credentials.getUsername(), credentials.getPassword()))
-            // Send a generic error message (for security) to the frontend
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("incorrect username or password");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         else
             return ResponseEntity.accepted().build();
     }
 
     @PostMapping("/register")
-    public ResponseEntity<String> registerUtente(@RequestBody RegistrationRequest newUtente){
+    public ResponseEntity<responseError> registerUtente(
+        @RequestParam String username,
+        @RequestParam String email,
+        @RequestParam String password,
+        @RequestParam(required=false) MultipartFile photo,
+        @RequestParam(required=false) String photoType){
         try {
-            Utente registeredUtente = service.register(newUtente);
+            byte[] photoContent = null;
+            String actualPhotoType = null; 
+
+            if(photo != null){
+                photoContent = photo.getBytes();
+                actualPhotoType = photoType;
+            }
+
+            Utente registeredUtente = service.register( new RegistrationRequest(username, email, password, photoContent, actualPhotoType));
             if(registeredUtente != null)
                 return ResponseEntity.status(HttpStatus.CREATED).build();
             else // user already exists
                 return ResponseEntity.status(HttpStatus.CONFLICT).build(); 
         } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            responseError resp = new responseError();
+            resp.setMessage(e.getMessage());
+            return ResponseEntity.badRequest().body(resp);
+        } catch(IOException e){
+            responseError resp = new responseError();
+            resp.setMessage(e.getMessage());
+            return ResponseEntity.badRequest().body(resp);
         }
     }
 
     @PutMapping("/{username}")
-    public ResponseEntity<Void> updateUtente(@PathVariable("username") String username, @RequestBody UpdateRequest dataToUpdate){
+    public ResponseEntity<String> updateUtente(
+        @PathVariable("username") String username, 
+        @RequestParam String email, 
+        @RequestParam MultipartFile photo, 
+        @RequestParam String photoType){
         try {
-            Utente updatedUtente = service.update(username, dataToUpdate);
+            byte[] photoContent = null;
+            String actualPhotoType = null; 
+            if(photo != null){
+                photoContent = photo.getBytes();
+                actualPhotoType = photoType;
+            }
+            Utente updatedUtente = service.update(username, new UpdateRequest(email, photoContent, actualPhotoType));
 
             if(updatedUtente == null)
                 return ResponseEntity.notFound().build();
@@ -78,7 +121,9 @@ public class UtenteController {
                 return ResponseEntity.ok().build();
 
         } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().build();
+            return ResponseEntity.badRequest().body(e.getMessage());
+        } catch (IOException e){
+            return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
 

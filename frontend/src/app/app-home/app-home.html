@@ -1,0 +1,81 @@
+<nav>
+    <a [routerLink]="">
+        <img
+            src="/PomoLogo.svg"
+            width="100"
+            height="100"
+            alt="Pomo Logo"
+        />
+    </a>
+    <ul>
+        <li>
+            <a [routerLink]="">ACTIVITIES</a>
+        </li>
+        <li>
+            <a [routerLink]="">POMO TIMER</a>
+        </li>
+        <li>
+            <a [routerLink]="">STUDY ZONE</a>
+        </li>
+    </ul>
+    <a [routerLink]="">
+        <img
+            [src]="hasPhoto() ? (this.userDTO().profilePhoto | b64toImg: this.userDTO().photoType) : '/Profile/Profile_Photo.svg' "
+            width="80"
+            height="80"
+            alt="profile photo"
+        />
+    </a>
+</nav>
+
+<main>
+    <!-- Application content here -->
+    <router-outlet></router-outlet>
+</main>
+
+<footer>
+    <div class="footer-up-content">
+        <section>
+            <h3>Find out more</h3>
+            <ul>
+                <li>
+                    <a>Pomodoro technique</a>
+                </li>
+                <li>
+                    <a>Active recall</a>
+                </li>
+            </ul>
+        </section>
+        <section>
+            <h3>Go to study</h3>
+            <ul>
+                <li>
+                    <a>Activities</a>
+                </li>
+                <li>
+                    <a>Pomodoro Timer</a>
+                </li>
+                <li>
+                    <a>Study zone</a>
+                </li>
+            </ul>
+        </section>
+        <section>
+            <h3>Help center</h3>
+            <ul>
+                <li>
+                    <a>FAQ page</a>
+                </li>
+                <li>
+                    <a>Contact us</a>
+                </li>
+            </ul>
+        </section>
+    </div>
+    <div class="footer-sub-content">
+        <p>
+            <small>©2026 - Pomo | All rights reserved</small>
+        </p>
+        <span>POMO</span>
+    </div>
+</footer>
