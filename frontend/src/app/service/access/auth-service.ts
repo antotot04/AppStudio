@@ -1,5 +1,5 @@
 import { inject, Injectable } from '@angular/core';
-import { LoginForm } from '../dto/login-form';
+import { LoginForm } from '../../dto/login-form';
 import { HttpClient } from '@angular/common/http';
 
 @Injectable({

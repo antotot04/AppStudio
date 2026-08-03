@@ -1,8 +1,8 @@
 import { Component, inject, signal } from '@angular/core';
 import { email, form, FormField, maxLength, required, pattern, schema, minLength } from '@angular/forms/signals';
-import { RouterLink } from "@angular/router";
+import { Router, RouterLink } from "@angular/router";
 import { SignupForm } from '../dto/signup-form';
-import { SignupService } from '../service/signup-service';
+import { SignupService } from '../service/access/signup-service';
 
 @Component({
   selector: 'app-app-signup',
@@ -12,7 +12,8 @@ import { SignupService } from '../service/signup-service';
 })
 export class AppSignup {
 
-  signupService = inject(SignupService);
+  private router = inject(Router); 
+  private signupService = inject(SignupService);
   ifInvalid = signal<string>("valid");
   photo = signal<File | null>(null);
   chars = signal<number>(30);
@@ -21,8 +22,8 @@ export class AppSignup {
     username: '',
     email: '',
     password: '',
-    confirmPassword: ''
-  })
+    confirmPassword: '',
+  });
 
   signupForm = form(this.formModel, (schemaPath) => {
 
@@ -93,8 +94,12 @@ export class AppSignup {
     }
 
     this.signupService.registerUser(data).subscribe({
-      next: () => alert("ok"),
-      error: () => alert("error")
+      next: () => {
+        this.router.navigate([`/${this.signupForm.username().value()}`, 'home']);
+      },
+      error: () => {
+        this.ifInvalid.set("invalid");
+      }
     })
   }
 }

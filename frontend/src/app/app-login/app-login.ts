@@ -3,7 +3,7 @@ import { LoginForm } from '../dto/login-form'
 import { form, required, maxLength, FormField } from '@angular/forms/signals';
 import { RouterLink } from '@angular/router';
 import { Router } from '@angular/router';
-import { AuthService } from '../service/auth-service';
+import { AuthService } from '../service/access/auth-service';
 
 @Component({
   selector: 'app-app-login',

@@ -19,10 +19,15 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import it.app.backend.service.UtenteService;
 
 import it.app.backend.model.LoginRequest;
 import it.app.backend.model.Utente;
+import it.app.backend.model.UtenteResponse;
+import it.app.backend.model.responseError;
 import it.app.backend.model.RegistrationRequest;
 import it.app.backend.model.UpdateRequest;
 
@@ -40,11 +45,16 @@ public class UtenteController {
     }
 
     @GetMapping("/{username}")
-    public ResponseEntity<Utente> getByUsername(@PathVariable("username") String username){
+    public ResponseEntity<UtenteResponse> getByUsername(@PathVariable("username") String username){
         try {
             Optional<Utente> utente = service.findByUsername(username);
-            return utente.map(ResponseEntity::ok)
-                .orElseGet(() -> ResponseEntity.notFound().build());
+
+            if(utente.isPresent()){
+                Utente ut = utente.get();
+                return ResponseEntity.ok().body(new UtenteResponse(ut.getEmail(), ut.getFotoProfilo(), ut.getPhotoType()));
+            }else{
+                return ResponseEntity.notFound().build();
+            }
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().build(); 
         }
@@ -59,7 +69,7 @@ public class UtenteController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<String> registerUtente(
+    public ResponseEntity<responseError> registerUtente(
         @RequestParam String username,
         @RequestParam String email,
         @RequestParam String password,
@@ -80,9 +90,13 @@ public class UtenteController {
             else // user already exists
                 return ResponseEntity.status(HttpStatus.CONFLICT).build(); 
         } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            responseError resp = new responseError();
+            resp.setMessage(e.getMessage());
+            return ResponseEntity.badRequest().body(resp);
         } catch(IOException e){
-            return ResponseEntity.badRequest().body(e.getMessage());
+            responseError resp = new responseError();
+            resp.setMessage(e.getMessage());
+            return ResponseEntity.badRequest().body(resp);
         }
     }
 
