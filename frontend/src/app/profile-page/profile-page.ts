@@ -4,6 +4,8 @@ import { Router } from '@angular/router';
 import { email, form, FormField, minLength, pattern, required, schema } from "@angular/forms/signals";
 import { UpdateForm } from '../dto/update-form';
 import { UserInfo } from '../service/profile/user-info';
+import { AuthService } from '../service/access/auth-service';
+import { LoginForm } from '../dto/login-form';
 
 @Component({
   selector: 'app-profile-page',
@@ -14,6 +16,7 @@ import { UserInfo } from '../service/profile/user-info';
 export class ProfilePage {
   router = inject(Router);
   private userService = inject(UserInfo);
+  private authService = inject(AuthService); 
   readonly userInfos = input<UserInfoDTO>();
   close = output<void>(); 
   onExit(){
@@ -42,7 +45,8 @@ export class ProfilePage {
     email: ''
   });
 
-  formModelPassword = signal<{newPassword: string, confirmedPassword: string}>({
+  formModelPassword = signal<{oldPassword: string, newPassword: string, confirmedPassword: string}>({
+    oldPassword: '',
     newPassword: '',
     confirmedPassword: ''
   });
@@ -85,9 +89,38 @@ export class ProfilePage {
     this.userService.updateGeneralInfo(this.router.url.slice(1), dataToSend).subscribe({
       next: () => {
         this.generalState.set('updated');
+        alert("refresh to see changes");
+        setTimeout(() => {this.generalState.set('')}, 1000);
       },
       error: () => {
         console.log("backend error");
+      }
+    })
+  }
+
+  showPassForm = false;
+  onClickChangePass(){
+    this.showPassForm = true;
+  }
+
+  checkPass = signal(true);
+  validationFailed = signal(false);
+  validate(event: Event){
+    event.preventDefault();
+
+    const credentials: LoginForm = {
+      username: this.router.url.slice(1),
+      password: this.updateFormPassword.oldPassword().value()
+    }
+
+    this.authService.verifyLogin(credentials).subscribe({
+      next: () => {
+        this.checkPass.set(false);
+        this.validationFailed.set(this.checkPass()); 
+      },
+      error: () => {
+        this.checkPass.set(true); 
+        this.validationFailed.set(this.checkPass());
       }
     })
   }
@@ -111,6 +144,7 @@ export class ProfilePage {
     this.userService.updatePassword(this.router.url.slice(1), newPassword).subscribe({
       next: () => {
         this.passwordState.set('updated');
+        setTimeout(() => this.passwordState.set(''), 1000);
       },
       error: () => {
         console.log("backend error");

@@ -100,7 +100,7 @@ public class UtenteService {
         if(utente == null) return null;
 
         String newEmail = updatedUtente.getEmail();
-        if(newEmail != null && newEmail.length() < 320 && !newEmail.equals(utente.getEmail())){ 
+        if(newEmail != null && !newEmail.isBlank() && newEmail.length() < 320 && !newEmail.equals(utente.getEmail())){ 
             if(!repo.findByEmail(newEmail).isPresent()){ 
                 utente.setEmail(newEmail); 
             }else
@@ -108,7 +108,8 @@ public class UtenteService {
         }
 
         byte[] newFotoProfilo = updatedUtente.getProfilePhoto();
-        if(!Arrays.equals(utente.getFotoProfilo(), newFotoProfilo)){
+        String photoType = updatedUtente.getPhotoType();
+        if(newFotoProfilo != null && photoType != null && !Arrays.equals(utente.getFotoProfilo(), newFotoProfilo)){
             utente.setFotoProfilo(newFotoProfilo);
             utente.setPhotoType(updatedUtente.getPhotoType());
         }

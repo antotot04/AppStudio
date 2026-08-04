@@ -16,7 +16,7 @@
 
         @if(this.updateFormGeneral.email().invalid() && this.updateFormGeneral.email().touched()){
             <ul>
-                @for(error of this.updateFormGeneral.email().errors(); track error){
+                @for(error of this.updateFormGeneral.email().errors(); track error.message){
                     <li>{{ error.message }}</li>
                 }
             </ul>
@@ -28,26 +28,40 @@
         <button type="submit" [class]="generalState()">{{generalButtonText()}}</button>
     </form>
 
-    <form class="password-form" (submit)="onSubmitPassword($event)">
-        <label for="user-password">Password: </label>
-        <input type="password" id="user-password" placeholder="**********" [formField]="this.updateFormPassword.newPassword">
+    @if(!showPassForm){
+        <button (click)="onClickChangePass()">Change Password</button>
+    }@else{
+        <form class="password-form" (submit)="onSubmitPassword($event)">
+            @if(checkPass()){
+                <label for="user-old-password">Insert your password: </label>
+                <input type="password" id="user-old-password" placeholder="**********" [formField]="this.updateFormPassword.oldPassword">
+                <button (click)="validate($event)">Confirm</button>
 
-        @if(this.updateFormPassword.newPassword().invalid() && this.updateFormPassword.newPassword().touched()){
-            <ul>
-                @for(error of this.updateFormPassword.newPassword().errors(); track error){
-                    <li>{{ error.message }}</li>
+                @if(validationFailed()){ 
+                    <span>password is invalid</span>
                 }
-            </ul>
-        }
+            }@else{
+                <label for="user-password">Password: </label>
+                <input type="password" id="user-password" placeholder="**********" [formField]="this.updateFormPassword.newPassword">
 
-        <label for="user-confirm-password">Confirm new password: </label>
-        <input type="password" id="user-confirm-password" placeholder="confirm new password" [formField]="this.updateFormPassword.confirmedPassword">
+                @if(this.updateFormPassword.newPassword().invalid() && this.updateFormPassword.newPassword().touched()){
+                    <ul>
+                        @for(error of this.updateFormPassword.newPassword().errors(); track error.message){
+                            <li>{{ error.message }}</li>
+                        }
+                    </ul>
+                }
 
-        @if(this.updateFormPassword.confirmedPassword().touched() && 
-            updateFormPassword.confirmedPassword().value() !== this.updateFormPassword.newPassword().value()){
-                <span>passwords do not match</span>
-        }
+                <label for="user-confirm-password">Confirm new password: </label>
+                <input type="password" id="user-confirm-password" placeholder="confirm new password" [formField]="this.updateFormPassword.confirmedPassword">
 
-        <button type="submit" [class]="passwordState()">{{passwordButtonText()}}</button>
-    </form>
+                @if(this.updateFormPassword.confirmedPassword().touched() && 
+                    updateFormPassword.confirmedPassword().value() !== this.updateFormPassword.newPassword().value()){
+                        <span>passwords do not match</span>
+                }
+
+                <button type="submit" [class]="passwordState()">{{ passwordButtonText() }}</button>
+            }
+        </form>
+    }
 </div>
