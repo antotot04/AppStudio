@@ -9,7 +9,7 @@
 
             @if(loginForm.username().touched() && loginForm.username().invalid()){
                 <ul>
-                    @for(error of loginForm.username().errors(); track error){
+                    @for(error of loginForm.username().errors(); track error.message){
                         <li>{{ error.message }}</li>
                     }
                 </ul>
@@ -20,7 +20,7 @@
 
             @if(loginForm.password().touched() && loginForm.password().invalid()){
                 <ul>
-                    @for(error of loginForm.password().errors(); track error){
+                    @for(error of loginForm.password().errors(); track error.message){
                         <li>{{ error.message }}</li>
                     }
                 </ul>

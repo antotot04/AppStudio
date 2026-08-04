@@ -9,7 +9,7 @@
 
         @if(signupForm.username().touched() && signupForm.username().invalid()){
             <ul>
-                @for(error of signupForm.username().errors(); track error){
+                @for(error of signupForm.username().errors(); track error.message){
                     <li>{{ error.message }}</li>
                 }
             </ul>
@@ -20,7 +20,7 @@
 
         @if(signupForm.email().touched() && signupForm.email().invalid()){
             <ul>
-                @for(error of signupForm.email().errors(); track error){
+                @for(error of signupForm.email().errors(); track error.message){
                     <li>{{ error.message }}</li>
                 }
             </ul>
@@ -31,7 +31,7 @@
 
         @if(signupForm.password().touched() && signupForm.password().invalid()){
             <ul>
-                @for(error of signupForm.password().errors(); track error){
+                @for(error of signupForm.password().errors(); track error.message){
                     <li>{{ error.message }}</li>
                 }
             </ul>
