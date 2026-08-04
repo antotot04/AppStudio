@@ -1,7 +1,6 @@
 import { Injectable, inject } from '@angular/core';
-import { HttpClient, HttpParams } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { UserInfoDTO } from '../../dto/user-infoDTO';
-import { UpdatePassword } from '../../dto/update-password';
 
 @Injectable({
   providedIn: 'root',
@@ -28,5 +27,10 @@ export class UserInfo {
         passwToUpdate: newPassword
       }
     });
+  }
+
+  deleteAccount(user: string){
+    const url = this.baseurl + `/${user}`;
+    return this.service.delete(url); 
   }
 }

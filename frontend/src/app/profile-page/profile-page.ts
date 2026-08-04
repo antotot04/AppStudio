@@ -93,7 +93,7 @@ export class ProfilePage {
         setTimeout(() => {this.generalState.set('')}, 1000);
       },
       error: () => {
-        console.log("backend error");
+        console.log("updateGeneralInfo: backend error");
       }
     })
   }
@@ -147,8 +147,29 @@ export class ProfilePage {
         setTimeout(() => this.passwordState.set(''), 1000);
       },
       error: () => {
-        console.log("backend error");
+        console.log("updatePassword: backend error");
       }
     })
+  }
+
+  onLogOut(){
+    this.router.navigate(['/login']);
+  }
+
+  execDelete(){
+    this.userService.deleteAccount(this.router.url.slice(1)).subscribe({
+      next: () => {
+        this.router.navigate(['/signup']);
+      },
+      error: () => {
+        console.log("delete: backend error");
+      }
+    })
+  }
+
+  onDeleteAccount(){
+    if(confirm("Do you really want to delete your account? (All your data will be permanently deleted)")){
+      this.execDelete();
+    }
   }
 }
