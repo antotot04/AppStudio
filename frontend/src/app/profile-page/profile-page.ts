@@ -1,0 +1,183 @@
+import { Component, computed, inject, input, output, signal } from '@angular/core';
+import { UserInfoDTO } from '../dto/user-infoDTO';
+import { Router } from '@angular/router';
+import { email, form, FormField, minLength, pattern, required, schema } from "@angular/forms/signals";
+import { UpdateForm } from '../dto/update-form';
+import { UserInfo } from '../service/profile/user-info';
+import { AuthService } from '../service/access/auth-service';
+import { LoginForm } from '../dto/login-form';
+
+@Component({
+  selector: 'app-profile-page',
+  imports: [FormField],
+  templateUrl: './profile-page.html',
+  styleUrl: './profile-page.css',
+})
+export class ProfilePage {
+  router = inject(Router);
+  private userService = inject(UserInfo);
+  private authService = inject(AuthService); 
+  readonly userInfos = input<UserInfoDTO>();
+  close = output<void>(); 
+  onExit(){
+    this.close.emit();
+  }
+
+  generalState = signal<string>('');
+  generalButtonText = computed<string>(() => {
+    if(this.generalState() === 'updated'){
+      return 'info updated';
+    }else{
+      return 'update';
+    }
+  })
+
+  passwordState = signal<string>('');
+  passwordButtonText = computed<string>(() => {
+    if(this.passwordState() === 'updated'){
+      return 'password updated';
+    }else{
+      return 'update password';
+    }
+  })
+
+  formModelGeneral = signal<{email: string}>({
+    email: ''
+  });
+
+  formModelPassword = signal<{oldPassword: string, newPassword: string, confirmedPassword: string}>({
+    oldPassword: '',
+    newPassword: '',
+    confirmedPassword: ''
+  });
+
+  updateFormGeneral = form(this.formModelGeneral, (schemaPath) => {
+    email(schemaPath.email, {message: "insert a valid email"});
+  });
+
+  updateFormPassword = form(this.formModelPassword, (schemaPath) => {
+    required(schemaPath.newPassword, {message: "a new password is required"});
+    minLength(schemaPath.newPassword, 6, {message: "password is too short"});
+    pattern(schemaPath.newPassword, new RegExp(/^(?=.*[\d].*)(?=.*[^\d].*)(?=.*[^\n]$)/), {message: "password invalid"});
+  });
+
+
+  newImage: File | null = null;
+
+  onUpdatePhoto(event: Event){
+    const input = event.target as HTMLInputElement;
+    if(input.files){
+      this.newImage = input.files[0];
+    }
+  }
+
+  updateGeneralInfoError = signal('');
+  onSubmitGeneral(event: Event){
+    event.preventDefault();
+
+    if(this.updateFormGeneral.email().invalid()){
+      this.generalState.set('not-valid');
+      return;
+    }
+
+    const dataToSend = new FormData();
+    dataToSend.append('email', this.updateFormGeneral.email().value());
+    if(this.newImage !== null){
+      dataToSend.append('photo', this.newImage);
+      dataToSend.append('photoType', this.newImage.type);
+    }
+
+    this.userService.updateGeneralInfo(this.router.url.slice(1), dataToSend).subscribe({
+      next: () => {
+        this.updateGeneralInfoError.set('');
+        this.generalState.set('updated');
+        alert("refresh to see changes");
+        setTimeout(() => {this.generalState.set('')}, 1000);
+      },
+      error: (resp) => {
+        console.log("updateGeneralInfo: backend error");
+        console.log(resp);
+        if(resp.status === 404){
+          this.updateGeneralInfoError.set("User not found");
+        }else{
+          this.updateGeneralInfoError.set(resp.error.message);
+        }
+      }
+    })
+  }
+
+  showPassForm = false;
+  onClickChangePass(){
+    this.showPassForm = true;
+  }
+
+  checkPass = signal(true);
+  validationFailed = signal(false);
+  validate(event: Event){
+    event.preventDefault();
+
+    const credentials: LoginForm = {
+      username: this.router.url.slice(1),
+      password: this.updateFormPassword.oldPassword().value()
+    }
+
+    this.authService.verifyLogin(credentials).subscribe({
+      next: () => {
+        this.checkPass.set(false);
+        this.validationFailed.set(this.checkPass()); 
+      },
+      error: () => {
+        this.checkPass.set(true); 
+        this.validationFailed.set(this.checkPass());
+      }
+    })
+  }
+
+  onSubmitPassword(event: Event){
+    event.preventDefault();
+
+    if(this.updateFormPassword.newPassword().invalid()){
+      this.passwordState.set('not-valid');
+      return;
+    }
+
+    if(this.updateFormPassword.newPassword().value() !== this.updateFormPassword.confirmedPassword().value()){
+      this.passwordState.set('not-valid');
+      return;
+    }
+
+    const newPassword = this.updateFormPassword.newPassword().value();
+    console.log(newPassword);
+
+    this.userService.updatePassword(this.router.url.slice(1), newPassword).subscribe({
+      next: () => {
+        this.passwordState.set('updated');
+        setTimeout(() => this.passwordState.set(''), 1000);
+      },
+      error: () => {
+        console.log("updatePassword: backend error");
+      }
+    })
+  }
+
+  onLogOut(){
+    this.router.navigate(['/login']);
+  }
+
+  execDelete(){
+    this.userService.deleteAccount(this.router.url.slice(1)).subscribe({
+      next: () => {
+        this.router.navigate(['/signup']);
+      },
+      error: () => {
+        console.log("delete: backend error");
+      }
+    })
+  }
+
+  onDeleteAccount(){
+    if(confirm("Do you really want to delete your account? (All your data will be permanently deleted)")){
+      this.execDelete();
+    }
+  }
+}

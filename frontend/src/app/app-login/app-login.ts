@@ -38,9 +38,9 @@ export class AppLogin {
 
     this.authService.verifyLogin(credentials).subscribe({
       next: () => {
-        this.router.navigate([`/${credentials.username}`, 'home'])
+        this.router.navigate([`/${credentials.username}`])
       },
-      error: () => {
+      error: (resp) => {
         this.isFailed.set('failed'); 
       }
     });

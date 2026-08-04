@@ -55,6 +55,11 @@ public class UtenteService {
             throw new IllegalArgumentException("The email is too long (max 320 characters)");
         }
 
+        // Check whether the email is unique or not
+        if (repo.findByEmail(newUtente.getEmail()).isPresent()){
+            throw new IllegalArgumentException("Email already in use by another user");
+        }
+
         // Password security check before hashing
         if (passwordInClear.length() <= 6 || !containsNumbers(passwordInClear)) {
             throw new IllegalArgumentException("The password must contain more than 6 characters and at least one number");
@@ -100,7 +105,7 @@ public class UtenteService {
         if(utente == null) return null;
 
         String newEmail = updatedUtente.getEmail();
-        if(newEmail != null && newEmail.length() < 320 && !newEmail.equals(utente.getEmail())){ 
+        if(newEmail != null && !newEmail.isBlank() && newEmail.length() < 320 && !newEmail.equals(utente.getEmail())){ 
             if(!repo.findByEmail(newEmail).isPresent()){ 
                 utente.setEmail(newEmail); 
             }else
@@ -108,7 +113,8 @@ public class UtenteService {
         }
 
         byte[] newFotoProfilo = updatedUtente.getProfilePhoto();
-        if(!Arrays.equals(utente.getFotoProfilo(), newFotoProfilo)){
+        String photoType = updatedUtente.getPhotoType();
+        if(newFotoProfilo != null && photoType != null && !Arrays.equals(utente.getFotoProfilo(), newFotoProfilo)){
             utente.setFotoProfilo(newFotoProfilo);
             utente.setPhotoType(updatedUtente.getPhotoType());
         }

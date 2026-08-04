@@ -1,0 +1,74 @@
+<div>
+    <button (click)="onExit()">
+        <img
+            src="/exit.svg"
+            width="50"
+            height="50"
+            alt="exit"
+        />
+    </button>
+
+    <h2>@{{this.router.url.slice(1)}}</h2>
+
+    <p>{{this.userInfos()!.email}}</p>
+
+    <form class="general-form" (submit)="onSubmitGeneral($event)">
+        <label for="user-email">Email: </label>
+        <input type="email" id="user-email" [placeholder]="this.userInfos()!.email" [formField]="this.updateFormGeneral.email">
+
+        @if(this.updateFormGeneral.email().invalid() && this.updateFormGeneral.email().touched()){
+            <ul>
+                @for(error of this.updateFormGeneral.email().errors(); track error.message){
+                    <li>{{ error.message }}</li>
+                }
+            </ul>
+        }
+
+        <label for="user-photo">Photo: </label>
+        <input type="file" id="user-photo" accept="image/jpeg, image/png" (change)="onUpdatePhoto($event)">
+
+        <button type="submit" [class]="generalState()">{{generalButtonText()}}</button>
+        <span>{{ updateGeneralInfoError() }}</span>
+    </form>
+
+    @if(!showPassForm){
+        <button (click)="onClickChangePass()">Change Password</button>
+    }@else{
+        <form class="password-form" (submit)="onSubmitPassword($event)">
+            @if(checkPass()){
+                <label for="user-old-password">Insert your password: </label>
+                <input type="password" id="user-old-password" placeholder="**********" [formField]="this.updateFormPassword.oldPassword">
+                <button (click)="validate($event)">Confirm</button>
+
+                @if(validationFailed()){ 
+                    <span>password is invalid</span>
+                }
+            }@else{
+                <label for="user-password">Password: </label>
+                <input type="password" id="user-password" placeholder="**********" [formField]="this.updateFormPassword.newPassword">
+
+                @if(this.updateFormPassword.newPassword().invalid() && this.updateFormPassword.newPassword().touched()){
+                    <ul>
+                        @for(error of this.updateFormPassword.newPassword().errors(); track error.message){
+                            <li>{{ error.message }}</li>
+                        }
+                    </ul>
+                }
+
+                <label for="user-confirm-password">Confirm new password: </label>
+                <input type="password" id="user-confirm-password" placeholder="confirm new password" [formField]="this.updateFormPassword.confirmedPassword">
+
+                @if(this.updateFormPassword.confirmedPassword().touched() && 
+                    updateFormPassword.confirmedPassword().value() !== this.updateFormPassword.newPassword().value()){
+                        <span>passwords do not match</span>
+                }
+
+                <button type="submit" [class]="passwordState()">{{ passwordButtonText() }}</button>
+            }
+        </form>
+    }
+
+    <button (click)="onDeleteAccount()">DELETE ACCOUNT</button>
+    
+    <button (click)="onLogOut()">LOG OUT</button>
+</div>

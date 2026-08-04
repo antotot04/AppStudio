@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, computed, inject, signal } from '@angular/core';
 import { email, form, FormField, maxLength, required, pattern, schema, minLength } from '@angular/forms/signals';
 import { Router, RouterLink } from "@angular/router";
 import { SignupForm } from '../dto/signup-form';
@@ -14,8 +14,9 @@ export class AppSignup {
 
   private router = inject(Router); 
   private signupService = inject(SignupService);
-  ifInvalid = signal<string>("valid");
-  photo = signal<File | null>(null);
+  ifInvalid = signal<string>("");
+  errorMessage = signal<string>('');
+  photo: File | null = null;
   chars = signal<number>(30);
 
   formModel = signal<SignupForm>({
@@ -52,7 +53,7 @@ export class AppSignup {
   onPhotoUpload(event: Event){
     const upload = event.target as HTMLInputElement;
     if(upload.files){
-      this.photo.set(upload.files[0]);
+      this.photo = upload.files[0];
     }
   }
 
@@ -88,17 +89,23 @@ export class AppSignup {
     data.append("username", this.signupForm.username().value());
     data.append("email",  this.signupForm.email().value());
     data.append("password",  this.signupForm.password().value());
-    if(this.photo() !== null){
-      data.append("photo", this.photo() as File);
-      data.append("photoType", this.photo()!.type);
+    if(this.photo !== null){
+      data.append("photo", this.photo);
+      data.append("photoType", this.photo.type);
     }
 
     this.signupService.registerUser(data).subscribe({
       next: () => {
-        this.router.navigate([`/${this.signupForm.username().value()}`, 'home']);
+        this.router.navigate([`/${this.signupForm.username().value()}`]);
       },
-      error: () => {
+      error: (resp) => {
         this.ifInvalid.set("invalid");
+        setTimeout(() => this.ifInvalid.set(""), 1000);
+        if(resp.status === 409){
+          this.errorMessage.set("Username is already in use");
+        }else{
+          this.errorMessage.set(resp.error.message);
+        }
       }
     })
   }

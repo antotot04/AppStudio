@@ -101,11 +101,11 @@ public class UtenteController {
     }
 
     @PutMapping("/{username}")
-    public ResponseEntity<String> updateUtente(
+    public ResponseEntity<responseError> updateUtente(
         @PathVariable("username") String username, 
-        @RequestParam String email, 
-        @RequestParam MultipartFile photo, 
-        @RequestParam String photoType){
+        @RequestParam(required=false) String email, 
+        @RequestParam(required=false) MultipartFile photo, 
+        @RequestParam(required=false) String photoType){
         try {
             byte[] photoContent = null;
             String actualPhotoType = null; 
@@ -115,20 +115,24 @@ public class UtenteController {
             }
             Utente updatedUtente = service.update(username, new UpdateRequest(email, photoContent, actualPhotoType));
 
-            if(updatedUtente == null)
-                return ResponseEntity.notFound().build();
-            else
+            if(updatedUtente == null){
+                return ResponseEntity.notFound().build(); // user not found
+            }else
                 return ResponseEntity.ok().build();
 
         } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            responseError resp = new responseError();
+            resp.setMessage(e.getMessage());
+            return ResponseEntity.badRequest().body(resp);
         } catch (IOException e){
-            return ResponseEntity.badRequest().body(e.getMessage());
+            responseError resp = new responseError();
+            resp.setMessage(e.getMessage());
+            return ResponseEntity.badRequest().body(resp);
         }
     }
 
     @PutMapping("/{username}/password")
-    public ResponseEntity<String> updatePassword(@PathVariable("username") String username, @RequestBody String passwToUpdate){
+    public ResponseEntity<String> updatePassword(@PathVariable("username") String username, @RequestParam String passwToUpdate){
         try {
             Utente updatedUtente = service.updatePassword(username, passwToUpdate);
 
