@@ -6,7 +6,7 @@ import { HttpClient } from '@angular/common/http';
   providedIn: 'root',
 })
 export class AuthService {
-  url = "/api/utenti/login";
+  private url = "/api/utenti/login";
   private http = inject(HttpClient);
 
   verifyLogin(credentials: LoginForm){

@@ -1,17 +1,32 @@
 import { Injectable, inject } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { UserInfoDTO } from '../../dto/user-infoDTO';
+import { UpdatePassword } from '../../dto/update-password';
 
 @Injectable({
   providedIn: 'root',
 })
 export class UserInfo {
 
-  service = inject(HttpClient);
-  baseurl = 'api/utenti'; 
+  private service = inject(HttpClient);
+  private baseurl = 'api/utenti'; 
 
   getUser(user: string){
     const url = this.baseurl + `/${user}`;
     return this.service.get<UserInfoDTO>(url);
+  }
+
+  updateGeneralInfo(user: string, newData: FormData){
+    const url = this.baseurl + `/${user}`;
+    return this.service.put(url, newData);
+  }
+
+  updatePassword(user: string, newPassword: string){
+    const url = this.baseurl + `/${user}/password`;
+    return this.service.put(url, null, {
+      params: {
+        passwToUpdate: newPassword
+      }
+    });
   }
 }

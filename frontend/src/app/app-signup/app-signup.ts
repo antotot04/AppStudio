@@ -15,7 +15,7 @@ export class AppSignup {
   private router = inject(Router); 
   private signupService = inject(SignupService);
   ifInvalid = signal<string>("valid");
-  photo = signal<File | null>(null);
+  photo: File | null = null;
   chars = signal<number>(30);
 
   formModel = signal<SignupForm>({
@@ -52,7 +52,7 @@ export class AppSignup {
   onPhotoUpload(event: Event){
     const upload = event.target as HTMLInputElement;
     if(upload.files){
-      this.photo.set(upload.files[0]);
+      this.photo = upload.files[0];
     }
   }
 
@@ -88,14 +88,14 @@ export class AppSignup {
     data.append("username", this.signupForm.username().value());
     data.append("email",  this.signupForm.email().value());
     data.append("password",  this.signupForm.password().value());
-    if(this.photo() !== null){
-      data.append("photo", this.photo() as File);
-      data.append("photoType", this.photo()!.type);
+    if(this.photo !== null){
+      data.append("photo", this.photo);
+      data.append("photoType", this.photo.type);
     }
 
     this.signupService.registerUser(data).subscribe({
       next: () => {
-        this.router.navigate([`/${this.signupForm.username().value()}`, 'home']);
+        this.router.navigate([`/${this.signupForm.username().value()}`]);
       },
       error: () => {
         this.ifInvalid.set("invalid");

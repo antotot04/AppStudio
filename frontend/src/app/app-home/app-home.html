@@ -16,17 +16,21 @@
             <a [routerLink]="">STUDY ZONE</a>
         </li>
     </ul>
-    <a [routerLink]="">
+    <button (click)="setProfile()">
         <img
             [src]="hasPhoto() ? (this.userDTO().profilePhoto | b64toImg: this.userDTO().photoType) : '/Profile/Profile_Photo.svg' "
             width="80"
             height="80"
             alt="profile photo"
         />
-    </a>
+    </button>
 </nav>
 
 <main>
+    <!-- Profile page displayed here (will be displayed at the center of the page over the content)-->
+    @if(this.profileOn()){
+        <app-profile-page [userInfos]="this.userDTO()" (close)="this.setProfile()"></app-profile-page>
+    }
     <!-- Application content here -->
     <router-outlet></router-outlet>
 </main>

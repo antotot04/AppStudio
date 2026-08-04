@@ -20,7 +20,7 @@ export const routes: Routes = [
         component: AppSignup
     },
     {
-        path: ':username/home',
+        path: ':username',
         component: AppHome
     }
 ];
