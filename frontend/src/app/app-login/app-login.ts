@@ -40,7 +40,7 @@ export class AppLogin {
       next: () => {
         this.router.navigate([`/${credentials.username}`])
       },
-      error: () => {
+      error: (resp) => {
         this.isFailed.set('failed'); 
       }
     });

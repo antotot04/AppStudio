@@ -26,6 +26,7 @@
         <input type="file" id="user-photo" accept="image/jpeg, image/png" (change)="onUpdatePhoto($event)">
 
         <button type="submit" [class]="generalState()">{{generalButtonText()}}</button>
+        <span>{{ updateGeneralInfoError() }}</span>
     </form>
 
     @if(!showPassForm){

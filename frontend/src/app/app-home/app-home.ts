@@ -30,7 +30,6 @@ export class AppHome implements OnInit {
     this.userService.getUser(username).subscribe({
       next: (resp) => {
         this.userDTO.set(resp);
-        console.log(this.userDTO());
       },
       error: (resp) => {
         console.log("get failed: " + resp);

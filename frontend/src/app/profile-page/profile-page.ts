@@ -71,6 +71,7 @@ export class ProfilePage {
     }
   }
 
+  updateGeneralInfoError = signal('');
   onSubmitGeneral(event: Event){
     event.preventDefault();
 
@@ -88,12 +89,19 @@ export class ProfilePage {
 
     this.userService.updateGeneralInfo(this.router.url.slice(1), dataToSend).subscribe({
       next: () => {
+        this.updateGeneralInfoError.set('');
         this.generalState.set('updated');
         alert("refresh to see changes");
         setTimeout(() => {this.generalState.set('')}, 1000);
       },
-      error: () => {
+      error: (resp) => {
         console.log("updateGeneralInfo: backend error");
+        console.log(resp);
+        if(resp.status === 404){
+          this.updateGeneralInfoError.set("User not found");
+        }else{
+          this.updateGeneralInfoError.set(resp.error.message);
+        }
       }
     })
   }

@@ -49,6 +49,7 @@
         <input type="file" id="profile-photo" accept="image/jpeg, image/png" (change)="onPhotoUpload($event)">
 
         <button type="submit" [class]="ifInvalid()">Sign Up</button>
+        <span> {{ errorMessage() }} </span>
     </form>
     <p>Already have an account? <a [routerLink]="['']">Log In</a></p>
 </div>

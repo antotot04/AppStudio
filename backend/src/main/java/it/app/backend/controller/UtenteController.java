@@ -115,9 +115,9 @@ public class UtenteController {
             }
             Utente updatedUtente = service.update(username, new UpdateRequest(email, photoContent, actualPhotoType));
 
-            if(updatedUtente == null)
-                return ResponseEntity.notFound().build();
-            else
+            if(updatedUtente == null){
+                return ResponseEntity.notFound().build(); // user not found
+            }else
                 return ResponseEntity.ok().build();
 
         } catch (IllegalArgumentException e) {

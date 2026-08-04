@@ -55,6 +55,11 @@ public class UtenteService {
             throw new IllegalArgumentException("The email is too long (max 320 characters)");
         }
 
+        // Check whether the email is unique or not
+        if (repo.findByEmail(newUtente.getEmail()).isPresent()){
+            throw new IllegalArgumentException("Email already in use by another user");
+        }
+
         // Password security check before hashing
         if (passwordInClear.length() <= 6 || !containsNumbers(passwordInClear)) {
             throw new IllegalArgumentException("The password must contain more than 6 characters and at least one number");

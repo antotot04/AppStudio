@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, computed, inject, signal } from '@angular/core';
 import { email, form, FormField, maxLength, required, pattern, schema, minLength } from '@angular/forms/signals';
 import { Router, RouterLink } from "@angular/router";
 import { SignupForm } from '../dto/signup-form';
@@ -14,7 +14,8 @@ export class AppSignup {
 
   private router = inject(Router); 
   private signupService = inject(SignupService);
-  ifInvalid = signal<string>("valid");
+  ifInvalid = signal<string>("");
+  errorMessage = signal<string>('');
   photo: File | null = null;
   chars = signal<number>(30);
 
@@ -97,8 +98,14 @@ export class AppSignup {
       next: () => {
         this.router.navigate([`/${this.signupForm.username().value()}`]);
       },
-      error: () => {
+      error: (resp) => {
         this.ifInvalid.set("invalid");
+        setTimeout(() => this.ifInvalid.set(""), 1000);
+        if(resp.status === 409){
+          this.errorMessage.set("Username is already in use");
+        }else{
+          this.errorMessage.set(resp.error.message);
+        }
       }
     })
   }
