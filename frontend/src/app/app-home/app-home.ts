@@ -29,8 +29,6 @@ export class AppHome implements OnInit {
     this.userService.getUser(username).subscribe({
       next: (resp) => {
         this.userDTO.set(resp);
-        console.log(this.userDTO());
-        console.log(this.userDTO().photoType)
       },
       error: (resp) => {
         console.log("get failed: " + resp);
