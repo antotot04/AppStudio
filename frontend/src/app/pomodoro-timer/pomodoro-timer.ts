@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, signal } from '@angular/core';
 
 @Component({
   selector: 'app-pomodoro-timer',
@@ -6,4 +6,7 @@ import { Component } from '@angular/core';
   templateUrl: './pomodoro-timer.html',
   styleUrl: './pomodoro-timer.css',
 })
-export class PomodoroTimer {}
+export class PomodoroTimer {
+  timerState = signal('');
+  onPause = signal(true);
+}

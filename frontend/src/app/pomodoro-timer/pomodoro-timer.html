@@ -1,1 +1,68 @@
-<p>pomodoro-timer works!</p>
+<button>
+    <img
+        src="/Timer/Settings.svg"
+        width="90"
+        height="90"
+        alt="timer settings"
+    />
+</button>
+
+<button>
+    <img
+        src="/Timer/Leaderboard.svg"
+        width="90"
+        height="90"
+        alt="timer leaderboard"
+    />
+</button>
+
+<div class="timer-status">
+    @if(timerState() === "short"){
+        Short Pause
+    }@else if(timerState() === "long"){
+        Long Pause
+    }@else{
+        Pomodoro
+    }
+</div>
+
+<div class="timer-container">
+    <div class="timer">
+        {{ /* TODO: some clock implmentation here */ }}
+    </div>
+    @if(onPause()){
+        <button>
+            <img
+                src="/Timer/Start.svg"
+                width="85"
+                height="85"
+                alt="pause icon"
+            />
+        </button>
+    }@else{
+        <button>
+            <img
+                src="/Timer/Pause.svg"
+                width="85"
+                height="85"
+                alt="pause icon"
+            />
+        </button>
+    }
+
+    @if(timerState() === "short" || timerState() === "long"){
+        <button>
+            <img
+                src="/Timer/Skip.svg"
+                width="85" 
+                height="85"
+                alt="skip icon"
+            />
+        </button>
+    }
+
+    <div class="progress-bar-container">
+        <div class="progress">
+        </div>
+    </div>
+</div>
