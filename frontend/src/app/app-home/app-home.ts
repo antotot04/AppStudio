@@ -45,7 +45,8 @@ export class AppHome implements OnInit {
 
   ngOnInit(){
     const url = this.router.url;
-    const username = this.router.url.slice(1);
+    const username = url.slice(1, url.indexOf('/', url.indexOf('/')+1));
+    console.log(username);
     this.getUserInfo(username);
   }
 }

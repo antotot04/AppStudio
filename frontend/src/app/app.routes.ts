@@ -2,6 +2,7 @@ import { Routes } from '@angular/router';
 import { AppLogin } from './app-login/app-login';
 import { AppHome } from './app-home/app-home';
 import { AppSignup } from './app-signup/app-signup';
+import { PomodoroTimer } from './pomodoro-timer/pomodoro-timer';
 
 export const routes: Routes = [
     {
@@ -21,6 +22,17 @@ export const routes: Routes = [
     },
     {
         path: ':username',
-        component: AppHome
+        component: AppHome,
+        children: [
+            {
+                path: '',
+                pathMatch: 'full',
+                redirectTo: 'timer'
+            },
+            {
+                path: 'timer',
+                component: PomodoroTimer
+            }
+        ]
     }
 ];
