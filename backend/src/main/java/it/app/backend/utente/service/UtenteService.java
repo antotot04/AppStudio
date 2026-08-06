@@ -1,4 +1,4 @@
-package it.app.backend.service;
+package it.app.backend.utente.service;
 
 import java.time.OffsetDateTime;
 import java.util.Arrays;
@@ -9,10 +9,10 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import it.app.backend.model.Utente;
-import it.app.backend.model.RegistrationRequest;
-import it.app.backend.model.UpdateRequest;
-import it.app.backend.repository.UtenteRepository;
+import it.app.backend.utente.model.Utente;
+import it.app.backend.utente.model.RegistrationRequest;
+import it.app.backend.utente.model.UpdateRequest;
+import it.app.backend.utente.repository.UtenteRepository;
 
 
 @Service

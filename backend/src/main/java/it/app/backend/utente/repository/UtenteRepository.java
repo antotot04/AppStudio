@@ -1,6 +1,6 @@
-package it.app.backend.repository;
+package it.app.backend.utente.repository;
 
-import it.app.backend.model.Utente;
+import it.app.backend.utente.model.Utente;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;

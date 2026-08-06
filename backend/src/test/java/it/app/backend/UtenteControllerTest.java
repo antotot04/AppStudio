@@ -18,11 +18,11 @@ import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import it.app.backend.service.UtenteService;
-import it.app.backend.model.LoginRequest;
-import it.app.backend.model.RegistrationRequest;
-import it.app.backend.model.UpdateRequest;
-import it.app.backend.model.Utente;
+import it.app.backend.utente.service.UtenteService;
+import it.app.backend.utente.model.LoginRequest;
+import it.app.backend.utente.model.RegistrationRequest;
+import it.app.backend.utente.model.UpdateRequest;
+import it.app.backend.utente.model.Utente;
 
 @SpringBootTest
 @AutoConfigureMockMvc // mock to simulate HTTP calls

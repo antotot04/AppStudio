@@ -1,4 +1,4 @@
-package it.app.backend.model;
+package it.app.backend.common;
 
 public class responseError {
 

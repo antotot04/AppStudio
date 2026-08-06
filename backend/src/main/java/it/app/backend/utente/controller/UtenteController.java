@@ -1,4 +1,4 @@
-package it.app.backend.controller;
+package it.app.backend.utente.controller;
 
 import java.io.IOException;
 import java.util.List;
@@ -19,17 +19,13 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
-import it.app.backend.service.UtenteService;
-
-import it.app.backend.model.LoginRequest;
-import it.app.backend.model.Utente;
-import it.app.backend.model.UtenteResponse;
-import it.app.backend.model.responseError;
-import it.app.backend.model.RegistrationRequest;
-import it.app.backend.model.UpdateRequest;
+import it.app.backend.utente.service.UtenteService;
+import it.app.backend.common.responseError;
+import it.app.backend.utente.model.LoginRequest;
+import it.app.backend.utente.model.Utente;
+import it.app.backend.utente.model.UtenteResponse;
+import it.app.backend.utente.model.RegistrationRequest;
+import it.app.backend.utente.model.UpdateRequest;
 
 
 @RestController
