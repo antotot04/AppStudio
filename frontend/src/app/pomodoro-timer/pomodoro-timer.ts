@@ -1,5 +1,6 @@
 import { Component, computed, signal } from '@angular/core';
 import { DatePipe } from '@angular/common';
+import { last } from 'rxjs';
 
 @Component({
   selector: 'app-pomodoro-timer',
@@ -9,7 +10,7 @@ import { DatePipe } from '@angular/common';
 })
 export class PomodoroTimer {
 
-  pomodoroTime = 1500; // pomodoro unit: 25 min
+  readonly pomodoroTime = 1500; // pomodoro unit: 25 min
   // default pauses (in seconds)
   shortPause = signal(300);
   longPause = signal(900); 
@@ -24,22 +25,54 @@ export class PomodoroTimer {
   currentTime = signal(this.pomodoroTime);
   intervalId = 0;
 
+  /* progress bar dynamic styling */
+  progressColor = computed(() => {
+      const progress = document.querySelector(".progress") as HTMLElement;
+      if(this.timerState() === ''){
+        progress.style.backgroundColor = 'red';
+      }else if(this.timerState() === 'short'){
+        progress.style.backgroundColor = 'lightblue';
+      }else{
+        progress.style.backgroundColor = 'blue';
+      }
+  });
+  progressWidth = computed(() => {
+    const progressContainer = document.querySelector(".progress-bar-container") as HTMLElement;
+    const progressBar = document.querySelector(".progress") as HTMLElement;
+    let timeMeasure = this.pomodoroTime;
+
+    if(this.timerState() === 'short'){
+      timeMeasure = this.shortPause();
+    }else if(this.timerState() === 'long'){
+      timeMeasure = this.longPause();
+    }
+
+    const computedWidth = (this.currentTime() / timeMeasure) * (progressContainer.clientWidth);
+    progressBar.style.width = `${computedWidth}px`;
+  });
+
 
   prepareLongPause(){
     this.timerState.set('long');
+    this.progressColor();
     this.longFreqCounter.set(0); // reset frequency counter 
     this.currentTime.set(this.longPause());
+    this.progressWidth();
   }
 
   prepareShortPause(){
     this.timerState.set('short');
+    this.progressColor();
     this.longFreqCounter.set(this.longFreqCounter()+1); // increase frequency counter
     this.currentTime.set(this.shortPause());
+    this.progressWidth();
   }
 
   preparePomodoro(){
     this.timerState.set('');
+    this.progressColor();
     this.currentTime.set(this.pomodoroTime);
+    this.progressWidth();
   }
 
   timerTask(){
@@ -55,7 +88,8 @@ export class PomodoroTimer {
 
           this.onPause.set(true);
         }else{
-          this.currentTime.set(this.currentTime() - 1);
+          this.currentTime.update((lastValue) => lastValue - 1);
+          this.progressWidth();
         }
     }, 1000);
   }
