@@ -28,19 +28,19 @@
 
 <div class="timer-container">
     <div class="timer">
-        {{ /* TODO: some clock implmentation here */ }}
+        {{ currentTime() * 1000 | date:'mm:ss' }}
     </div>
     @if(onPause()){
-        <button>
+        <button (click)="onStart()">
             <img
                 src="/Timer/Start.svg"
                 width="85"
                 height="85"
-                alt="pause icon"
+                alt="start icon"
             />
         </button>
     }@else{
-        <button>
+        <button (click)="onStop()">
             <img
                 src="/Timer/Pause.svg"
                 width="85"
@@ -51,7 +51,7 @@
     }
 
     @if(timerState() === "short" || timerState() === "long"){
-        <button>
+        <button (click)="onSkip()">
             <img
                 src="/Timer/Skip.svg"
                 width="85" 
