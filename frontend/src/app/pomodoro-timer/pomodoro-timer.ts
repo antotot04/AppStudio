@@ -1,6 +1,6 @@
-import { Component, computed, signal } from '@angular/core';
+import { Component, computed, inject, signal } from '@angular/core';
 import { DatePipe } from '@angular/common';
-import { last } from 'rxjs';
+import { TimerService } from '../service/timer/timer-service';
 
 @Component({
   selector: 'app-pomodoro-timer',
@@ -10,10 +10,12 @@ import { last } from 'rxjs';
 })
 export class PomodoroTimer {
 
-  readonly pomodoroTime = 1500; // pomodoro unit: 25 min
+  timerService = inject(TimerService);
+
+  readonly pomodoroTime = 3; // pomodoro unit: 25 min
   // default pauses (in seconds)
-  shortPause = signal(300);
-  longPause = signal(900); 
+  shortPause = signal(5);
+  longPause = signal(10); 
 
   // default long pause frequency
   longFreqCounter = signal(0);
@@ -51,6 +53,16 @@ export class PomodoroTimer {
     progressBar.style.width = `${computedWidth}px`;
   });
 
+  sendTimestamp(){
+    this.timerService.sendTimestamp().subscribe({
+      next: () => {
+        console.log("sendTimestamp: ok");
+      },
+      error: () => {
+        console.log("sendTimestamp: error");
+      }
+    })
+  }
 
   prepareLongPause(){
     this.timerState.set('long');
@@ -80,10 +92,16 @@ export class PomodoroTimer {
         if(this.currentTime() === 0){
           clearInterval(this.intervalId);
 
+          if(this.timerState() === ''){
+            this.sendTimestamp();
+          }
+
           if(this.longFreqCounter() === this.longFrequency() && this.timerState() === ''){
             this.prepareLongPause();
+          }else if(this.timerState() === ''){
+            this.prepareShortPause();
           }else{
-            this.timerState() === '' ? this.prepareShortPause() : this.preparePomodoro();
+            this.preparePomodoro();
           }
 
           this.onPause.set(true);
@@ -94,7 +112,7 @@ export class PomodoroTimer {
     }, 1000);
   }
  
-  onStart(){
+  onPlay(){
     this.timerTask();
     this.onPause.set(false);
   }
@@ -107,5 +125,9 @@ export class PomodoroTimer {
   onSkip(){
     this.onStop(); 
     this.preparePomodoro();
+  }
+
+  ngOnDestroy(){
+    clearInterval(this.intervalId);
   }
 }

@@ -31,12 +31,12 @@
         {{ currentTime() * 1000 | date:'mm:ss' }}
     </div>
     @if(onPause()){
-        <button (click)="onStart()">
+        <button (click)="onPlay()">
             <img
-                src="/Timer/Start.svg"
+                src="/Timer/Play.svg"
                 width="85"
                 height="85"
-                alt="start icon"
+                alt="play icon"
             />
         </button>
     }@else{
