@@ -1,10 +1,12 @@
 package it.app.backend.timer.controller;
 
 import java.time.Instant;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -12,18 +14,27 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import it.app.backend.common.responseError;
-import it.app.backend.timer.service.TimerService;
+import it.app.backend.timer.model.SoundTrack;
+import it.app.backend.timer.service.PomodoroService;
+import it.app.backend.timer.service.SuonoService;
 
 @RestController
 @RequestMapping("/api/timer")
 public class TimerController {
     @Autowired
-    private TimerService service;
+    private PomodoroService pomoService;
+    @Autowired
+    private SuonoService soundService;
+
+    @GetMapping(path="/sounds")
+    public ResponseEntity<List<SoundTrack>> getSoundTracks(){
+        return ResponseEntity.ok().body(soundService.getAllSounds());
+    }
 
     @PostMapping(path="/{username}/pomodoro")
     public ResponseEntity<responseError> registerPomodoro(@PathVariable("username") String username, @RequestParam Instant timestamp){
         try{
-            service.registerUserPomo(username, timestamp);
+            pomoService.registerUserPomo(username, timestamp);
             return ResponseEntity.status(HttpStatus.CREATED).build();
         }catch(Exception e){
             responseError resp = new responseError();

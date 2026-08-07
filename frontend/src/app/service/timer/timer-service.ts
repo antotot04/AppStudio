@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { inject } from '@angular/core';
+import { SoundTrack } from '../../dto/sound-track';
 
 @Injectable({
   providedIn: 'root',
@@ -15,6 +16,10 @@ export class TimerService {
       params: {
         timestamp: timestampToSend
       }
-    })
+    });
+  }
+
+  getAllSounds(){
+    return this.http.get<SoundTrack[]>(`${this.baseUrl}/sounds`);
   }
 }

@@ -2,10 +2,11 @@ import { Component, computed, inject, signal } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import { TimerService } from '../service/timer/timer-service';
 import { Router } from '@angular/router';
+import { TimerSettings } from '../timer-settings/timer-settings';
 
 @Component({
   selector: 'app-pomodoro-timer',
-  imports: [DatePipe],
+  imports: [DatePipe, TimerSettings],
   templateUrl: './pomodoro-timer.html',
   styleUrl: './pomodoro-timer.css',
 })
@@ -15,6 +16,8 @@ export class PomodoroTimer {
   router = inject(Router);
   url = this.router.url;
   username = this.url.slice(1, this.url.indexOf('/', this.url.indexOf('/') + 1)); 
+
+  onPopUpState = signal<'settings' | 'leaderboard' | ''>('');
 
   readonly pomodoroTime = 3; // pomodoro unit: 25 min
   // default pauses (in seconds)
@@ -131,6 +134,14 @@ export class PomodoroTimer {
   onSkip(){
     this.onStop(); 
     this.preparePomodoro();
+  }
+
+  onSettingsClick(){
+    this.onPopUpState.set('settings');
+  }
+
+  onLeaderboardClick(){
+    this.onPopUpState.set('leaderboard');
   }
 
   ngOnDestroy(){

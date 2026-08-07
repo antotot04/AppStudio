@@ -1,0 +1,46 @@
+<h1>SETTINGS</h1>
+
+<form>
+    <fieldset>
+        <legend>Timer</legend>
+
+        <label for="short-pause">Short Pause</label>
+        <input type="time" id="short-pause">
+        <!-- TODO invalid value check -->
+
+        <label for="long-pause">Long Pause</label>
+        <input type="time" id="long-pause">
+        <!-- TODO invalid value check -->
+
+        <label type="long-frequency">Long Pause Frequency</label>
+        <input type="number" id="long-frequency">
+        <!-- TODO invalid value check -->
+
+    </fieldset>
+    <fieldset>
+        <legend>Sound</legend>
+
+        <label for="ringtone-select">Ringtone</label>
+        <select id="ringtone-select">
+            <option value="">--Please choose an option--</option>
+            @for(option of this.ringtoneOptions(); track option.id){
+                <option [value]="option.name">{{option.name}}</option>
+            }
+        </select>
+
+        <label for="ringtone-volume">Ringtone volume</label>
+        <input type="range" id="ringtone-volume" min="0" max="100" value="70" step="1">
+
+        <label for="background-select">Background (not required)</label>
+        <select id="background-select">
+            <option value="">--Choose an option--</option>
+            <@for(option of this.backgroundOptions(); track option.id){
+                <option [value]="option.name">{{option.name}}</option>
+            }
+        </select>
+
+        <label for="timer-volume">Background volume</label>
+        <input type="range" id="timer-volume" min="0" max="100" value="30" step="1">
+    </fieldset>
+    <button type="submit">Save</button>
+</form>

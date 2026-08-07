@@ -8,6 +8,6 @@ import org.springframework.stereotype.Repository;
 import it.app.backend.timer.model.Pomodoro;
 
 @Repository
-public interface TimerRepository extends JpaRepository<Pomodoro, UUID> {
+public interface PomodoroRepository extends JpaRepository<Pomodoro, UUID> {
 
 }

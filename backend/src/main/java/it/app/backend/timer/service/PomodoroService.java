@@ -8,13 +8,13 @@ import org.springframework.stereotype.Service;
 
 import it.app.backend.timer.model.Pomodoro;
 import it.app.backend.utente.model.Utente;
-import it.app.backend.timer.repository.TimerRepository;
+import it.app.backend.timer.repository.PomodoroRepository;
 import it.app.backend.utente.service.UtenteService;
 
 @Service
-public class TimerService {
+public class PomodoroService {
     @Autowired
-    private TimerRepository repo;
+    private PomodoroRepository repo;
     
     @Autowired
     private UtenteService utenteService;
