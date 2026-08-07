@@ -154,7 +154,6 @@ public class UtenteService {
     }
 
     /* Search by email and username */
-
     public Optional<Utente> findByUsername(String username)  throws IllegalArgumentException{
         if(username == null) 
             throw new IllegalArgumentException("username not valid");

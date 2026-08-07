@@ -1,6 +1,7 @@
 import { Component, computed, inject, signal } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import { TimerService } from '../service/timer/timer-service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-pomodoro-timer',
@@ -11,6 +12,9 @@ import { TimerService } from '../service/timer/timer-service';
 export class PomodoroTimer {
 
   timerService = inject(TimerService);
+  router = inject(Router);
+  url = this.router.url;
+  username = this.url.slice(this.url.indexOf('/'), this.url.indexOf('/', this.url.indexOf('/') + 1)); 
 
   readonly pomodoroTime = 3; // pomodoro unit: 25 min
   // default pauses (in seconds)
@@ -54,7 +58,8 @@ export class PomodoroTimer {
   });
 
   sendTimestamp(){
-    this.timerService.sendTimestamp().subscribe({
+    const timestamp =  new Date();
+    this.timerService.sendTimestamp(this.username, timestamp.toString()).subscribe({
       next: () => {
         console.log("sendTimestamp: ok");
       },

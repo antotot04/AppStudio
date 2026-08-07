@@ -9,10 +9,10 @@ export class TimerService {
   private http = inject(HttpClient);
   private baseUrl = 'api/timer'; 
 
-  sendTimestamp(){
-    return this.http.post(this.baseUrl, null, {
+  sendTimestamp(username: string, timestamp: string){
+    return this.http.post(`${this.baseUrl}/${username}/pomodoro`, null, {
       params: {
-        timestamp: (new Date()).toString()
+        timestamp: timestamp
       }
     })
   }

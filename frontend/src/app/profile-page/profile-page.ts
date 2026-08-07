@@ -1,8 +1,7 @@
 import { Component, computed, inject, input, output, signal } from '@angular/core';
 import { UserInfoDTO } from '../dto/user-infoDTO';
 import { Router } from '@angular/router';
-import { email, form, FormField, minLength, pattern, required, schema } from "@angular/forms/signals";
-import { UpdateForm } from '../dto/update-form';
+import { email, form, FormField, minLength, pattern, required } from "@angular/forms/signals";
 import { UserInfo } from '../service/profile/user-info';
 import { AuthService } from '../service/access/auth-service';
 import { LoginForm } from '../dto/login-form';
