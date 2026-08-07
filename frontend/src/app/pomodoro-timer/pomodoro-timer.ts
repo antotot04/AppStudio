@@ -14,7 +14,7 @@ export class PomodoroTimer {
   timerService = inject(TimerService);
   router = inject(Router);
   url = this.router.url;
-  username = this.url.slice(this.url.indexOf('/'), this.url.indexOf('/', this.url.indexOf('/') + 1)); 
+  username = this.url.slice(1, this.url.indexOf('/', this.url.indexOf('/') + 1)); 
 
   readonly pomodoroTime = 3; // pomodoro unit: 25 min
   // default pauses (in seconds)
@@ -58,8 +58,9 @@ export class PomodoroTimer {
   });
 
   sendTimestamp(){
-    const timestamp =  new Date();
-    this.timerService.sendTimestamp(this.username, timestamp.toString()).subscribe({
+    const timestamp = new Date();
+    console.log(this.username);
+    this.timerService.sendTimestamp(this.username, timestamp).subscribe({
       next: () => {
         console.log("sendTimestamp: ok");
       },

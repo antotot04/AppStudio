@@ -17,7 +17,7 @@ public class Pomodoro {
 
     @Id
     @Column(name="Id_Pomodoro")
-    private UUID Id_Pomodoro; 
+    private UUID Id_Pomodoro = UUID.randomUUID();
 
     @Column(name="Timestamp", nullable=false)
     private Instant timestamp;
