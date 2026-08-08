@@ -1,39 +1,28 @@
 package it.app.backend.utente.model;
 
 public class UtenteResponse {
-    private String email; 
-    private byte[] profilePhoto;
-    private String photoType;
+    private String email;
+    private Boolean hasPhoto;
 
-    public UtenteResponse(String email, byte[] profilePhoto, String photoType) {
+    public UtenteResponse(String email, Boolean hasPhoto) {
         this.email = email;
-        this.profilePhoto = profilePhoto;
-        this.photoType = photoType;
+        this.hasPhoto = hasPhoto;
     }
 
     public String getEmail() {
         return email;
     }
 
-    public byte[] getProfilePhoto() {
-        return profilePhoto;
-    }
-
-    public String getPhotoType() {
-        return photoType;
+    public Boolean getHasPhoto() {
+        return hasPhoto;
     }
 
     public void setEmail(String email) {
         this.email = email;
     }
 
-    public void setProfilePhoto(byte[] profilePhoto) {
-        this.profilePhoto = profilePhoto;
+    public void setHasPhoto(Boolean hasPhoto) {
+        this.hasPhoto = hasPhoto;
     }
-
-    public void setPhotoType(String photoType) {
-        this.photoType = photoType;
-    }
-
     
 }

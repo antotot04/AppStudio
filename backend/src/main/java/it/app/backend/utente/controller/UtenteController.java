@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.http.MediaType;
 
 import it.app.backend.utente.service.UtenteService;
 import it.app.backend.common.responseError;
@@ -47,12 +47,43 @@ public class UtenteController {
 
             if(utente.isPresent()){
                 Utente ut = utente.get();
-                return ResponseEntity.ok().body(new UtenteResponse(ut.getEmail(), ut.getFotoProfilo(), ut.getPhotoType()));
+                Boolean hasPhoto = false;
+                
+                if(ut.getFotoProfilo() != null){
+                    hasPhoto = true;
+                }
+
+                return ResponseEntity.ok().body(new UtenteResponse(ut.getEmail(), hasPhoto));
             }else{
                 return ResponseEntity.notFound().build();
             }
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().build(); 
+        }
+    }
+
+    @GetMapping("/{username}/profilePhoto")
+    public ResponseEntity<byte[]> getProfilePhoto(@PathVariable("username") String username){
+        try{
+            Optional<Utente> utenteOpt = service.findByUsername(username);
+            if(utenteOpt.isEmpty()){
+                return ResponseEntity.notFound().build();
+            }
+
+            Utente utente = utenteOpt.get();
+
+            if(utente.getFotoProfilo() == null){
+                return ResponseEntity.noContent().build();
+            }
+
+            if(utente.getPhotoType().equals("image/png")){
+                return ResponseEntity.ok().contentType(MediaType.IMAGE_PNG).body(utente.getFotoProfilo());
+            }else{
+                return ResponseEntity.ok().contentType(MediaType.IMAGE_JPEG).body(utente.getFotoProfilo());
+            }
+
+        }catch(IllegalArgumentException e){
+            return ResponseEntity.badRequest().build();
         }
     }
 

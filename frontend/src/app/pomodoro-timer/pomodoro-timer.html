@@ -1,4 +1,4 @@
-<button>
+<button (click)="onSettingsClick()">
     <img
         src="/Timer/Settings.svg"
         width="90"
@@ -7,7 +7,7 @@
     />
 </button>
 
-<button>
+<button (click)="onLeaderboardClick()">
     <img
         src="/Timer/Leaderboard.svg"
         width="90"
@@ -16,21 +16,43 @@
     />
 </button>
 
-<div class="timer-status">
-    @if(timerState() === "short"){
-        Short Pause
-    }@else if(timerState() === "long"){
-        Long Pause
-    }@else{
-        Pomodoro
+<div class="pop-up-container">
+    @if(onPopUpState() === "settings"){
+        <app-timer-settings (exitEvent)="onSettingsExit($event)" (userSettingsEvent)="onUserSettings($event)"></app-timer-settings>
+    }@else if(onPopUpState() === "leaderboard"){
+        <!-- TODO: <app-leaderboard></app-leaderboard> -->
     }
 </div>
 
 <div class="timer-container">
+    <audio class="ringtone"
+        [src]="`/api/timer/sound/${userSettings().sound.ringtone}`"
+        (play)="setRingtoneVolume($event)"
+    >
+    </audio>
+    @if(this.userSettings().sound.background !== ''){
+        <audio class="background"
+            loop
+            [src]="`/api/timer/sound/${userSettings().sound.background}`"
+            (play)="setBackgroundVolume($event)"
+        >
+        </audio>
+    }
+
+    <div class="timer-status">
+        @if(timerState() === "short"){
+            Short Pause
+        }@else if(timerState() === "long"){
+            Long Pause
+        }@else{
+            Pomodoro
+        }
+    </div>
+
     <div class="timer">
         {{ currentTime() * 1000 | date:'mm:ss' }}
     </div>
-    @if(onPause()){
+    @if(pause()){
         <button (click)="onPlay()">
             <img
                 src="/Timer/Play.svg"
