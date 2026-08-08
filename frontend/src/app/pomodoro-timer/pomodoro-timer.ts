@@ -3,6 +3,7 @@ import { DatePipe } from '@angular/common';
 import { TimerService } from '../service/timer/timer-service';
 import { Router } from '@angular/router';
 import { TimerSettings } from '../timer-settings/timer-settings';
+import { PomoSettingsForm } from '../dto/pomo-settings-form';
 
 @Component({
   selector: 'app-pomodoro-timer',
@@ -10,29 +11,60 @@ import { TimerSettings } from '../timer-settings/timer-settings';
   templateUrl: './pomodoro-timer.html',
   styleUrl: './pomodoro-timer.css',
 })
+
 export class PomodoroTimer {
 
   timerService = inject(TimerService);
   router = inject(Router);
   url = this.router.url;
   username = this.url.slice(1, this.url.indexOf('/', this.url.indexOf('/') + 1)); 
+  userSettings = signal<PomoSettingsForm>({
+    timer: {
+      short: 300, // seconds
+      long: 900, // seconds
+      frequency: 4
+    },
+    sound: {
+      ringtone: 'cb01f746-9e74-4832-9474-f9309724d32b', // default ringtone id
+      ringtone_volume: 70, 
+      background: '',
+      background_volume: 30
+    }
+  });
 
   onPopUpState = signal<'settings' | 'leaderboard' | ''>('');
 
-  readonly pomodoroTime = 3; // pomodoro unit: 25 min
-  // default pauses (in seconds)
-  shortPause = signal(5);
-  longPause = signal(10); 
-
-  // default long pause frequency
+  readonly pomodoroTime = 10; // pomodoro unit: 25 min
+  shortPause = computed(() => {
+    return this.userSettings().timer.short;
+  });
+  longPause = computed(() => {
+    return this.userSettings().timer.long;
+  }); 
+  longFrequency = computed(() => {
+    return this.userSettings().timer.frequency;
+  });
   longFreqCounter = signal(0);
-  longFrequency = signal(4);
 
-  // timer state signals 
+  // timer state 
   timerState = signal<'' | 'short' | 'long'>('');
-  onPause = signal(true);
+  pause = signal(true);
   currentTime = signal(this.pomodoroTime);
   intervalId = 0;
+
+  playRingtone(command: boolean | 'restart'){
+    const audioEle = document.querySelector("audio.ringtone") as HTMLAudioElement;
+    if(command === 'restart'){
+      audioEle.load();
+    }else{
+      command ? audioEle.play() : audioEle.pause();
+    }
+  }
+
+  playBackground(command: boolean){
+    const audioEle = document.querySelector("audio.background") as HTMLAudioElement;
+    command ? audioEle.play() : audioEle.pause();
+  }
 
   /* progress bar dynamic styling */
   progressColor = computed(() => {
@@ -103,6 +135,10 @@ export class PomodoroTimer {
 
           if(this.timerState() === ''){
             this.sendTimestamp();
+            if(this.userSettings().sound.background !== ''){
+              this.playBackground(false);
+            }
+            this.playRingtone(true);
           }
 
           if(this.longFreqCounter() === this.longFrequency() && this.timerState() === ''){
@@ -113,7 +149,7 @@ export class PomodoroTimer {
             this.preparePomodoro();
           }
 
-          this.onPause.set(true);
+          this.pause.set(true);
         }else{
           this.currentTime.update((lastValue) => lastValue - 1);
           this.progressWidth();
@@ -123,17 +159,31 @@ export class PomodoroTimer {
  
   onPlay(){
     this.timerTask();
-    this.onPause.set(false);
+
+    this.playRingtone(false);
+    if(this.timerState() === '' &&
+      this.userSettings().sound.background !== ''){
+      this.playBackground(true);
+    }
+
+    this.pause.set(false);
   }
 
   onStop(){
     clearInterval(this.intervalId);
-    this.onPause.set(true);
+
+    if(this.timerState() === '' && 
+      this.userSettings().sound.background !== ''){
+      this.playBackground(false); 
+    }
+
+    this.pause.set(true);
   }
 
   onSkip(){
     this.onStop(); 
     this.preparePomodoro();
+    this.playRingtone('restart'); 
   }
 
   onSettingsClick(){
@@ -142,6 +192,38 @@ export class PomodoroTimer {
 
   onLeaderboardClick(){
     this.onPopUpState.set('leaderboard');
+  }
+
+  setRingtoneVolume(event: Event){
+    const ringtone = event.target as HTMLAudioElement;
+    ringtone.volume = this.userSettings().sound.ringtone_volume * Math.pow(10, -2);
+  }
+
+  setBackgroundVolume(event: Event){
+    const background = event.target as HTMLAudioElement;
+    background.volume = this.userSettings().sound.background_volume * Math.pow(10, -2);
+  }
+
+  toSec(time: string): number{
+    const minutes = Number(time.slice(0, 2));
+    const seconds = Number(time.slice(3));
+    return minutes * 60 + seconds;
+  }
+
+  refreshTimer(){
+    if(this.timerState() === 'short'){
+      this.prepareShortPause();
+      this.longFreqCounter.set(0);
+    }else if(this.timerState() === 'long'){
+      this.prepareLongPause();
+    }else if(this.timerState() === ''){
+      this.longFreqCounter.set(0);
+    }
+  }
+
+  onUserSettings(userSettings: PomoSettingsForm){
+    this.userSettings.set(userSettings);
+    this.refreshTimer();
   }
 
   ngOnDestroy(){

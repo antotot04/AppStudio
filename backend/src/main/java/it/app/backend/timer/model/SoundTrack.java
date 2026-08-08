@@ -3,7 +3,7 @@ package it.app.backend.timer.model;
 import java.util.UUID;
 
 public class SoundTrack {
-    private UUID id;
+    private final UUID id;
     private String type;
     private String name;
 
@@ -24,6 +24,7 @@ public class SoundTrack {
     public String getType() {
         return type;
     }
+
 
     public void setName(String name) {
         this.name = name;
