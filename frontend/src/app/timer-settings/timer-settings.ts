@@ -14,6 +14,7 @@ export class TimerSettings implements OnInit {
 
   private service = inject(TimerService);
   userSettingsEvent = output<PomoSettingsForm>();
+  exitEvent = output<boolean>();
 
   formModel = signal<PomoSettingsForm>({
     timer: {
@@ -75,6 +76,10 @@ export class TimerSettings implements OnInit {
       }
     }
     this.userSettingsEvent.emit(userSettings);
+  }
+
+  onClickExit(){
+    this.exitEvent.emit(true);
   }
 
   ngOnInit(): void {

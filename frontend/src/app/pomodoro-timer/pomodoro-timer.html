@@ -18,7 +18,7 @@
 
 <div class="pop-up-container">
     @if(onPopUpState() === "settings"){
-        <app-timer-settings (userSettingsEvent)="onUserSettings($event)"></app-timer-settings>
+        <app-timer-settings (exitEvent)="onSettingsExit($event)" (userSettingsEvent)="onUserSettings($event)"></app-timer-settings>
     }@else if(onPopUpState() === "leaderboard"){
         <!-- TODO: <app-leaderboard></app-leaderboard> -->
     }

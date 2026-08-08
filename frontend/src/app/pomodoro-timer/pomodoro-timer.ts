@@ -226,6 +226,12 @@ export class PomodoroTimer {
     this.refreshTimer();
   }
 
+  onSettingsExit(condition: boolean){
+    if(condition){
+      this.onPopUpState.set('');
+    }
+  }
+
   ngOnDestroy(){
     clearInterval(this.intervalId);
   }
