@@ -18,7 +18,7 @@
 
 <div class="pop-up-container">
     @if(onPopUpState() === "settings"){
-        <app-timer-settings (exitEvent)="onSettingsExit($event)" (userSettingsEvent)="onUserSettings($event)"></app-timer-settings>
+        <app-timer-settings [username]="this.username" (exitEvent)="onSettingsExit($event)" (userSettingsEvent)="onUserSettings($event)"></app-timer-settings>
     }@else if(onPopUpState() === "leaderboard"){
         <!-- TODO: <app-leaderboard></app-leaderboard> -->
     }
@@ -26,14 +26,14 @@
 
 <div class="timer-container">
     <audio class="ringtone"
-        [src]="`/api/timer/sound/${userSettings().sound.ringtone}`"
+        [src]="`/api/timer/sound/${userSettings().suono.ringtone}`"
         (play)="setRingtoneVolume($event)"
     >
     </audio>
-    @if(this.userSettings().sound.background !== ''){
+    @if(this.userSettings().suono.background !== null){
         <audio class="background"
             loop
-            [src]="`/api/timer/sound/${userSettings().sound.background}`"
+            [src]="`/api/timer/sound/${userSettings().suono.background}`"
             (play)="setBackgroundVolume($event)"
         >
         </audio>

@@ -14,10 +14,10 @@
         <legend>Timer</legend>
 
         <label for="short-pause">Short Pause</label>
-        <input type="number" id="short-pause" [formField]="this.settingsForm.timer.short">
+        <input type="number" id="short-pause" [formField]="this.settingsForm.timer.shortPause">
 
         <label for="long-pause">Long Pause</label>
-        <input type="number" id="long-pause" [formField]="this.settingsForm.timer.long">
+        <input type="number" id="long-pause" [formField]="this.settingsForm.timer.longPause">
 
         <label type="long-frequency">Long Pause Frequency</label>
         <input type="number" id="long-frequency" [formField]="this.settingsForm.timer.frequency">
@@ -40,7 +40,7 @@
         <label for="background-select">Background (not required)</label>
         <select id="background-select" [formField]="this.settingsForm.sound.background">
             <option value="">--Choose an option--</option>
-            <@for(option of this.backgroundOptions(); track option.id){
+            @for(option of this.backgroundOptions(); track option.id){
                 <option [value]="option.id">{{option.name}}</option>
             }
         </select>

@@ -1,8 +1,11 @@
-import { Component, computed, inject, OnInit, output, signal } from '@angular/core';
+import { Component, computed, inject, input, OnInit, output, signal } from '@angular/core';
 import { SoundTrack } from '../dto/sound-track';
 import { TimerService } from '../service/timer/timer-service';
 import { PomoSettingsForm } from '../dto/pomo-settings-form';
 import { disabled, form, FormField } from '@angular/forms/signals';
+import { UpdateSettingsDTO } from '../dto/update-settings-dto';
+import { BackgroundInfo } from '../dto/background-info';
+import { forkJoin } from 'rxjs';
 
 @Component({
   selector: 'app-timer-settings',
@@ -13,13 +16,16 @@ import { disabled, form, FormField } from '@angular/forms/signals';
 export class TimerSettings implements OnInit {
 
   private service = inject(TimerService);
-  userSettingsEvent = output<PomoSettingsForm>();
+  username = input<string>('');
+  userSettingsEvent = output<boolean>();
   exitEvent = output<boolean>();
+  backgroundToCreate = signal<boolean>(true); // default background sound is not given
+  created = signal<boolean>(false);
 
   formModel = signal<PomoSettingsForm>({
     timer: {
-      short: 5,
-      long: 15, 
+      shortPause: 5, // minutes
+      longPause: 15, // minutes 
       frequency: 4
     },
     sound: {
@@ -50,32 +56,86 @@ export class TimerSettings implements OnInit {
       error: () => {
         console.log("getAllSounds: error");
       }
-    });this.service.getAllSounds().subscribe({
+    });
+  }
+
+  getSettings(){
+    this.service.getUserSettings(this.username()).subscribe({
       next: (resp) => {
-        this.soundList.set(resp);
+        const freshSettings: PomoSettingsForm = {
+          timer: {
+            shortPause: resp.timer.shortPause / 60,
+            longPause: resp.timer.longPause / 60,
+            frequency: resp.timer.frequency
+          },
+          sound: {
+            ringtone: resp.suono.ringtone,
+            ringtone_volume: resp.suono.ringtone_volume,
+            background: resp.suono.background === null ? '' : resp.suono.background,
+            background_volume: resp.suono.background_volume
+          }
+        }
+
+        if(resp.suono.background === null){
+          this.backgroundToCreate.set(true);
+        }else{
+          this.backgroundToCreate.set(false);
+        }
+
+        this.formModel.set(freshSettings);
       },
       error: () => {
-        console.log("getAllSounds: error");
+        console.log("getSettings: error");
       }
-    });
+    })
+  }
+
+  updateSettings(settings: UpdateSettingsDTO, background: BackgroundInfo | null){
+    const requests = [this.service.updateUserSettings(this.username(), settings)];
+
+    if(background !== null){
+      if(this.backgroundToCreate()){
+        requests.push(this.service.registerNewBackground(this.username(), background));
+        this.backgroundToCreate.set(false);
+      }else{
+        requests.push(this.service.updateBackground(this.username(), background));
+      }
+    }else{
+      requests.push(this.service.deleteBackground(this.username()));
+      this.backgroundToCreate.set(true);
+    }
+
+    forkJoin(requests).subscribe({
+      next: () => {
+        this.userSettingsEvent.emit(true); // to inform pomodoro component that new settings has been updated
+        console.log("userSettings updated");
+      },
+      error: () => {
+        console.log("error");
+      }
+    })
   }
 
   onSubmit(event: Event){
     event.preventDefault();
-    const userSettings: PomoSettingsForm = {
-      timer: {
-        short: this.settingsForm.timer.short().value() * 60,
-        long: this.settingsForm.timer.long().value() * 60, 
-        frequency: this.settingsForm.timer.frequency().value()
-      },
-      sound: {
-        ringtone: this.settingsForm.sound.ringtone().value(),
-        ringtone_volume: this.settingsForm.sound.ringtone_volume().value(),
-        background: this.settingsForm.sound.background().value(),
-        background_volume: this.settingsForm.sound.background_volume().value()
-      }
+    const userSettings: UpdateSettingsDTO = {
+      shortPause: this.settingsForm.timer.shortPause().value() * 60,
+      longPause: this.settingsForm.timer.longPause().value() * 60, 
+      longFreq: this.settingsForm.timer.frequency().value(),
+      ringtone: this.settingsForm.sound.ringtone().value(),
+      ringtoneVolume: this.settingsForm.sound.ringtone_volume().value()
     }
-    this.userSettingsEvent.emit(userSettings);
+
+    if(this.settingsForm.sound.background().value() !== ''){
+      const userBackground: BackgroundInfo = {
+        sound: this.settingsForm.sound.background().value(),
+        volume: this.settingsForm.sound.background_volume().value()
+      }
+
+      this.updateSettings(userSettings, userBackground);
+    }else{
+      this.updateSettings(userSettings, null);
+    }
   }
 
   onClickExit(){
@@ -84,5 +144,6 @@ export class TimerSettings implements OnInit {
 
   ngOnInit(): void {
     this.getSoundList();
+    this.getSettings();
   }
 }

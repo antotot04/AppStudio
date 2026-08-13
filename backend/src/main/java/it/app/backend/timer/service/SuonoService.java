@@ -29,11 +29,7 @@ public class SuonoService {
         return tracks;
     }
 
-    public Suono getSound(UUID trackId) throws IllegalArgumentException{
-        Optional<Suono> soundOpt = repo.findById(trackId);
-        if(soundOpt.isEmpty()){
-            throw new IllegalArgumentException("invalid id");
-        }
-        return soundOpt.get();
+    public Optional<Suono> getSound(UUID trackId) throws IllegalArgumentException{
+        return repo.findById(trackId);
     }
 }
