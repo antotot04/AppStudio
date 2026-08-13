@@ -1,13 +1,13 @@
-export interface PomoSettingsForm {
+export interface UserSettings {
     timer: {
         shortPause: number,
         longPause: number, 
         frequency: number
     },
-    sound: {
+    suono: {
         ringtone: string, // uuid
         ringtone_volume: number,
-        background: string, // uuid
+        background: string | null, // uuid
         background_volume: number
     }
 }

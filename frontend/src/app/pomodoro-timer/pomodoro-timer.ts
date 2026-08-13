@@ -1,9 +1,10 @@
-import { Component, computed, inject, signal } from '@angular/core';
+import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import { TimerService } from '../service/timer/timer-service';
 import { Router } from '@angular/router';
 import { TimerSettings } from '../timer-settings/timer-settings';
 import { PomoSettingsForm } from '../dto/pomo-settings-form';
+import { UserSettings } from '../dto/user-settings';
 
 @Component({
   selector: 'app-pomodoro-timer',
@@ -12,34 +13,33 @@ import { PomoSettingsForm } from '../dto/pomo-settings-form';
   styleUrl: './pomodoro-timer.css',
 })
 
-export class PomodoroTimer {
-
+export class PomodoroTimer implements OnInit {
   timerService = inject(TimerService);
   router = inject(Router);
   url = this.router.url;
   username = this.url.slice(1, this.url.indexOf('/', this.url.indexOf('/') + 1)); 
-  userSettings = signal<PomoSettingsForm>({
+  userSettings = signal<UserSettings>({ // defaults
     timer: {
-      short: 300, // seconds
-      long: 900, // seconds
+      shortPause: 300, // seconds
+      longPause: 900, // seconds
       frequency: 4
     },
-    sound: {
-      ringtone: 'cb01f746-9e74-4832-9474-f9309724d32b', // default ringtone id
+    suono: {
+      ringtone: 'cb01f746-9e74-4832-9474-f9309724d32b', // ringtone id
       ringtone_volume: 70, 
-      background: '',
+      background: null,
       background_volume: 30
     }
   });
 
   onPopUpState = signal<'settings' | 'leaderboard' | ''>('');
 
-  readonly pomodoroTime = 10; // pomodoro unit: 25 min
+  readonly pomodoroTime = 5; // pomodoro unit: 25 min
   shortPause = computed(() => {
-    return this.userSettings().timer.short;
+    return this.userSettings().timer.shortPause;
   });
   longPause = computed(() => {
-    return this.userSettings().timer.long;
+    return this.userSettings().timer.longPause;
   }); 
   longFrequency = computed(() => {
     return this.userSettings().timer.frequency;
@@ -135,7 +135,7 @@ export class PomodoroTimer {
 
           if(this.timerState() === ''){
             this.sendTimestamp();
-            if(this.userSettings().sound.background !== ''){
+            if(this.userSettings().suono.background !== null){
               this.playBackground(false);
             }
             this.playRingtone(true);
@@ -162,7 +162,7 @@ export class PomodoroTimer {
 
     this.playRingtone(false);
     if(this.timerState() === '' &&
-      this.userSettings().sound.background !== ''){
+      this.userSettings().suono.background !== null){
       this.playBackground(true);
     }
 
@@ -173,7 +173,7 @@ export class PomodoroTimer {
     clearInterval(this.intervalId);
 
     if(this.timerState() === '' && 
-      this.userSettings().sound.background !== ''){
+      this.userSettings().suono.background !== null){
       this.playBackground(false); 
     }
 
@@ -196,12 +196,12 @@ export class PomodoroTimer {
 
   setRingtoneVolume(event: Event){
     const ringtone = event.target as HTMLAudioElement;
-    ringtone.volume = this.userSettings().sound.ringtone_volume * Math.pow(10, -2);
+    ringtone.volume = this.userSettings().suono.ringtone_volume * Math.pow(10, -2);
   }
 
   setBackgroundVolume(event: Event){
     const background = event.target as HTMLAudioElement;
-    background.volume = this.userSettings().sound.background_volume * Math.pow(10, -2);
+    background.volume = this.userSettings().suono.background_volume * Math.pow(10, -2);
   }
 
   toSec(time: string): number{
@@ -221,15 +221,32 @@ export class PomodoroTimer {
     }
   }
 
-  onUserSettings(userSettings: PomoSettingsForm){
-    this.userSettings.set(userSettings);
-    this.refreshTimer();
+  getUpdatedSettings(){
+    this.timerService.getUserSettings(this.username).subscribe({
+      next: (resp) => {
+        this.userSettings.set(resp);
+        this.refreshTimer();
+      },
+      error: () => {
+        console.log("getSettings: error");
+      }
+    })
+  }
+
+  onUserSettings(settingsUpdated: boolean){
+    if(settingsUpdated){
+      this.getUpdatedSettings();
+    }
   }
 
   onSettingsExit(condition: boolean){
     if(condition){
       this.onPopUpState.set('');
     }
+  }
+
+  ngOnInit(){
+    this.getUpdatedSettings();
   }
 
   ngOnDestroy(){

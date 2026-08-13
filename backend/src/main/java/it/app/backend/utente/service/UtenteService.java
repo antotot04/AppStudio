@@ -4,15 +4,19 @@ import java.time.OffsetDateTime;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import it.app.backend.utente.model.Utente;
+import it.app.backend.timer.model.SettingsDTO;
+import it.app.backend.timer.service.SettingsService;
 import it.app.backend.utente.model.RegistrationRequest;
 import it.app.backend.utente.model.UpdateRequest;
 import it.app.backend.utente.repository.UtenteRepository;
+import jakarta.transaction.Transactional;
 
 
 @Service
@@ -20,6 +24,8 @@ public class UtenteService {
 
     @Autowired
     private UtenteRepository repo;
+    @Autowired
+    private SettingsService settingsService; 
     @Autowired
     private BCryptPasswordEncoder encoderPassword;
 
@@ -31,12 +37,13 @@ public class UtenteService {
         return false;
     }
 
-    /* This method saves a new user in the DB if it meets the basic requirements. Returns:
+    /* This method saves a new user in the DB along with its default timer settings if it meets the basic requirements. Returns:
      * - null: if the user already exists
      * - Utente: if the new user is saved correctly
      * Throws IllegalArgumentException if the user entity is invalid.
      * This happens when newUtente or any of the following attributes are null:
      * [username, email, password, dataCreazione] */
+    @Transactional
     public Utente register(RegistrationRequest newUtente) throws IllegalArgumentException {
         // Basic checks
         String username = newUtente.getUsername();
@@ -87,8 +94,18 @@ public class UtenteService {
         utenteToRegister.setPassword(newUtente.getPassword());
 
         utenteToRegister.setDataCreazione(OffsetDateTime.now());
+        Utente savedUtente = repo.save(utenteToRegister);
 
-        return repo.save(utenteToRegister);
+        // also saving settings for new utente
+        settingsService.registerUserSettings(username, new SettingsDTO( // default values
+            300,
+            900,
+            4,
+            UUID.fromString("cb01f746-9e74-4832-9474-f9309724d32b"),
+            70
+        ));
+
+        return savedUtente;
     }
 
     /* This is where the basic user information (email and profile picture) will be updated.

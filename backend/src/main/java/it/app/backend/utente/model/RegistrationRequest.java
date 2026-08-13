@@ -1,7 +1,5 @@
 package it.app.backend.utente.model;
 
-import java.time.OffsetDateTime;
-
 
 /* DTO for Registration requests */
 public class RegistrationRequest {
