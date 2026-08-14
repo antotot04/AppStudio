@@ -3,12 +3,12 @@ import { DatePipe } from '@angular/common';
 import { TimerService } from '../service/timer/timer-service';
 import { Router } from '@angular/router';
 import { TimerSettings } from '../timer-settings/timer-settings';
-import { PomoSettingsForm } from '../dto/pomo-settings-form';
 import { UserSettings } from '../dto/user-settings';
+import { TimerLeaderboard } from '../timer-leaderboard/timer-leaderboard';
 
 @Component({
   selector: 'app-pomodoro-timer',
-  imports: [DatePipe, TimerSettings],
+  imports: [DatePipe, TimerSettings, TimerLeaderboard],
   templateUrl: './pomodoro-timer.html',
   styleUrl: './pomodoro-timer.css',
 })
@@ -239,7 +239,7 @@ export class PomodoroTimer implements OnInit {
     }
   }
 
-  onSettingsExit(condition: boolean){
+  onPopUpExit(condition: boolean){
     if(condition){
       this.onPopUpState.set('');
     }
