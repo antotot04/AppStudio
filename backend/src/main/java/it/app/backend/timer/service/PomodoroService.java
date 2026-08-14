@@ -43,4 +43,14 @@ public class PomodoroService {
             return repo.getLeaderboard("1 year", quantity);
         }
     }
+
+    public LeaderboardUser getUserLeaderboard(String username, String time, int relativeQuantity){
+        if(time.equals("week")){
+            return repo.getUserLeaderboard("7 days", username, relativeQuantity);
+        }else if(time.equals("month")){
+            return repo.getUserLeaderboard("1 month", username, relativeQuantity);
+        }else{
+            return repo.getUserLeaderboard("1 year", username, relativeQuantity);
+        }
+    }
 }
