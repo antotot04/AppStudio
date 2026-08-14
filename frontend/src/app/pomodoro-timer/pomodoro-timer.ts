@@ -34,7 +34,7 @@ export class PomodoroTimer implements OnInit {
 
   onPopUpState = signal<'settings' | 'leaderboard' | ''>('');
 
-  readonly pomodoroTime = 5; // pomodoro unit: 25 min
+  readonly pomodoroTime = 1500; // pomodoro unit: 25 min
   shortPause = computed(() => {
     return this.userSettings().timer.shortPause;
   });
