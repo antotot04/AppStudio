@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import org.apache.catalina.connector.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -19,9 +20,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-
 import it.app.backend.common.responseError;
 import it.app.backend.timer.model.BackgroundInfo;
+import it.app.backend.timer.model.LeaderboardUser;
 import it.app.backend.timer.model.SelectBackground;
 import it.app.backend.timer.model.Settings;
 import it.app.backend.timer.model.SettingsDTO;
@@ -50,6 +51,21 @@ public class TimerController {
     @GetMapping(path="/sounds")
     public ResponseEntity<List<SoundTrack>> getSoundTracks(){
         return ResponseEntity.ok().body(soundService.getAllSounds());
+    }
+
+    @GetMapping(path="/leaderboard")
+    public ResponseEntity<List<LeaderboardUser>> getLeaderboard(@RequestParam int userQuantity, @RequestParam String timeSpan){
+        return ResponseEntity.ok().body(pomoService.getLeaderboard(userQuantity, timeSpan));
+    }
+
+    @GetMapping(path="/{username}/leaderboard")
+    public ResponseEntity<LeaderboardUser> getUserLeaderboard(@PathVariable String username, @RequestParam String timeSpan, @RequestParam int relativeQuantity){
+        LeaderboardUser userTarget = pomoService.getUserLeaderboard(username, timeSpan, relativeQuantity);
+        if(userTarget != null){
+            return ResponseEntity.ok().body(userTarget);
+        }else{
+            return ResponseEntity.notFound().build();
+        }
     }
 
     @GetMapping(path="/sound/{soundId}")

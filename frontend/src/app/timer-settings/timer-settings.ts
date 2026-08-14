@@ -20,7 +20,6 @@ export class TimerSettings implements OnInit {
   userSettingsEvent = output<boolean>();
   exitEvent = output<boolean>();
   backgroundToCreate = signal<boolean>(true); // default background sound is not given
-  created = signal<boolean>(false);
 
   formModel = signal<PomoSettingsForm>({
     timer: {

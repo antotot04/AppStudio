@@ -5,6 +5,7 @@ import { SoundTrack } from '../../dto/sound-track';
 import { UpdateSettingsDTO } from '../../dto/update-settings-dto';
 import { BackgroundInfo } from '../../dto/background-info';
 import { UserSettings } from '../../dto/user-settings';
+import { LeaderboardUser } from '../../dto/leaderboard-user';
 
 @Injectable({
   providedIn: 'root',
@@ -31,7 +32,7 @@ export class TimerService {
   }
 
   registerNewBackground(username: string, background: BackgroundInfo){
-    return this.http.post(`${this.baseUrl}/${username}/background`, background)
+    return this.http.post(`${this.baseUrl}/${username}/background`, background);
   }
 
   updateBackground(username: string, background: BackgroundInfo){
@@ -44,5 +45,23 @@ export class TimerService {
 
   deleteBackground(username: string){
     return this.http.delete(`${this.baseUrl}/${username}/background`);
+  }
+
+  getLeaderboardData(userQuantity: number, timeSpan: "week" | "month" | "year"){
+    return this.http.get<LeaderboardUser[]>(`${this.baseUrl}/leaderboard`, {
+      params: {
+        userQuantity: userQuantity,
+        timeSpan: timeSpan
+      }
+    });
+  }
+
+  getUserLeaderboardData(username: string, timeSpan: "week" | "month" | "year", quantity: number){
+    return this.http.get<LeaderboardUser>(`${this.baseUrl}/${username}/leaderboard`, {
+      params: {
+        timeSpan: timeSpan,
+        relativeQuantity: quantity
+      }
+    });
   }
 }
