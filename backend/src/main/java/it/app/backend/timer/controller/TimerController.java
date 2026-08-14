@@ -18,10 +18,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
+import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 import it.app.backend.common.responseError;
 import it.app.backend.timer.model.BackgroundInfo;
+import it.app.backend.timer.model.LeaderboardUser;
 import it.app.backend.timer.model.SelectBackground;
 import it.app.backend.timer.model.Settings;
 import it.app.backend.timer.model.SettingsDTO;
@@ -50,6 +51,11 @@ public class TimerController {
     @GetMapping(path="/sounds")
     public ResponseEntity<List<SoundTrack>> getSoundTracks(){
         return ResponseEntity.ok().body(soundService.getAllSounds());
+    }
+
+    @GetMapping(path="/leaderboard")
+    public ResponseEntity<List<LeaderboardUser>> getLeaderboard(@RequestParam int userQuantity, @RequestParam String timeSpan){
+        return ResponseEntity.ok().body(pomoService.getLeaderboard(userQuantity, timeSpan));
     }
 
     @GetMapping(path="/sound/{soundId}")
