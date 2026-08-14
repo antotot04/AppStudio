@@ -1,0 +1,60 @@
+<h2>Ranking</h2>
+
+<button (click)="onClickExit()">
+    <img
+        src="/exit.svg"
+        width="50"
+        height="50"
+        alt="exit"
+    /> 
+</button>
+
+<select id="time-selector" (change)="onSelect($event)">
+    <option value="week">week</option>
+    <option value="month">month</option>
+    <option value="year">year</option>
+</select>
+
+<table>
+    <thead>
+        <tr>
+            <th scope="col" colspan="2"></th>
+            <th scope="col">USER</th>
+            <th scope="col">POMODORO</th>
+        </tr>
+    </thead>
+    <tbody>
+        @for (user of leaderboardUsers(); track user.rank) {
+            <tr>
+                <th scope="row">{{ user.rank }}</th>
+                <td>
+                    <img 
+                        [src]="`api/utenti/${user.username}/profilePhoto`"
+                        onerror="this.onerror=null; this.src='/Profile/Profile_Photo.svg'"
+                        width="50"
+                        height="50"
+                        alt="leaderboard user profilePhoto"
+                    />
+                </td>
+                <td>{{ user.username }}</td>
+                <td>{{ user.pomodoroCounter }}</td>
+            </tr>
+        }
+    </tbody>
+    <tfoot>
+        <tr>
+                <th scope="row">{{ loggedUser().username !== '' ? loggedUser().rank : '.' }}</th>
+                <td>
+                    <img 
+                        [src]="`api/utenti/${username()}/profilePhoto`"
+                        onerror="this.onerror=null; this.src='/Profile/Profile_Photo.svg'"
+                        width="50"
+                        height="50"
+                        alt="your profile photo"
+                    />
+                </td>
+                <td>{{ username() }}</td>
+                <td>{{ loggedUser().pomodoroCounter }}</td>
+        </tr>
+    </tfoot>
+</table>

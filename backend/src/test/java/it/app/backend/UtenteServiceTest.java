@@ -21,10 +21,10 @@ import java.util.Optional;
 import org.mockito.MockitoAnnotations;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
-import it.app.backend.model.RegistrationRequest;
-import it.app.backend.model.Utente;
-import it.app.backend.repository.UtenteRepository;
-import it.app.backend.service.UtenteService;
+import it.app.backend.utente.model.RegistrationRequest;
+import it.app.backend.utente.model.Utente;
+import it.app.backend.utente.repository.UtenteRepository;
+import it.app.backend.utente.service.UtenteService;
 
 // testing of the user service
 public class UtenteServiceTest {

@@ -10,7 +10,7 @@
             <a [routerLink]="">ACTIVITIES</a>
         </li>
         <li>
-            <a [routerLink]="">POMO TIMER</a>
+            <a [routerLink]="['timer']">POMO TIMER</a>
         </li>
         <li>
             <a [routerLink]="">STUDY ZONE</a>
@@ -18,7 +18,7 @@
     </ul>
     <button (click)="setProfile()">
         <img
-            [src]="hasPhoto() ? (this.userDTO().profilePhoto | b64toImg: this.userDTO().photoType) : '/Profile/Profile_Photo.svg' "
+            [src]="this.hasPhoto() ? this.profilePhotoUrl : '/Profile/Profile_Photo.svg'"
             width="80"
             height="80"
             alt="profile photo"

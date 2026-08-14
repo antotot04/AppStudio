@@ -1,8 +1,7 @@
 import { Component, computed, inject, input, output, signal } from '@angular/core';
 import { UserInfoDTO } from '../dto/user-infoDTO';
 import { Router } from '@angular/router';
-import { email, form, FormField, minLength, pattern, required, schema } from "@angular/forms/signals";
-import { UpdateForm } from '../dto/update-form';
+import { email, form, FormField, minLength, pattern, required } from "@angular/forms/signals";
 import { UserInfo } from '../service/profile/user-info';
 import { AuthService } from '../service/access/auth-service';
 import { LoginForm } from '../dto/login-form';
@@ -18,6 +17,7 @@ export class ProfilePage {
   private userService = inject(UserInfo);
   private authService = inject(AuthService); 
   readonly userInfos = input<UserInfoDTO>();
+  username = this.router.url.slice(1, this.router.url.indexOf('/', this.router.url.indexOf('/') + 1));
   close = output<void>(); 
   onExit(){
     this.close.emit();
@@ -87,7 +87,7 @@ export class ProfilePage {
       dataToSend.append('photoType', this.newImage.type);
     }
 
-    this.userService.updateGeneralInfo(this.router.url.slice(1), dataToSend).subscribe({
+    this.userService.updateGeneralInfo(this.username, dataToSend).subscribe({
       next: () => {
         this.updateGeneralInfoError.set('');
         this.generalState.set('updated');
@@ -117,7 +117,7 @@ export class ProfilePage {
     event.preventDefault();
 
     const credentials: LoginForm = {
-      username: this.router.url.slice(1),
+      username: this.username,
       password: this.updateFormPassword.oldPassword().value()
     }
 
@@ -149,7 +149,7 @@ export class ProfilePage {
     const newPassword = this.updateFormPassword.newPassword().value();
     console.log(newPassword);
 
-    this.userService.updatePassword(this.router.url.slice(1), newPassword).subscribe({
+    this.userService.updatePassword(this.username, newPassword).subscribe({
       next: () => {
         this.passwordState.set('updated');
         setTimeout(() => this.passwordState.set(''), 1000);
@@ -165,7 +165,7 @@ export class ProfilePage {
   }
 
   execDelete(){
-    this.userService.deleteAccount(this.router.url.slice(1)).subscribe({
+    this.userService.deleteAccount(this.username).subscribe({
       next: () => {
         this.router.navigate(['/signup']);
       },

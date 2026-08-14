@@ -1,5 +1,5 @@
-import { Component, computed, inject, signal } from '@angular/core';
-import { email, form, FormField, maxLength, required, pattern, schema, minLength } from '@angular/forms/signals';
+import { Component, inject, signal } from '@angular/core';
+import { email, form, FormField, maxLength, required, pattern, minLength } from '@angular/forms/signals';
 import { Router, RouterLink } from "@angular/router";
 import { SignupForm } from '../dto/signup-form';
 import { SignupService } from '../service/access/signup-service';
