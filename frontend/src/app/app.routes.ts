@@ -3,6 +3,7 @@ import { AppLogin } from './app-login/app-login';
 import { AppHome } from './app-home/app-home';
 import { AppSignup } from './app-signup/app-signup';
 import { PomodoroTimer } from './pomodoro-timer/pomodoro-timer';
+import { StudyZone } from './study-zone/study-zone';
 
 export const routes: Routes = [
     {
@@ -32,6 +33,10 @@ export const routes: Routes = [
             {
                 path: 'timer',
                 component: PomodoroTimer
+            },
+            {
+                path: 'study',
+                component: StudyZone
             }
         ]
     }
