@@ -1,0 +1,33 @@
+<h2>
+    @if(onNewDeck()) {
+        NEW DECK
+    }@else {
+        EDIT DECK
+    }
+</h2>
+
+<button (click)="onExit()">
+    <img
+        src="/exit.svg"
+        width="50"
+        height="50"
+        alt="exit"
+    />
+</button>
+
+<form (submit)="onSubmit($event)">
+    <div class="inputs-container">
+        <label for="deck-title">Deck Title</label>
+        <input type="text" id="deck-title" placeholder="A Title" [formField]="this.deckForm.deckTitle">
+
+        <label for="deck-layout">Layout (Optional)</label>
+        <select id="deck-layout" [formField]="this.deckForm.deckLayout">
+            <option value="">--choose an option--</option>
+            <option value="quiz">quiz</option>
+            <option value="true-false">true-false</option>
+            <option value="double-sided">double-sided</option>
+        </select>
+    </div>
+
+    <button type="submit">Save</button>
+</form>

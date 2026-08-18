@@ -1,1 +1,36 @@
-<p>study-zone works!</p>
+<div class="search">
+    <select id="select-layout">
+        <option value="">general</option>
+        <option value="quiz">quiz</option>
+        <option value="true-false">true-false</option>
+        <option value="double-sided">double-sided</option>
+    </select>
+    <input type="text" id="search-content" placeholder="search a deck here">
+</div>
+
+<button (click)="onNewDeck()">
+    new deck
+</button>
+
+@if (deckPopUp()) {
+    <app-deck-settings pageFunc="create" (hasTerminated)="onClose()"></app-deck-settings>
+}
+
+<div class="deck-container">
+    @for (deckItem of deckList(); track deckItem.id) {
+        <div class="deck-item">
+            <p class="item-title">
+                {{ deckItem.title }}
+            </p>
+            <p class="item-layout">
+                {{ deckItem.layout }}
+            </p>
+            <button class="study-deck">
+                STUDY
+            </button>
+            <button class="open-deck">
+                OPEN
+            </button>
+        </div>
+    }
+</div>
