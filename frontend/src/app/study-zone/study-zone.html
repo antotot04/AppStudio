@@ -23,7 +23,7 @@
                 {{ deckItem.title }}
             </p>
             <p class="item-layout">
-                {{ deckItem.layout }}
+                {{ deckItem.layout === '' ? 'general deck' : deckItem.layout }}
             </p>
             <button class="study-deck">
                 STUDY

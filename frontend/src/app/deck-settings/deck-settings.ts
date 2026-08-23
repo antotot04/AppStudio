@@ -1,4 +1,4 @@
-import { Component, computed, inject, input, output, signal } from '@angular/core';
+import { Component, computed, inject, input, OnInit, output, signal } from '@angular/core';
 import { StudyService } from '../service/study/study-service';
 import { DeckDTO } from '../dto/deck-dto';
 import { form, required, FormField } from '@angular/forms/signals';
@@ -10,10 +10,13 @@ import { Router } from '@angular/router';
   templateUrl: './deck-settings.html',
   styleUrl: './deck-settings.css',
 })
-export class DeckSettings {
+export class DeckSettings implements OnInit {
   hasTerminated = output<void>();
   // if this page needs to create a new deck or to update an existing one
   pageFunc = input<'create' | 'edit'>();
+  deckId = input<string>();
+  initTitle = signal('');
+  initLayout = signal('');
   private studyService = inject(StudyService);
   private router = inject(Router);
   url = this.router.url;
@@ -60,7 +63,35 @@ export class DeckSettings {
   }
 
   onExit(){
-    /* TODO: user warning if it has touched the form but hasn't clicked save */
-    this.hasTerminated.emit();
+    if(this.deckForm.deckTitle().value() !== this.initTitle() || 
+      this.deckForm.deckLayout().value() !== this.initLayout()){
+      if(confirm("If you exit your changes won't be saved")){
+        this.hasTerminated.emit();
+      }
+    }else{
+      this.hasTerminated.emit();
+    }
+  }
+
+  getDeckInfo(){
+    if(this.deckId() !== undefined){
+      this.studyService.getUserDeck(this.username, this.deckId()!).subscribe({
+        next: (resp) => {
+          this.formModel.set({
+            deckTitle: resp.title,
+            deckLayout: resp.layout
+          });
+          this.initTitle.set(resp.title);
+          this.initLayout.set(resp.layout);
+        },
+        error: () => {
+          console.log("getDeckInfo: error");
+        }
+      })
+    }
+  }
+
+  ngOnInit(){
+    this.getDeckInfo();
   }
 }
