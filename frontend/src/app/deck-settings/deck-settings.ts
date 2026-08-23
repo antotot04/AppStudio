@@ -16,7 +16,7 @@ export class DeckSettings implements OnInit {
   pageFunc = input<'create' | 'edit'>();
   deckId = input<string>();
   initTitle = signal('');
-  initLayout = signal('');
+  initLayout = signal('general');
   private studyService = inject(StudyService);
   private router = inject(Router);
   url = this.router.url;
@@ -34,7 +34,7 @@ export class DeckSettings implements OnInit {
 
   formModel = signal<DeckDTO>({
     deckTitle: '',
-    deckLayout: ''
+    deckLayout: 'general'
   });
 
   deckForm = form(this.formModel, (schemaPath) => {

@@ -1,12 +1,14 @@
-<div class="search">
-    <select id="select-layout">
-        <option value="">general</option>
+<form class="search" (submit)="onSubmit($event)">
+    <select id="select-layout" [formField]="this.searchForm.layout">
+        <option value="">all</option>
+        <option value="general">general</option>
         <option value="quiz">quiz</option>
         <option value="true-false">true-false</option>
         <option value="double-sided">double-sided</option>
     </select>
-    <input type="text" id="search-content" placeholder="search a deck here">
-</div>
+    <input type="text" id="search-content" placeholder="search a deck here" [formField]="this.searchForm.word">
+    <button type="submit">Search</button>
+</form>
 
 <button (click)="onNewDeck()">
     new deck
@@ -17,13 +19,13 @@
 }
 
 <div class="deck-container">
-    @for (deckItem of deckList(); track deckItem.id) {
+    @for (deckItem of decksToDisplay(); track deckItem.id) {
         <div class="deck-item">
             <p class="item-title">
                 {{ deckItem.title }}
             </p>
             <p class="item-layout">
-                {{ deckItem.layout === '' ? 'general deck' : deckItem.layout }}
+                {{ deckItem.layout }}
             </p>
             <button class="study-deck">
                 STUDY

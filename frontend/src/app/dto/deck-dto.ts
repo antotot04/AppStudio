@@ -1,4 +1,4 @@
 export interface DeckDTO {
     deckTitle: string,
-    deckLayout: 'quiz' | 'true-false' | 'double-sided' | ""
+    deckLayout: 'quiz' | 'true-false' | 'double-sided' | "general"
 }
