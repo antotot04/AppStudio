@@ -1,0 +1,43 @@
+<form class="search" (submit)="onSubmit($event)">
+    <select id="select-layout" [formField]="this.searchForm.layout">
+        <option value="">all</option>
+        <option value="general">general</option>
+        <option value="quiz">quiz</option>
+        <option value="true-false">true-false</option>
+        <option value="double-sided">double-sided</option>
+    </select>
+    <input type="text" id="search-content" placeholder="search a card here" [formField]="this.searchForm.word">
+    <button type="submit">Search</button>
+</form>
+
+
+<button (click)="onNewCard()">
+New Card
+</button>
+
+<button (click)="onDeleteDeck()">
+Delete Deck
+</button>
+
+<div class="deck-content">
+    <h1>{{ deckInfo().deckTitle }}</h1>
+    <p>{{ cardsCounter() === 1 ? "1 card" : cardsCounter() + " cards" }}</p>
+    <p>{{ deckInfo().deckLayout }}</p>
+
+    @for (cardItem of cardsToDisplay(); track cardItem.cardId) {
+        <div>
+            <p>
+                {{ cardItem.front }}
+            </p>
+            <p>
+                {{ cardItem.layout }}
+            </p>
+            <button (click)="onEditCard()">
+                EDIT
+            </button>
+            <button (click)="onDeleteCard()">
+                DELETE
+            </button>
+        </div>
+    }
+</div>
