@@ -11,8 +11,8 @@ import { Router } from '@angular/router';
   styleUrl: './deck-settings.css',
 })
 export class DeckSettings implements OnInit {
-  hasTerminated = output<void>();
-  // if this page needs to create a new deck or to update an existing one
+  hasTerminated = output<boolean>();
+  // page state: 'create' | 'edit' a deck
   pageFunc = input<'create' | 'edit'>();
   deckId = input<string>();
   initTitle = signal('');
@@ -45,7 +45,7 @@ export class DeckSettings implements OnInit {
     this.studyService.registerUserDeck(this.username, deckData).subscribe({
       next: () => {
         console.log("deck registered");
-        this.hasTerminated.emit();
+        this.hasTerminated.emit(true);
       },
       error: () => {
         console.log("createUserDeck: error");
@@ -53,29 +53,58 @@ export class DeckSettings implements OnInit {
     })
   }
 
+  editUserDeck(deckData: DeckDTO){
+    if(this.deckId() !== undefined){
+      this.studyService.updateUserDeck(this.deckId()!, deckData).subscribe({
+        next: () => {
+          console.log("deck edited");
+          this.hasTerminated.emit(true);
+        },
+        error: () => {
+          console.log("editUserDeck: error");
+        }
+      });
+    }
+  }
+
   onSubmit(event: Event){
     event.preventDefault();
 
-    this.createUserDeck({
+    const deckData: DeckDTO = {
       deckTitle: this.deckForm.deckTitle().value(),
       deckLayout: this.deckForm.deckLayout().value()
-    });
+    };
+
+    if(this.pageFunc() === "create"){
+      this.createUserDeck(deckData);
+    }else if(this.pageFunc() === "edit"){
+
+      if(deckData.deckTitle === this.initTitle() || 
+      deckData.deckLayout === this.initLayout()){
+        this.hasTerminated.emit(false);
+        return; 
+      }
+
+      /* TODO: check for cards layout for safety */
+
+      this.editUserDeck(deckData);
+    }
   }
 
   onExit(){
     if(this.deckForm.deckTitle().value() !== this.initTitle() || 
       this.deckForm.deckLayout().value() !== this.initLayout()){
       if(confirm("If you exit your changes won't be saved")){
-        this.hasTerminated.emit();
+        this.hasTerminated.emit(false);
       }
     }else{
-      this.hasTerminated.emit();
+      this.hasTerminated.emit(false);
     }
   }
 
   getDeckInfo(){
     if(this.deckId() !== undefined){
-      this.studyService.getUserDeck(this.username, this.deckId()!).subscribe({
+      this.studyService.getUserDeck(this.deckId()!).subscribe({
         next: (resp) => {
           this.formModel.set({
             deckTitle: resp.title,
@@ -93,5 +122,9 @@ export class DeckSettings implements OnInit {
 
   ngOnInit(){
     this.getDeckInfo();
+
+    if(this.pageFunc() === "edit"){
+      // TODO: check cards layout
+    }
   }
 }

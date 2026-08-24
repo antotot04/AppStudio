@@ -15,7 +15,7 @@
 </button>
 
 @if (deckPopUp()) {
-    <app-deck-settings pageFunc="create" (hasTerminated)="onClose()"></app-deck-settings>
+    <app-deck-settings [pageFunc]="pageFunc()" [deckId]="deckId()" (hasTerminated)="onClose($event)"></app-deck-settings>
 }
 
 <div class="deck-container">
@@ -27,11 +27,14 @@
             <p class="item-layout">
                 {{ deckItem.layout }}
             </p>
-            <button class="study-deck">
+            <button class="study-deck" (click)="onStudy()">
                 STUDY
             </button>
-            <button class="open-deck">
+            <button class="open-deck" (click)="onOpen()">
                 OPEN
+            </button>
+            <button class="edit-deck" (click)="onEdit(deckItem.id)">
+                EDIT
             </button>
         </div>
     }

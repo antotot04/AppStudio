@@ -15,16 +15,20 @@ export class StudyService {
     return this.http.get<DeckItem[]>(`${this.url}/${username}/decks`);
   }
 
-  getUserDeck(username: string, deckId: string){
-    return this.http.get<DeckItem>(`${this.url}/${username}/deck`, {
-      params: {
-        id: deckId
-      }
-    });
+  getUserDeck(deckId: string){
+    return this.http.get<DeckItem>(`${this.url}/deck/${deckId}`);
   }
 
   registerUserDeck(username: string, deckData: DeckDTO){
     return this.http.post(`${this.url}/${username}/deck`, deckData);
+  }
+
+  updateUserDeck(deckId: string, deckData: DeckDTO){
+    return this.http.put(`${this.url}/deck/${deckId}`, deckData);
+  }
+
+  deleteUserDeck(deckId: string){
+    return this.http.delete(`${this.url}/deck/${deckId}`)
   }
 
   /* cards endpoints */
