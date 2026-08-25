@@ -23,9 +23,9 @@
         <label for="deck-layout">Layout (Optional)</label>
         <select id="deck-layout" [formField]="this.deckForm.deckLayout">
             <option value="general">--choose an option--</option>
-            <option value="quiz">quiz</option>
-            <option value="true-false">true-false</option>
-            <option value="double-sided">double-sided</option>
+            <option [disabled]="quizDisabled()" value="quiz">quiz</option>
+            <option [disabled]="trueFalseDisabled()" value="true-false">true-false</option>
+            <option [disabled]="doubleSidedDisabled()" value="double-sided">double-sided</option>
         </select>
     </div>
 

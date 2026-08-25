@@ -81,8 +81,18 @@ export class DeckPage implements OnInit {
     }
   }
 
-  onDeleteCard(){
-    
+  onDeleteCard(cardId: string, layout: "quiz" | "double-sided" | "true-false"){
+    if(confirm("Do you really want to delete this card?")){
+      this.studyService.deleteDeckCard(cardId, layout).subscribe({
+        next: () => {
+          console.log("onDeleteCard: deleted")
+          this.getDeckCards();
+        },
+        error: () => {
+          console.log("onDeleteCard: error");
+        }
+      });
+    }
   }
 
   getDeckInfo(){
@@ -107,11 +117,6 @@ export class DeckPage implements OnInit {
     this.studyService.getDeckCards(this.deckId).subscribe({
       next: (resp) => {
         this.cardList = resp;
-        this.cardList.forEach((card) => {
-          if(card.layout === null){
-            card.layout = "general";
-          }
-        });
         this.cardsToDisplay.set(this.cardList);
       },
       error: () => {

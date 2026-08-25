@@ -6,7 +6,6 @@ import { CardItem } from '../../dto/card-item';
 import { QuizCard } from '../../dto/quiz-card';
 import { TrueFalseCard } from '../../dto/true-false-card';
 import { DoubleSidedCard } from '../../dto/double-sided-card';
-import { Layouts } from '../../dto/layouts';
 
 @Injectable({
   providedIn: 'root',
@@ -36,40 +35,36 @@ export class StudyService {
     return this.http.delete(`${this.url}/deck/${deckId}`);
   }
 
-  /* cards endpoints */
   getDeckCards(deckId: string){
     return this.http.get<CardItem[]>(`${this.url}/deck/${deckId}/cards`);
   }
 
-  getDeckCard(cardId: string){
-    return this.http.get<QuizCard | TrueFalseCard | DoubleSidedCard>(`${this.url}/card/${cardId}`);
+  getDeckCard(cardId: string, layout: "quiz" | "true-false" | "double-sided"){
+    return this.http.get<QuizCard | TrueFalseCard | DoubleSidedCard>(`${this.url}/card/${cardId}/${layout}`);
   }
 
   reigsterCard(deckId: string, 
     cardLayout: "quiz" | "true-false" | "double-sided", 
     cardData: QuizCard | TrueFalseCard | DoubleSidedCard){
-      return this.http.post(`${this.url}/deck/${deckId}/card`, cardData, {
-        params: {
-          layout: cardLayout
-        }
-      })
+    return this.http.post(`${this.url}/deck/${deckId}/card/${cardLayout}`, cardData);
   }
 
   updateCard(cardId: string,
     cardLayout: "quiz" | "true-false" | "double-sided", 
     cardData: QuizCard | TrueFalseCard | DoubleSidedCard){
-      return this.http.put(`${this.url}/card/${cardId}`, cardData, {
-        params: {
-          layout: cardLayout
-        }
-      })
+    return this.http.put(`${this.url}/card/${cardId}/${cardLayout}`, cardData);
   }
 
-  deleteDeckCard(cardId: string){
-    return this.http.delete(`${this.url}/card/${cardId}`);
+  deleteDeckCard(cardId: string, layout: "quiz" | "true-false" | "double-sided"){
+    return this.http.delete(`${this.url}/card/${layout}/${cardId}`);
   }
 
-  availableLayouts(deckId: string){
-    return this.http.get<Layouts>(`${this.url}/deck/${deckId}/layouts`);
+  deleteQuizOption(cardId: string, optionText: string){
+    return this.http.delete(`${this.url}/card/quiz/option`, {
+      params: {
+        optionId: cardId,
+        text: optionText
+      }
+    })
   }
 }
