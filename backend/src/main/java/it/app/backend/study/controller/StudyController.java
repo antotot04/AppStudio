@@ -99,8 +99,6 @@ public class StudyController {
         }
     }
 
-    // available layout for a deck
-
     /* Cards related */
 
     // get all deck cards
