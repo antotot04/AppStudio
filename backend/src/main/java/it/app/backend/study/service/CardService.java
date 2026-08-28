@@ -14,8 +14,10 @@ import it.app.backend.study.model.DoubleSidedCardDTO;
 import it.app.backend.study.model.OptionId;
 import it.app.backend.study.model.QuizCard;
 import it.app.backend.study.model.QuizCardDTO;
+import it.app.backend.study.model.QuizCardData;
 import it.app.backend.study.model.QuizOption;
 import it.app.backend.study.model.QuizOptionDTO;
+import it.app.backend.study.model.QuizOptionData;
 import it.app.backend.study.model.TrueFalseCard;
 import it.app.backend.study.model.TrueFalseCardDTO;
 import it.app.backend.study.repository.DeckRepository;
@@ -127,7 +129,8 @@ public class CardService {
         trueFalseCardRepo.save(cardToRegister);
     }
 
-    public void registerQuizCard(UUID deckId, QuizCardDTO data) throws IllegalArgumentException {
+    /* registration of card and initial options */
+    public void registerQuizCard(UUID deckId, QuizCardData data) throws IllegalArgumentException {
         if(deckId == null || data == null){
             throw new IllegalArgumentException("null values on card registration");
         }
@@ -150,13 +153,31 @@ public class CardService {
 
         quizCardRepo.save(cardToRegister);
 
-        for(QuizOptionDTO option : data.getOptions()){
+        for(QuizOptionData option : data.getOptions()){
             QuizOption optToRegister = new QuizOption();
             optToRegister.setCard(cardToRegister);
             optToRegister.setText(option.getAnswerText());
             optToRegister.setIsValid(option.getValidity());
             quizOptionRepo.save(optToRegister);
         }
+    }
+
+    /* new quiz option after registration */
+    public void registerQuizOption(UUID cardId, QuizOptionData data) throws IllegalArgumentException {
+        if(cardId == null || data == null){
+            throw new IllegalArgumentException("null values on card update");
+        }
+
+        QuizCard card = quizCardRepo.findById(cardId).orElseThrow(
+            () -> new IllegalArgumentException("card does not exists")
+        );
+
+        QuizOption optToRegister = new QuizOption();
+        optToRegister.setCard(card);
+        optToRegister.setText(data.getAnswerText());
+        optToRegister.setIsValid(data.getValidity());
+
+        quizOptionRepo.save(optToRegister);
     }
 
     public void updateDoubleSidedCard(UUID cardId, DoubleSidedCardDTO data) throws IllegalArgumentException {
@@ -205,7 +226,7 @@ public class CardService {
 
         for(QuizOptionDTO updatedOption : data.getOptions()){
             boolean updated = false;
-            QuizOption option = quizOptionRepo.findById(new OptionId(cardId, updatedOption.getAnswerText())).orElseThrow(() -> 
+            QuizOption option = quizOptionRepo.findById(new OptionId(cardId, updatedOption.getIdOption())).orElseThrow(() -> 
                 new IllegalArgumentException("option doesn't exists")
             );
 
@@ -225,8 +246,8 @@ public class CardService {
         }
     }
 
-    public void deleteQuizOption(UUID optionId, String text) throws IllegalArgumentException {
-        OptionId id = new OptionId(optionId, text);
+    public void deleteQuizOption(UUID cardId, UUID optionId) throws IllegalArgumentException {
+        OptionId id = new OptionId(cardId, optionId);
         if(!quizOptionRepo.existsById(id)){
             throw new IllegalArgumentException("cannot find option");
         }

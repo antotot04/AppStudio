@@ -5,23 +5,23 @@ import java.util.Objects;
 import java.util.UUID;
 
 public class OptionId implements Serializable{
-    private UUID id;
-    private String text;
+    private UUID idCard;
+    private UUID idOption;
 
     public OptionId() {
     }
 
-    public OptionId(UUID id, String text) {
-        this.id = id;
-        this.text = text;
+    public OptionId(UUID idCard, UUID idOption) {
+        this.idCard = idCard;
+        this.idOption = idOption;
     }
 
-    public String getText() {
-        return text;
+    public UUID getIdCard() {
+        return idCard;
     }
 
-    public UUID getId() {
-        return id;
+    public UUID getIdOption() {
+        return idOption;
     }
 
     @Override
@@ -30,11 +30,11 @@ public class OptionId implements Serializable{
             return false;
         }
         OptionId optId = (OptionId) obj;
-        return id.equals(optId.getId()) && text.equals(optId.getText());
+        return idCard.equals(optId.getIdCard()) && idOption.equals(optId.getIdOption());
     }
 
     @Override
     public int hashCode(){
-        return Objects.hash(text, id);
+        return Objects.hash(idCard, idOption);
     }
 }

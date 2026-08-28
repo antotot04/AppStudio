@@ -17,22 +17,29 @@ import jakarta.persistence.Table;
 @IdClass(OptionId.class)
 public class QuizOption {
     @Id
-    private UUID id;
+    private UUID idCard;
 
     @ManyToOne
-    @MapsId("id")
+    @MapsId("idCard")
     @JoinColumn(name="Id_Carta", referencedColumnName="Id_Carta", nullable=false)
     private QuizCard card;
 
     @Id
+    @Column(name="Id_Opzione")
+    private UUID idOption = UUID.randomUUID();
+
     @Column(name="Testo_Opzione", columnDefinition="TEXT")
     private String text;
 
     @Column(name="Validità_Opzione", nullable=false)
     private boolean isValid;
 
-    public UUID getId() {
-        return id;
+    public UUID getIdCard() {
+        return idCard;
+    }
+
+    public UUID getIdOption() {
+        return idOption;
     }
 
     public QuizCard getCard() {

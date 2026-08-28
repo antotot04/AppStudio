@@ -2,15 +2,15 @@ package it.app.backend.study.model;
 
 import java.util.List;
 
-/* response body of http get */
-public class QuizCardDTO {
+/* dto for initial quiz card registration */
+public class QuizCardData {
     private String front;
-    private List<QuizOptionDTO> options;
+    private List<QuizOptionData> options;
 
-    public QuizCardDTO() {
+    public QuizCardData() {
     }
 
-    public QuizCardDTO(String front, List<QuizOptionDTO> options) throws  IllegalArgumentException {
+    public QuizCardData(String front, List<QuizOptionData> options) throws  IllegalArgumentException {
         if(front == null || front.length() > 600){
             throw new IllegalArgumentException("invalid front");
         }
@@ -26,7 +26,7 @@ public class QuizCardDTO {
         return front;
     }
 
-    public List<QuizOptionDTO> getOptions() {
+    public List<QuizOptionData> getOptions() {
         return options;
     }
 
@@ -37,7 +37,7 @@ public class QuizCardDTO {
         this.front = front;
     }
 
-    public void setOptions(List<QuizOptionDTO> options) throws IllegalArgumentException {
+    public void setOptions(List<QuizOptionData> options) throws IllegalArgumentException {
         if(options == null){
             throw new IllegalArgumentException("options list is null");
         }

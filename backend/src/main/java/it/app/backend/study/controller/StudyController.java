@@ -26,8 +26,10 @@ import it.app.backend.study.model.DoubleSidedCard;
 import it.app.backend.study.model.DoubleSidedCardDTO;
 import it.app.backend.study.model.QuizCard;
 import it.app.backend.study.model.QuizCardDTO;
+import it.app.backend.study.model.QuizCardData;
 import it.app.backend.study.model.QuizOption;
 import it.app.backend.study.model.QuizOptionDTO;
+import it.app.backend.study.model.QuizOptionData;
 import it.app.backend.study.model.TrueFalseCard;
 import it.app.backend.study.model.TrueFalseCardDTO;
 import it.app.backend.study.service.CardService;
@@ -140,7 +142,7 @@ public class StudyController {
 
             List<QuizOptionDTO> optionsDTO = new ArrayList<>();
             options.forEach(opt -> 
-                optionsDTO.add(new QuizOptionDTO(opt.getText(), opt.getIsValid()))
+                optionsDTO.add(new QuizOptionDTO(opt.getIdOption(), opt.getText(), opt.getIsValid()))
             );
 
             return ResponseEntity.ok().body(new QuizCardDTO(card.getFront(), optionsDTO));
@@ -183,11 +185,25 @@ public class StudyController {
     @PostMapping("deck/{deckId}/card/quiz")
     public ResponseEntity<responseError> registerQuizCard(
         @PathVariable("deckId") UUID deckId, 
-        @RequestBody QuizCardDTO cardData
+        @RequestBody QuizCardData cardData
     ){
         try {
             cardService.registerQuizCard(deckId, cardData);
             return ResponseEntity.status(HttpStatus.CREATED).build();
+        } catch (Exception e) {
+            responseError resp = new responseError();
+            resp.setMessage(e.getMessage());
+            return ResponseEntity.badRequest().body(resp);
+        }
+    }
+    
+    @PostMapping("card/{cardId}/quiz/option")
+    public ResponseEntity<responseError> registerQuizOption(
+        @PathVariable("cardId") UUID cardId, 
+        @RequestBody QuizOptionData data){
+        try {
+            cardService.registerQuizOption(cardId, data);
+            return ResponseEntity.status(HttpStatus.OK).build();
         } catch (Exception e) {
             responseError resp = new responseError();
             resp.setMessage(e.getMessage());
@@ -203,7 +219,7 @@ public class StudyController {
     ){
         try {
             cardService.updateDoubleSidedCard(cardId, cardData);
-            return ResponseEntity.status(HttpStatus.CREATED).build();
+            return ResponseEntity.status(HttpStatus.OK).build();
         } catch (Exception e) {
             responseError resp = new responseError();
             resp.setMessage(e.getMessage());
@@ -218,7 +234,7 @@ public class StudyController {
     ){
         try {
             cardService.updateTrueFalseCard(cardId, cardData);
-            return ResponseEntity.status(HttpStatus.CREATED).build();
+            return ResponseEntity.status(HttpStatus.OK).build();
         } catch (Exception e) {
             responseError resp = new responseError();
             resp.setMessage(e.getMessage());
@@ -233,7 +249,7 @@ public class StudyController {
     ){
         try {
             cardService.updateQuizCard(cardId, cardData);
-            return ResponseEntity.status(HttpStatus.CREATED).build();
+            return ResponseEntity.status(HttpStatus.OK).build();
         } catch (Exception e) {
             responseError resp = new responseError();
             resp.setMessage(e.getMessage());
@@ -241,11 +257,11 @@ public class StudyController {
         }
     }
 
-    // delete card (& options)
+    // delete a quiz option
     @DeleteMapping("card/quiz/option")
-    public ResponseEntity<responseError> deleteOption(@RequestParam UUID optionId, @RequestParam String text){
+    public ResponseEntity<responseError> deleteOption(@RequestParam UUID cardId, @RequestParam UUID optionId){
         try {
-            cardService.deleteQuizOption(optionId, text);
+            cardService.deleteQuizOption(cardId, optionId);
             return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
         } catch (Exception e) {
             responseError resp = new responseError();
