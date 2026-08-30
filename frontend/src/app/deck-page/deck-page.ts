@@ -5,10 +5,11 @@ import { Router } from '@angular/router';
 import { DeckDTO } from '../dto/deck-dto';
 import { form, FormField } from '@angular/forms/signals';
 import { SearchEntry } from '../dto/search-entry';
+import { CardSettings } from "../card-settings/card-settings";
 
 @Component({
   selector: 'app-deck-page',
-  imports: [FormField],
+  imports: [FormField, CardSettings],
   templateUrl: './deck-page.html',
   styleUrl: './deck-page.css',
 })
@@ -24,12 +25,15 @@ export class DeckPage implements OnInit {
   });
 
   popUpCardSettings = signal<boolean>(false);
+  cardSettingsMode = signal<"edit" | "create">("create");
+  currCardId = signal<string | undefined>(undefined);
+  currCardLayout = signal<"quiz" | "double-sided" | "true-false">("double-sided");
 
   cardList: CardItem[] = [];
   cardsToDisplay = signal<CardItem[]>([]);
   cardsCounter = computed<number>(() => {
     return this.cardsToDisplay().length;
-  })
+  });
 
   formModel = signal<SearchEntry>({
     layout: '',
@@ -61,11 +65,29 @@ export class DeckPage implements OnInit {
   }
 
   onNewCard(){
-    
+    this.popUpCardSettings.set(true);
+    this.cardSettingsMode.set("create");
+    this.currCardId.set(undefined);
+    const currDeckLayout = this.deckInfo().deckLayout;
+    if(currDeckLayout === "general"){
+      this.currCardLayout.set("double-sided"); // default layout choice
+    }else{
+      this.currCardLayout.set(currDeckLayout);
+    }
   }
 
-  onEditCard(){
+  onEditCard(cardId: string, layout: "quiz" | "double-sided" | "true-false"){
+    this.popUpCardSettings.set(true);
+    this.cardSettingsMode.set("edit");
+    this.currCardId.set(cardId);
+    this.currCardLayout.set(layout);
+  }
 
+  onCardSettingsTerminated(isSuccessful: boolean){
+    if(isSuccessful){
+      this.getDeckCards();
+    }
+    this.popUpCardSettings.set(false);
   }
 
   onDeleteDeck(){

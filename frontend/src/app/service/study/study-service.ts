@@ -6,6 +6,8 @@ import { CardItem } from '../../dto/card-item';
 import { QuizCard } from '../../dto/quiz-card';
 import { TrueFalseCard } from '../../dto/true-false-card';
 import { DoubleSidedCard } from '../../dto/double-sided-card';
+import { QuizCardData } from '../../dto/quiz-card-data';
+import { QuizOptionData } from '../../dto/quiz-option-data';
 
 @Injectable({
   providedIn: 'root',
@@ -45,8 +47,12 @@ export class StudyService {
 
   reigsterCard(deckId: string, 
     cardLayout: "quiz" | "true-false" | "double-sided", 
-    cardData: QuizCard | TrueFalseCard | DoubleSidedCard){
+    cardData: QuizCardData | TrueFalseCard | DoubleSidedCard){
     return this.http.post(`${this.url}/deck/${deckId}/card/${cardLayout}`, cardData);
+  }
+
+  registerOption(cardId: string, optionData: QuizOptionData){
+    return this.http.post(`${this.url}/card/${cardId}/quiz/option`, optionData);
   }
 
   updateCard(cardId: string,
@@ -59,11 +65,11 @@ export class StudyService {
     return this.http.delete(`${this.url}/card/${layout}/${cardId}`);
   }
 
-  deleteQuizOption(cardId: string, optionText: string){
+  deleteQuizOption(cardId: string, optionId: string){
     return this.http.delete(`${this.url}/card/quiz/option`, {
       params: {
-        optionId: cardId,
-        text: optionText
+        cardId: cardId,
+        optionId: optionId
       }
     })
   }

@@ -19,6 +19,10 @@ New Card
 Delete Deck
 </button>
 
+@if(popUpCardSettings()){
+    <app-card-settings [pageFunc]="cardSettingsMode()" [deckLayout]="deckInfo().deckLayout" [cardId]="this.currCardId()" [layout]="this.currCardLayout()" (hasTerminated)="onCardSettingsTerminated($event)"></app-card-settings>
+}
+
 <div class="deck-content">
     <h1>{{ deckInfo().deckTitle }}</h1>
     <p>{{ cardsCounter() === 1 ? "1 card" : cardsCounter() + " cards" }}</p>
@@ -32,7 +36,7 @@ Delete Deck
             <p>
                 {{ cardItem.layout }}
             </p>
-            <button (click)="onEditCard()">
+            <button (click)="onEditCard(cardItem.cardId, cardItem.layout)">
                 EDIT
             </button>
             <button (click)="onDeleteCard(cardItem.cardId, cardItem.layout)">
