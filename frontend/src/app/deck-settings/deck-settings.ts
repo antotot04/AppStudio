@@ -85,11 +85,13 @@ export class DeckSettings implements OnInit {
     };
 
     if(this.pageFunc() === "create"){
+      console.log("here on create");
       this.createUserDeck(deckData);
     }else if(this.pageFunc() === "edit"){
-
-      if(deckData.deckTitle === this.initTitle() || 
+      console.log("here on edit");
+      if(deckData.deckTitle === this.initTitle() &&
       deckData.deckLayout === this.initLayout()){
+        console.log("terminated");
         this.hasTerminated.emit(false);
         return; 
       }

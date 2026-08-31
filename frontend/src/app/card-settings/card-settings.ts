@@ -387,7 +387,7 @@ export class CardSettings implements OnInit {
           }
         }else{
           if(this.cardForm.front().value() !== '' ||
-          this.cardForm.validity().value() !== "false"){
+          this.cardForm.validity().value() !== "true"){
             editedInfos = true;
           }
         }
