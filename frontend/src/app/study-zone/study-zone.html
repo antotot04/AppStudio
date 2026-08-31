@@ -27,10 +27,11 @@
             <p class="item-layout">
                 {{ deckItem.layout }}
             </p>
-            <button class="study-deck" (click)="onStudy()">
+            <!-- [routerLink]="/*['learn', deckItem.id]*/" -->
+            <button class="study-deck">
                 STUDY
             </button>
-            <button class="open-deck" (click)="onOpen()">
+            <button class="open-deck" [routerLink]="['deck', deckItem.id]">
                 OPEN
             </button>
             <button class="edit-deck" (click)="onEdit(deckItem.id)">

@@ -1,0 +1,65 @@
+<h2> {{ cardPageTitle() }} </h2>
+
+<button (click)="onExit()">
+    <img
+        src="/exit.svg"
+        width="50"
+        height="50"
+        alt="exit"
+    />
+</button>
+
+<form (submit)="onSubmit($event)">
+    <select id="layout-select" (change)="onChangeLayout($event)">
+        <option [disabled]="this.doubleSidedDisabled" value="double-sided" [selected]="this.layout() === 'double-sided' && !this.doubleSidedDisabled ? true : false">double-sided</option>
+        <option [disabled]="this.trueFalseDisabled" value="true-false" [selected]="this.layout() === 'true-false' && !this.trueFalseDisabled ? true : false">true-false</option>
+        <option [disabled]="this.quizDisabled" value="quiz" [selected]="this.layout() === 'quiz' && !this.quizDisabled ? true : false">quiz</option>
+    </select>
+
+    <label for="front">{{ this.layoutEdited() === "double-sided" ? "FRONT" : "QUESTION" }}</label>
+    <textarea id="front" rows="20" cols="20" placeholder="Text here..." [formField]="this.cardForm.front"></textarea>
+
+    @if(this.layoutEdited() === "double-sided"){
+        <label for="back">BACK</label>
+        <textarea id="back" rows="20" cols="20" placeholder="Text here..." [formField]="this.cardForm.back"></textarea>
+    }@else if(this.layoutEdited() === "true-false"){
+        <fieldset>
+            <legend>ANSWER</legend>
+            <div>
+                <input type="radio" id="true" value="true" [formField]="this.cardForm.validity">
+                <label for="true">True</label>
+            </div>
+            <div>
+                <input type="radio" id="false" value="false" [formField]="this.cardForm.validity">
+                <label for="false">False</label>
+            </div>
+        </fieldset>
+    }@else if(this.layoutEdited() === "quiz"){
+        <fieldset>
+            <legend>OPTIONS (required)</legend>
+            <p>Select the correct options, a maximum of 5 options can be created</p>
+            <button type="button" (click)="onAddOption()">+</button>
+            @for (option of optionFormList(); track option.idOption) {
+                <div>
+                    <input type="checkbox" [checked]="option.validity" (change)="addValidity($event, option.idOption)">
+                    <textarea rows="10" cols="50" placeholder="Text here..." (change)="addAnswerText($event, option.idOption)">{{ option.answerText }}</textarea>
+                </div>
+                <button type="button" (click)="onDeleteOption(option.idOption)">-</button>
+                @if(this.optionFormList().find((opt) => opt.answerText === '' && opt.idOption === option.idOption) !== undefined){
+                    <p>option text is required</p>
+                }
+            }
+        </fieldset>
+    }
+
+    <button 
+        type="submit" 
+        [disabled]="
+            this.layoutEdited() === 'quiz' &&
+            (this.optionFormList().filter((opt) => opt.answerText === '').length !== 0 || 
+            this.optionFormList().length === 0)
+        "
+    >
+        Save
+    </button>
+</form>

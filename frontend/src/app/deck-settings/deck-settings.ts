@@ -12,15 +12,24 @@ import { Router } from '@angular/router';
 })
 export class DeckSettings implements OnInit {
   hasTerminated = output<boolean>();
-  // page state: 'create' | 'edit' a deck
-  pageFunc = input<'create' | 'edit'>();
-  deckId = input<string>();
-  initTitle = signal('');
-  initLayout = signal('general');
   private studyService = inject(StudyService);
   private router = inject(Router);
   url = this.router.url;
   username = this.url.slice(1, this.url.indexOf('/', this.url.indexOf('/') + 1));
+
+  // page state: 'create' | 'edit' a deck
+  pageFunc = input<'create' | 'edit'>();
+  deckId = input<string>();
+
+  // initial deck infos
+  initTitle = signal('');
+  initLayout = signal('general');
+
+  // disabled options
+  quizDisabled = signal(false);
+  trueFalseDisabled = signal(false);
+  doubleSidedDisabled = signal(false);
+
   onNewDeck = computed<boolean>(() => {
     if(this.pageFunc() === 'create'){
       return true;
@@ -85,8 +94,6 @@ export class DeckSettings implements OnInit {
         return; 
       }
 
-      /* TODO: check for cards layout for safety */
-
       this.editUserDeck(deckData);
     }
   }
@@ -120,11 +127,48 @@ export class DeckSettings implements OnInit {
     }
   }
 
+  setDisabledOptions(){
+    if(this.deckId() !== undefined){
+      this.studyService.getDeckCards(this.deckId()!).subscribe({
+        next: (resp) => {
+          const possibleLayout = resp[0].layout;
+          for(const card of resp){
+            if(card.layout !== possibleLayout){
+              this.doubleSidedDisabled.set(true);
+              this.trueFalseDisabled.set(true);
+              this.quizDisabled.set(true);
+              break;
+            }
+          }
+          
+          if(!this.doubleSidedDisabled() && 
+          !this.trueFalseDisabled() && 
+          !this.quizDisabled()){
+            if(possibleLayout == "quiz"){
+              this.trueFalseDisabled.set(true);
+              this.doubleSidedDisabled.set(true);
+            }else if(possibleLayout == "double-sided"){
+              this.trueFalseDisabled.set(true);
+              this.quizDisabled.set(true);
+            }else{
+              this.doubleSidedDisabled.set(true);
+              this.quizDisabled.set(true);
+            }
+          }
+        },
+        error: () => {
+          console.log("setDisabledOptions: error");
+        }
+      })
+    }
+  }
+
   ngOnInit(){
     this.getDeckInfo();
 
+    /* checking for available layouts for selected deck */
     if(this.pageFunc() === "edit"){
-      // TODO: check cards layout
+      this.setDisabledOptions();
     }
   }
 }

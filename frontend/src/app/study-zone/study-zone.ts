@@ -1,18 +1,14 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
 import { StudyService } from '../service/study/study-service';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { DeckItem } from '../dto/deck-item';
 import { DeckSettings } from "../deck-settings/deck-settings";
 import { form, FormField } from '@angular/forms/signals';
-
-interface searchEntry {
-  layout: "quiz" | "true-false" | "double-sided" | "general" | "",
-  word: string
-}
+import { SearchEntry } from '../dto/search-entry';
 
 @Component({
   selector: 'app-study-zone',
-  imports: [DeckSettings, FormField],
+  imports: [DeckSettings, FormField, RouterLink],
   templateUrl: './study-zone.html',
   styleUrl: './study-zone.css',
 })
@@ -29,7 +25,7 @@ export class StudyZone implements OnInit {
   pageFunc = signal<'create' | 'edit'>('create');
   deckId = signal<undefined | string>(undefined);
 
-  formModel = signal<searchEntry>({
+  formModel = signal<SearchEntry>({
     layout: '',
     word: ''
   });
@@ -80,17 +76,11 @@ export class StudyZone implements OnInit {
     this.deckId.set(undefined);
   }
 
-  onClose(deckCreated: boolean){
+  onClose(updateState: boolean){
     this.deckPopUp.set(false);
-    this.getAllUserDecks(); // refresh deck state
-  }
-
-  onStudy(){
-    // TODO: redirect to study page
-  }
-
-  onOpen(){
-    // TODO: redirect to deck page
+    if(updateState){
+      this.getAllUserDecks(); // refresh deck state
+    }
   }
 
   onEdit(deckId: string){

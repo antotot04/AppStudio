@@ -2,6 +2,12 @@ import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { DeckItem } from '../../dto/deck-item';
 import { DeckDTO } from '../../dto/deck-dto';
+import { CardItem } from '../../dto/card-item';
+import { QuizCard } from '../../dto/quiz-card';
+import { TrueFalseCard } from '../../dto/true-false-card';
+import { DoubleSidedCard } from '../../dto/double-sided-card';
+import { QuizCardData } from '../../dto/quiz-card-data';
+import { QuizOptionData } from '../../dto/quiz-option-data';
 
 @Injectable({
   providedIn: 'root',
@@ -28,8 +34,43 @@ export class StudyService {
   }
 
   deleteUserDeck(deckId: string){
-    return this.http.delete(`${this.url}/deck/${deckId}`)
+    return this.http.delete(`${this.url}/deck/${deckId}`);
   }
 
-  /* cards endpoints */
+  getDeckCards(deckId: string){
+    return this.http.get<CardItem[]>(`${this.url}/deck/${deckId}/cards`);
+  }
+
+  getDeckCard(cardId: string, layout: "quiz" | "true-false" | "double-sided"){
+    return this.http.get<QuizCard | TrueFalseCard | DoubleSidedCard>(`${this.url}/card/${cardId}/${layout}`);
+  }
+
+  reigsterCard(deckId: string, 
+    cardLayout: "quiz" | "true-false" | "double-sided", 
+    cardData: QuizCardData | TrueFalseCard | DoubleSidedCard){
+    return this.http.post(`${this.url}/deck/${deckId}/card/${cardLayout}`, cardData);
+  }
+
+  registerOption(cardId: string, optionData: QuizOptionData){
+    return this.http.post(`${this.url}/card/${cardId}/quiz/option`, optionData);
+  }
+
+  updateCard(cardId: string,
+    cardLayout: "quiz" | "true-false" | "double-sided", 
+    cardData: QuizCard | TrueFalseCard | DoubleSidedCard){
+    return this.http.put(`${this.url}/card/${cardId}/${cardLayout}`, cardData);
+  }
+
+  deleteDeckCard(cardId: string, layout: "quiz" | "true-false" | "double-sided"){
+    return this.http.delete(`${this.url}/card/${layout}/${cardId}`);
+  }
+
+  deleteQuizOption(cardId: string, optionId: string){
+    return this.http.delete(`${this.url}/card/quiz/option`, {
+      params: {
+        cardId: cardId,
+        optionId: optionId
+      }
+    })
+  }
 }
