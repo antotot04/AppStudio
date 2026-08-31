@@ -5,6 +5,7 @@ import { AppSignup } from './app-signup/app-signup';
 import { PomodoroTimer } from './pomodoro-timer/pomodoro-timer';
 import { StudyZone } from './study-zone/study-zone';
 import { DeckPage } from './deck-page/deck-page';
+import { StudyDeck } from './study-deck/study-deck';
 
 export const routes: Routes = [
     {
@@ -42,6 +43,10 @@ export const routes: Routes = [
             {
                 path: 'study/deck/:id',
                 component: DeckPage
+            },
+            {
+                path: 'study/learn/:deckId',
+                component: StudyDeck
             }
         ]
     }

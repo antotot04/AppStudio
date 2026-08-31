@@ -27,8 +27,8 @@
             <p class="item-layout">
                 {{ deckItem.layout }}
             </p>
-            <!-- [routerLink]="/*['learn', deckItem.id]*/" -->
-            <button class="study-deck">
+            <!-- TODO: disable study button if no cards for given deck -->
+            <button class="study-deck" [routerLink]="['learn', deckItem.id]">
                 STUDY
             </button>
             <button class="open-deck" [routerLink]="['deck', deckItem.id]">

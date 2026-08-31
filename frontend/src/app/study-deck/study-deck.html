@@ -1,0 +1,80 @@
+<p>
+    {{`${currCardCounter()}/${this.cardList.length} ${currCardCounter() === 1 ? 'card studied' : 'cards studied'}`}}
+</p>
+
+@if(!isFinalOutcome()){
+    <button (click)="onExit()">
+        EXIT
+    </button>
+
+    <button [disabled]="!isDone()" (click)="onNext()">
+        NEXT
+    </button>
+}@else {
+    <button (click)="onExit()">
+        END
+    </button>
+}
+
+@if(!isFinalOutcome()){
+    <div>
+        <p>{{ currCard().front }}</p>
+    </div>
+    <form (submit)="onSubmit($event)">
+        @if(currCard().layout === "true-false"){
+            <fieldset>
+                <legend>Answer</legend>
+                <input type="radio" id="resp1" value="true" [formField]="this.respForm.validity">
+                <label for="resp1">TRUE</label>
+
+                <input type="radio" id="resp2" value="false" [formField]="this.respForm.validity">
+                <label for="resp2">FALSE</label>
+            </fieldset>
+
+            @if(onSolution()){
+                @if(isCorrect()){
+                    <p>correct!</p>
+                }@else {
+                    <p>wrong</p>
+                }
+            }
+        }@else if (currCard().layout === "quiz"){
+            <fieldset>
+                <legend>Choose the correct options</legend>
+                @for (option of optionFormList(); track option.id) {
+                    <input type="checkbox" [attr.id]="option.id" [checked]="option.validity" (change)="setOption($event, option.id)">
+                    <label [attr.for]="option.id">{{ printAnswerText(option.id) }}</label>
+                }
+            </fieldset>
+
+            @if(onSolution()){
+                @if(isCorrect()){
+                    <p>correct!</p>
+                }@else {
+                    <p>wrong</p>
+                }
+            }
+        }@else {
+            @if(onSolution()){
+                <div>
+                    <p>{{ currCardInfo().doubleSided.back }}</p>
+                </div> 
+                <p>Did you know it?</p>
+                <form (submit)="onSubmitOutcome($event)">
+                    <input type="radio" value="true" id="true"[formField]="this.outForm">
+                    <label for="true">yes</label>
+                    <input type="radio" value="false" id="false" [formField]="this.outForm">
+                    <label for="false">no</label>
+                    <button type="submit" [disabled]="isDone()">Submit</button>
+                </form>
+            }
+        }
+        <button type="submit" [disabled]="isDone()">SHOW SOLUTION</button>
+    </form>
+}@else {
+    <p>
+        {{ isPassed() ? "YOU PASSED THE TEST! 🤩" : "Unfortunately, you failed the test 😕" }}: <br>
+        <span>{{`${this.outcomeCounter()}/${this.cardList.length}`}}</span> <br>   
+        {{ congratsMessage() }}
+    </p>
+}
