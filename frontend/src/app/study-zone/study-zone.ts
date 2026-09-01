@@ -5,6 +5,11 @@ import { DeckItem } from '../dto/deck-item';
 import { DeckSettings } from "../deck-settings/deck-settings";
 import { form, FormField } from '@angular/forms/signals';
 import { SearchEntry } from '../dto/search-entry';
+import { forkJoin, map} from 'rxjs';
+
+interface DisplayedDeckItem extends DeckItem {
+  learnDisabled?: boolean
+}
 
 @Component({
   selector: 'app-study-zone',
@@ -18,9 +23,9 @@ export class StudyZone implements OnInit {
   url = this.router.url;
   username = this.url.slice(1, this.url.indexOf('/', this.url.indexOf('/') + 1));
   /* all fetched user decks */
-  deckList: DeckItem[] = [];
+  deckList: DisplayedDeckItem[] = [];
   /* decks actually displayed based on search parameters */
-  decksToDisplay = signal<DeckItem[]>([]);
+  decksToDisplay = signal<DisplayedDeckItem[]>([]);
   deckPopUp = signal(false);
   pageFunc = signal<'create' | 'edit'>('create');
   deckId = signal<undefined | string>(undefined);
@@ -52,12 +57,20 @@ export class StudyZone implements OnInit {
   getAllUserDecks(){
     this.studyService.getAllDecks(this.username).subscribe({
       next: (resp) => {
-        this.deckList = resp;
-        this.deckList.forEach((deck) => {
-          if(deck.layout === null) 
-            deck.layout = "general";
-        });
-        this.decksToDisplay.set(this.deckList);
+        const serviceList = resp.map((deck) =>
+          this.studyService.getDeckCards(deck.id).pipe(map((list) => {
+            return {
+              id: deck.id,
+              layout: deck.layout === null ? "general" : deck.layout,
+              title: deck.title,
+              learnDisabled: list.length === 0
+            } as DisplayedDeckItem
+          }))
+        );
+        forkJoin(serviceList).subscribe((realResp) => {
+          this.deckList = realResp;
+          this.decksToDisplay.set(this.deckList);
+        })
       },
       error: () => {
         console.log("getAllUserDecks: error");
