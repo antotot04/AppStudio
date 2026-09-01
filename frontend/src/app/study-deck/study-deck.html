@@ -2,6 +2,10 @@
     {{`${currCardCounter()}/${this.cardList.length} ${currCardCounter() === 1 ? 'card studied' : 'cards studied'}`}}
 </p>
 
+<div class="progress-bar-container">
+    <div class="progress-bar-content"></div>
+</div>
+
 @if(!isFinalOutcome()){
     <button (click)="onExit()">
         EXIT
@@ -74,7 +78,7 @@
 }@else {
     <p>
         {{ isPassed() ? "YOU PASSED THE TEST! 🤩" : "Unfortunately, you failed the test 😕" }}: <br>
-        <span>{{`${this.outcomeCounter()}/${this.cardList.length}`}}</span> <br>   
+        <span>{{`${this.outcomeCounter()}/${this.cardList.length}`}}</span> correct<br>   
         {{ congratsMessage() }}
     </p>
 }

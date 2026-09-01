@@ -63,7 +63,7 @@ export class StudyDeck implements OnInit {
     return niceness;
   });
   isPassed = computed<boolean>(() => {
-    return this.niceness() > 0.5;
+    return this.niceness() >= 0.5;
   })
   congratsMessage = computed<string>(() => {
     if(this.niceness() < 0.4){
@@ -108,9 +108,22 @@ export class StudyDeck implements OnInit {
     return option.answerText;
   }
 
+  updateProgressBar(){
+    const fullWidth = (document.querySelector(".progress-bar-container") as HTMLElement).clientWidth;
+    const barContent = document.querySelector(".progress-bar-content") as HTMLElement;
+    const contentWidth = (this.currCardCounter() / this.cardList.length) * fullWidth;
+    barContent.style.width = `${contentWidth}px`
+  }
+
   onExit(){
-    if(confirm("Do you really want to end this study session?") && !this.isFinalOutcome()){
+    if(this.isFinalOutcome()){
       this.router.navigate([this.username, 'study']);
+      return;
+    }
+
+    if(confirm("Do you really want to end this study session?")){
+      this.router.navigate([this.username, 'study']);
+      return;
     }
   }
 
@@ -119,6 +132,8 @@ export class StudyDeck implements OnInit {
     this.currCardCounter.update((counter) => {
       return counter+1;
     });
+
+    this.updateProgressBar();
 
     if(this.currCardCounter() >= this.cardList.length){
       this.isFinalOutcome.set(true);
