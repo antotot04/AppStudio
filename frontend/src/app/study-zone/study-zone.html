@@ -1,0 +1,41 @@
+<form class="search" (submit)="onSubmit($event)">
+    <select id="select-layout" [formField]="this.searchForm.layout">
+        <option value="">all</option>
+        <option value="general">general</option>
+        <option value="quiz">quiz</option>
+        <option value="true-false">true-false</option>
+        <option value="double-sided">double-sided</option>
+    </select>
+    <input type="text" id="search-content" placeholder="search a deck here" [formField]="this.searchForm.word">
+    <button type="submit">Search</button>
+</form>
+
+<button (click)="onNewDeck()">
+    new deck
+</button>
+
+@if (deckPopUp()) {
+    <app-deck-settings [pageFunc]="pageFunc()" [deckId]="deckId()" (hasTerminated)="onClose($event)"></app-deck-settings>
+}
+
+<div class="deck-container">
+    @for (deckItem of decksToDisplay(); track deckItem.id) {
+        <div class="deck-item">
+            <p class="item-title">
+                {{ deckItem.title }}
+            </p>
+            <p class="item-layout">
+                {{ deckItem.layout }}
+            </p>
+            <button class="study-deck" [disabled]="deckItem.learnDisabled" [routerLink]="['learn', deckItem.id]">
+                STUDY
+            </button>
+            <button class="open-deck" [routerLink]="['deck', deckItem.id]">
+                OPEN
+            </button>
+            <button class="edit-deck" (click)="onEdit(deckItem.id)">
+                EDIT
+            </button>
+        </div>
+    }
+</div>
