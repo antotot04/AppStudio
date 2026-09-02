@@ -21,14 +21,14 @@ public class PomodoroService {
     @Autowired
     private UtenteService utenteService;
 
-    public void registerUserPomo(String username, Instant timestamp) throws IllegalArgumentException{
+    public Pomodoro registerUserPomo(String username, Instant timestamp) throws IllegalArgumentException{
         Optional<Utente> optUtente = utenteService.findByUsername(username);
         if(optUtente.isPresent()){
             Utente utente = optUtente.get();
             Pomodoro pomoToSave = new Pomodoro();
             pomoToSave.setTimestamp(timestamp);
             pomoToSave.setUtente(utente);
-            repo.save(pomoToSave);
+            return repo.save(pomoToSave);
         }else{
             throw new IllegalArgumentException("user not found");
         }
