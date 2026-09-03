@@ -3,10 +3,12 @@ import { Router } from '@angular/router';
 import { ActivityService } from '../service/activity/activity-service';
 import { form, FormField } from '@angular/forms/signals';
 import { ActivityDTO } from '../dto/activity-dto';
+import { ActivitySettings } from "../activity-settings/activity-settings";
+import { ActivityData } from '../dto/activity-data';
 
 @Component({
   selector: 'app-activity-page',
-  imports: [FormField],
+  imports: [FormField, ActivitySettings],
   templateUrl: './activity-page.html',
   styleUrl: './activity-page.css',
 })
@@ -20,6 +22,8 @@ export class ActivityPage implements OnInit {
 
   // settings popUp state
   settingsPopUp = signal(false);
+  settingsMode = signal<"edit" | "create">("create");
+  currActData = signal<ActivityDTO | undefined>(undefined);
 
   /* search form */
   formModel = signal<{ word: string }>({
@@ -39,11 +43,26 @@ export class ActivityPage implements OnInit {
   }
 
   onNewActivity(){
-
+    this.settingsMode.set("create");
+    this.currActData.set(undefined);
+    this.settingsPopUp.set(true);
   }
 
   onEdit(activityId: string){
+    const actData = this.activityList.find((act) => act.id === activityId);
+    if(actData === undefined){
+      throw new Error("actData is undefined");
+    }
+    this.settingsMode.set("edit");
+    this.currActData.set(actData);
+    this.settingsPopUp.set(true);
+  }
 
+  onSettingsTerm(validTerm: boolean){
+    this.settingsPopUp.set(false);
+    if(validTerm){
+      this.loadUserActivities();
+    }
   }
 
   onDelete(activityId: string){
@@ -57,6 +76,18 @@ export class ActivityPage implements OnInit {
       }
     })
     }
+  }
+
+  renderDescription(description: string | undefined): string{
+    if(!description){
+      return '';
+    }
+
+    if(description.length > 40){
+      return description.slice(0, 40).concat("...");
+    }
+
+    return description;
   }
 
   loadUserActivities(){

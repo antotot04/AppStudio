@@ -8,7 +8,7 @@
 </button>
 
 @if (settingsPopUp()) {
-    <!-- settings component here -->
+    <app-activity-settings [pageFunc]="settingsMode()" [activityData]="currActData()" (hasTerminated)="onSettingsTerm($event)"></app-activity-settings>
 }
 
 <div class="activity-container">
@@ -21,7 +21,7 @@
                 {{ activity.title }}
             </p>
             <p class="description">
-                {{ activity.description }}
+                {{renderDescription(activity.description)}}
             </p>
             <button class="edit-activity" (click)="onEdit(activity.id)">
                 EDIT
