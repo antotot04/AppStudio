@@ -1,0 +1,34 @@
+<form class="search" (submit)="onSubmit($event)">
+    <input type="text" id="search-content" placeholder="search by title..." [formField]="this.searchForm.word">
+    <button type="submit">Search</button>
+</form>
+
+<button (click)="onNewActivity()">
+    new activity
+</button>
+
+@if (settingsPopUp()) {
+    <!-- settings component here -->
+}
+
+<div class="activity-container">
+    @for (activity of activitiesToDisplay(); track activity.id) {
+        <div class="deck-item">
+            <span class="side-pomo-counter">
+                {{`${activity.currentPomos}/${activity.pomoCounter}`}}
+            </span>
+            <p class="title">
+                {{ activity.title }}
+            </p>
+            <p class="description">
+                {{ activity.description }}
+            </p>
+            <button class="edit-activity" (click)="onEdit(activity.id)">
+                EDIT
+            </button>
+            <button class="delete-activity" (click)="onDelete(activity.id)">
+                DELETE
+            </button>
+        </div>
+    }
+</div>
