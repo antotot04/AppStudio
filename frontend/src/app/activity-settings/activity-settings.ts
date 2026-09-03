@@ -31,13 +31,10 @@ export class ActivitySettings implements OnInit{
   activityForm = form(this.formModel, (schemaPath) => {
     required(schemaPath.title, { message: "title is required" });
     required(schemaPath.pomoCounter, { message: "duration is required" });
-    const actData = this.activityData();
-    if(this.pageFunc() === "edit" && actData !== undefined){
-      min(schemaPath.pomoCounter, actData.currentPomos, { message: "you can't select a lower duration than your current pomodoros on this activity" });
-    }else{
-      min(schemaPath.pomoCounter, 0, { message: "duration can't be lower than zero"  });
-    }
+    min(schemaPath.pomoCounter, 0, { message: "you can't select a lower duration than your current pomodoros on this activity" });
   })
+  readonly minDurationErrorMessage = "total pomodoro duration cannot be lower than the total of your already completed pomodoros";
+  showMinDurationErrorMessage = signal(false);
 
   onNewActivity = computed<boolean>(() => {
     if(this.pageFunc() === undefined){
@@ -93,6 +90,16 @@ export class ActivitySettings implements OnInit{
       return;
     }
 
+    const actData = this.activityData();
+    if(this.pageFunc() == "edit" && actData !== undefined){
+      if(this.activityForm.pomoCounter().value() < actData.currentPomos){
+        this.showMinDurationErrorMessage.set(true);
+        return;
+      }else{
+        this.showMinDurationErrorMessage.set(false);
+      }
+    }
+
     if(this.pageFunc() === "create"){
       this.registerActivity();
     }else if(this.pageFunc() === "edit"){
@@ -136,5 +143,7 @@ export class ActivitySettings implements OnInit{
         pomoCounter: actData.pomoCounter
       });
     }
+
+    console.log(actData?.currentPomos);
   }
 }

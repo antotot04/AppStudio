@@ -5,6 +5,8 @@ import { Router } from '@angular/router';
 import { TimerSettings } from '../timer-settings/timer-settings';
 import { UserSettings } from '../dto/user-settings';
 import { TimerLeaderboard } from '../timer-leaderboard/timer-leaderboard';
+import { ActivityDTO } from '../dto/activity-dto';
+import { ActivityService } from '../service/activity/activity-service';
 
 @Component({
   selector: 'app-pomodoro-timer',
@@ -15,6 +17,7 @@ import { TimerLeaderboard } from '../timer-leaderboard/timer-leaderboard';
 
 export class PomodoroTimer implements OnInit {
   timerService = inject(TimerService);
+  activityServivce = inject(ActivityService);
   router = inject(Router);
   url = this.router.url;
   username = this.url.slice(1, this.url.indexOf('/', this.url.indexOf('/') + 1)); 
@@ -32,9 +35,12 @@ export class PomodoroTimer implements OnInit {
     }
   });
 
+  activityList = signal<ActivityDTO[]>([]);
+  actChecked = signal<string | undefined>(undefined) // id of the current checked activity
+
   onPopUpState = signal<'settings' | 'leaderboard' | ''>('');
 
-  readonly pomodoroTime = 1500; // pomodoro unit: 25 min
+  readonly pomodoroTime = 3; // pomodoro unit: 25 min
   shortPause = computed(() => {
     return this.userSettings().timer.shortPause;
   });
@@ -92,9 +98,7 @@ export class PomodoroTimer implements OnInit {
     progressBar.style.width = `${computedWidth}px`;
   });
 
-  sendTimestamp(){
-    const timestamp = new Date();
-    console.log(this.username);
+  sendTimestamp(timestamp: Date){
     this.timerService.sendTimestamp(this.username, timestamp).subscribe({
       next: () => {
         console.log("sendTimestamp: ok");
@@ -103,6 +107,42 @@ export class PomodoroTimer implements OnInit {
         console.log("sendTimestamp: error");
       }
     })
+  }
+
+  sendActTimestamp(timestamp: Date, activityId: string){
+    /* NOTE: see comments related to this endpoint in activity-service.ts */
+    this.activityServivce.sendActivityPomodoro(this.username, activityId, timestamp).subscribe({
+      next: () => {
+        this.activityList.update((list) => {
+          const updatedList = list.map((act) => {
+            if(act.id === activityId){
+              return {
+                ... act,
+                currentPomos: act.currentPomos+1
+              }
+            }else{
+              return {
+                ... act,
+              }
+            }
+          });
+          return updatedList;
+        })
+
+        /* check if current activity is completed */
+        const selectedAct = this.activityList().find((act) => act.id === activityId);
+        if(selectedAct === undefined){
+          throw new Error("current selected activity is undefined");
+        }
+
+        if(selectedAct.currentPomos === selectedAct.pomoCounter){
+          this.actChecked.set(undefined);
+        }
+      },
+      error: () => {
+        console.log("sendActTimestamp: error");
+      }
+    });
   }
 
   prepareLongPause(){
@@ -134,7 +174,14 @@ export class PomodoroTimer implements OnInit {
           clearInterval(this.intervalId);
 
           if(this.timerState() === ''){
-            this.sendTimestamp();
+            const timestamp = new Date();
+            const currActId = this.actChecked();
+            if(currActId !== undefined){
+              this.sendActTimestamp(timestamp, currActId);
+            }else{
+              this.sendTimestamp(timestamp);
+            }
+
             if(this.userSettings().suono.background !== null){
               this.playBackground(false);
             }
@@ -233,6 +280,61 @@ export class PomodoroTimer implements OnInit {
     })
   }
 
+  loadCurrUserActivities(){
+    this.activityServivce.getUserActivities(this.username).subscribe({
+      next: (resp) => {
+        this.activityList.set(resp);
+      },
+      error: () => {
+        console.log("loadCurrUserActivities: error");
+      }
+    })
+  }
+
+  renderDescription(description: string): string{
+    if(description.length > 40){
+      return description.slice(0, 40).concat("...");
+    }
+    return description;
+  }
+
+  onMoreDescription(event: Event, description: string, activityId: string){
+    const thisBtn = event.target as HTMLButtonElement;
+    const target = document.querySelector("#act-description-" + activityId) as HTMLParagraphElement;
+
+    if(thisBtn.textContent === "Show more"){
+      target.textContent = "Description:\n" + description;
+      thisBtn.textContent = "Hide";
+    }else{
+      target.textContent = this.renderDescription(description);
+      thisBtn.textContent = "Show more";
+    }
+  }
+
+  onActChange(event: Event){
+    const thisCheck = event.target as HTMLInputElement;
+    const checkList = document.querySelectorAll("input.act-checkbox") as NodeListOf<HTMLInputElement>;
+    if(thisCheck.checked){
+      this.actChecked.set(thisCheck.id);
+      checkList.forEach((ele) => {
+        if(!ele.disabled && ele !== thisCheck){
+          ele.checked = false;
+        }
+      });
+    }else{
+      this.actChecked.set(undefined);
+    }
+  }
+
+  activitiesCompleted(): boolean{
+    for(const act of this.activityList()){
+      if(act.currentPomos !== act.pomoCounter){
+        return false;
+      }
+    }
+    return true;
+  }
+
   onUserSettings(settingsUpdated: boolean){
     if(settingsUpdated){
       this.getUpdatedSettings();
@@ -247,6 +349,7 @@ export class PomodoroTimer implements OnInit {
 
   ngOnInit(){
     this.getUpdatedSettings();
+    this.loadCurrUserActivities();
   }
 
   ngOnDestroy(){

@@ -87,4 +87,25 @@
         <div class="progress">
         </div>
     </div>
+
+    <h2>Current Activities</h2>
+
+    @if(activityList().length !== 0){
+        @for (activity of activityList(); track activity.id) {
+            <input class="act-checkbox" type="checkbox" [checked]="activity.currentPomos === activity.pomoCounter" [disabled]="activity.currentPomos === activity.pomoCounter" [id]="activity.id" (change)="onActChange($event)">
+            <label [attr.for]="activity.id">{{activity.title}}</label>
+            <p>{{"current pomdoros: " + `${activity.currentPomos}/${activity.pomoCounter}`}}</p>
+            @if (activity.description) {
+                <p [id]="'act-description-' + activity.id">{{"Description:\n" + renderDescription(activity.description)}}</p>
+                @if(activity.description.length > 40){
+                    <button (click)="onMoreDescription($event, activity.description, activity.id)">Show more</button>
+                }
+            }
+        }
+        @if(activitiesCompleted()){
+            <p>Congratulations! You completed all your activities 🥳. Go make some others!</p>
+        }
+    }@else{
+        <p>No activities to select at the moment</p>
+    }
 </div>
