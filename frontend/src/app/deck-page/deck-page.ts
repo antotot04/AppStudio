@@ -140,8 +140,7 @@ export class DeckPage implements OnInit {
       next: (resp) => {
         this.cardList = resp;
         this.cardsToDisplay.set(this.cardList);
-        // TODO: on next commit
-        // this.execSearch()
+        this.execSearch();
       },
       error: () => {
         console.log("getDeckCards: error");
