@@ -53,7 +53,6 @@ export class DeckSettings implements OnInit {
   createUserDeck(deckData: DeckDTO){
     this.studyService.registerUserDeck(this.username, deckData).subscribe({
       next: () => {
-        console.log("deck registered");
         this.hasTerminated.emit(true);
       },
       error: () => {
@@ -66,7 +65,6 @@ export class DeckSettings implements OnInit {
     if(this.deckId() !== undefined){
       this.studyService.updateUserDeck(this.deckId()!, deckData).subscribe({
         next: () => {
-          console.log("deck edited");
           this.hasTerminated.emit(true);
         },
         error: () => {
@@ -85,13 +83,10 @@ export class DeckSettings implements OnInit {
     };
 
     if(this.pageFunc() === "create"){
-      console.log("here on create");
       this.createUserDeck(deckData);
     }else if(this.pageFunc() === "edit"){
-      console.log("here on edit");
       if(deckData.deckTitle === this.initTitle() &&
       deckData.deckLayout === this.initLayout()){
-        console.log("terminated");
         this.hasTerminated.emit(false);
         return; 
       }

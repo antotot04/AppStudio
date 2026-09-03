@@ -6,6 +6,7 @@ import { PomodoroTimer } from './pomodoro-timer/pomodoro-timer';
 import { StudyZone } from './study-zone/study-zone';
 import { DeckPage } from './deck-page/deck-page';
 import { StudyDeck } from './study-deck/study-deck';
+import { ActivityPage } from './activity-page/activity-page';
 
 export const routes: Routes = [
     {
@@ -47,6 +48,10 @@ export const routes: Routes = [
             {
                 path: 'study/learn/:deckId',
                 component: StudyDeck
+            },
+            {
+                path: 'activities',
+                component: ActivityPage
             }
         ]
     }
