@@ -51,7 +51,7 @@ public class ActivityController {
     }
 
     @PostMapping("/user/{username}/pomo")
-    public ResponseEntity<responseError> registerPomoActivity(@PathVariable("username") String username, @RequestParam("activityId") UUID activityId, @RequestParam("timestmap") Instant timestamp){
+    public ResponseEntity<responseError> registerPomoActivity(@PathVariable("username") String username, @RequestParam("activityId") UUID activityId, @RequestParam("timestamp") Instant timestamp){
         try {
             actService.registerFullActivityPomo(username, activityId, timestamp);
             return ResponseEntity.status(HttpStatus.CREATED).build();
