@@ -26,6 +26,10 @@ export class ActivityService {
     return this.http.delete(`${this.baseUrl}/id/${activityId}`);
   }
 
+  deleteCompletedUserActivities(username: string){
+    return this.http.delete(`${this.baseUrl}/user/${username}/completed`);
+  }
+
   /* this endpoint registers a pomodoro as related to a given activity but also
    * as a standard pomodoro. 
    * NOTE: When its related activity will be deleted this pomodoro

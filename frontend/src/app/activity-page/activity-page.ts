@@ -78,6 +78,19 @@ export class ActivityPage implements OnInit {
     }
   }
 
+  onDeleteAllCompleted(){
+    if(confirm("Do you really want to delete all completed activities?")){
+      this.actService.deleteCompletedUserActivities(this.username).subscribe({
+        next: () => {
+          this.loadUserActivities();
+        },
+        error: () => {
+          console.log("deleteAllCompleted: error");
+        }
+      })
+    }
+  }
+
   renderDescription(description: string | undefined): string{
     if(!description){
       return '';

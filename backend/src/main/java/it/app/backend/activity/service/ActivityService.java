@@ -118,4 +118,8 @@ public class ActivityService {
         actRepo.deleteById(activityId);
     }
 
+    public void deleteCompleted(String username){
+        actRepo.deleteCompletedByUsername(username);
+    }
+
 }

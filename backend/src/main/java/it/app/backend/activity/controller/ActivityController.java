@@ -79,4 +79,10 @@ public class ActivityController {
         actService.deleteActivity(activityId);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
+
+    @DeleteMapping("/user/{username}/completed")
+    public ResponseEntity<Void> deleteAllUserActivities(@PathVariable("username") String username){
+        actService.deleteCompleted(username);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    }
 }

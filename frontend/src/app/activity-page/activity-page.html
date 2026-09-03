@@ -6,6 +6,9 @@
 <button (click)="onNewActivity()">
     new activity
 </button>
+<button (click)="onDeleteAllCompleted()">
+    delete completed activities
+</button>
 
 @if (settingsPopUp()) {
     <app-activity-settings [pageFunc]="settingsMode()" [activityData]="currActData()" (hasTerminated)="onSettingsTerm($event)"></app-activity-settings>
@@ -15,7 +18,7 @@
     @for (activity of activitiesToDisplay(); track activity.id) {
         <div class="deck-item">
             <span class="side-pomo-counter">
-                {{`${activity.currentPomos}/${activity.pomoCounter}`}}
+                {{`${activity.currentPomos}/${activity.pomoCounter} ` + (activity.currentPomos === activity.pomoCounter ? 'completed!' : '') }}
             </span>
             <p class="title">
                 {{ activity.title }}
