@@ -1,0 +1,427 @@
+--
+-- PostgreSQL database (schema) dump
+--
+
+-- Dumped from database version 18.4 (Homebrew)
+-- Dumped by pg_dump version 18.4
+
+SET statement_timeout = 0;
+SET lock_timeout = 0;
+SET idle_in_transaction_session_timeout = 0;
+SET transaction_timeout = 0;
+SET client_encoding = 'UTF8';
+SET standard_conforming_strings = on;
+SELECT pg_catalog.set_config('search_path', '', false);
+SET check_function_bodies = false;
+SET xmloption = content;
+SET client_min_messages = warning;
+SET row_security = off;
+
+--
+-- Name: pgcrypto; Type: EXTENSION; Schema: -; Owner: -
+--
+
+CREATE EXTENSION IF NOT EXISTS pgcrypto WITH SCHEMA public;
+
+
+--
+-- Name: EXTENSION pgcrypto; Type: COMMENT; Schema: -; Owner: 
+--
+
+COMMENT ON EXTENSION pgcrypto IS 'cryptographic functions';
+
+
+SET default_tablespace = '';
+
+SET default_table_access_method = heap;
+
+--
+-- Name: ATTIVITA; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public."ATTIVITA" (
+    "Id_Attività" uuid DEFAULT gen_random_uuid() NOT NULL,
+    "Titolo" character varying(100) NOT NULL,
+    "Descrizione" text,
+    "Pomodori_Da_Completare" integer NOT NULL,
+    "Username" character varying(30) NOT NULL
+);
+
+
+ALTER TABLE public."ATTIVITA" OWNER TO postgres;
+
+--
+-- Name: CARTA_FRONTE_RETRO; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public."CARTA_FRONTE_RETRO" (
+    "Id_Carta" uuid DEFAULT gen_random_uuid() NOT NULL,
+    "Titolo" character varying(600) NOT NULL,
+    "Id_Mazzo" uuid NOT NULL,
+    "Retro" text NOT NULL
+);
+
+
+ALTER TABLE public."CARTA_FRONTE_RETRO" OWNER TO postgres;
+
+--
+-- Name: CARTA_RISP_MULTIPLA; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public."CARTA_RISP_MULTIPLA" (
+    "Id_Carta" uuid DEFAULT gen_random_uuid() NOT NULL,
+    "Titolo" character varying(600) NOT NULL,
+    "Id_Mazzo" uuid NOT NULL
+);
+
+
+ALTER TABLE public."CARTA_RISP_MULTIPLA" OWNER TO postgres;
+
+--
+-- Name: CARTA_VERO_FALSO; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public."CARTA_VERO_FALSO" (
+    "Id_Carta" uuid DEFAULT gen_random_uuid() NOT NULL,
+    "Titolo" character varying(600) NOT NULL,
+    "Id_Mazzo" uuid NOT NULL,
+    "Soluzione" boolean NOT NULL
+);
+
+
+ALTER TABLE public."CARTA_VERO_FALSO" OWNER TO postgres;
+
+--
+-- Name: MAZZO; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public."MAZZO" (
+    "Id_Mazzo" uuid DEFAULT gen_random_uuid() NOT NULL,
+    "Nome" character varying(50) NOT NULL,
+    "Layout" character varying(17),
+    "Username" character varying(30) NOT NULL
+);
+
+
+ALTER TABLE public."MAZZO" OWNER TO postgres;
+
+--
+-- Name: OPZIONI_RISP_MULTIPLA; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public."OPZIONI_RISP_MULTIPLA" (
+    "Id_Carta" uuid NOT NULL,
+    "Validità_Opzione" boolean NOT NULL,
+    "Id_Opzione" uuid NOT NULL,
+    "Testo_Opzione" text NOT NULL
+);
+
+
+ALTER TABLE public."OPZIONI_RISP_MULTIPLA" OWNER TO postgres;
+
+--
+-- Name: POMODORO; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public."POMODORO" (
+    "Id_Pomodoro" uuid DEFAULT gen_random_uuid() NOT NULL,
+    "Timestamp" timestamp with time zone NOT NULL,
+    "Username" character varying(30) NOT NULL
+);
+
+
+ALTER TABLE public."POMODORO" OWNER TO postgres;
+
+--
+-- Name: POM_ASSOCIATO; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public."POM_ASSOCIATO" (
+    "Id_Pomodoro" uuid NOT NULL,
+    "Id_Attività" uuid NOT NULL
+);
+
+
+ALTER TABLE public."POM_ASSOCIATO" OWNER TO postgres;
+
+--
+-- Name: PREFERENZE_TIMER; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public."PREFERENZE_TIMER" (
+    "Username" character varying(30) NOT NULL,
+    "Durata_Pausa_Corta" character varying DEFAULT '00:05:00'::character varying,
+    "Durata_Pausa_Lunga" character varying DEFAULT '00:15:00'::character varying,
+    "Frequenza_Pausa_Lunga" integer DEFAULT 4,
+    "Id_Suoneria" uuid,
+    "Volume_Suoneria" integer DEFAULT 50
+);
+
+
+ALTER TABLE public."PREFERENZE_TIMER" OWNER TO postgres;
+
+--
+-- Name: SELEZIONA_BACKGROUND; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public."SELEZIONA_BACKGROUND" (
+    "Username" character varying(30) NOT NULL,
+    "Id_Suono_Background" uuid,
+    "Volume_Suono_Background" integer DEFAULT 50,
+    "Attivo" boolean DEFAULT false NOT NULL
+);
+
+
+ALTER TABLE public."SELEZIONA_BACKGROUND" OWNER TO postgres;
+
+--
+-- Name: SUONO; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public."SUONO" (
+    "Id_Suono" uuid DEFAULT gen_random_uuid() NOT NULL,
+    "Tipo" character varying(10) NOT NULL,
+    "Nome" character varying(150) NOT NULL,
+    "Contenuto" bytea NOT NULL,
+    "MIME_Type" character varying(10) NOT NULL
+);
+
+
+ALTER TABLE public."SUONO" OWNER TO postgres;
+
+--
+-- Name: UTENTE; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public."UTENTE" (
+    "Username" character varying(30) CONSTRAINT "UTENTI _Username_not_null" NOT NULL,
+    "Email" character varying(320) CONSTRAINT "UTENTI _Email_not_null" NOT NULL,
+    "Password" character varying(60) CONSTRAINT "UTENTI _Password_not_null" NOT NULL,
+    "Data_Creazione" timestamp with time zone CONSTRAINT "UTENTI _Data_Creazione_not_null" NOT NULL,
+    "Foto_Profilo" bytea,
+    "Photo_Type" character varying(60)
+);
+
+
+ALTER TABLE public."UTENTE" OWNER TO postgres;
+
+--
+-- Name: ATTIVITA ATTIVITA_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."ATTIVITA"
+    ADD CONSTRAINT "ATTIVITA_pkey" PRIMARY KEY ("Id_Attività");
+
+
+--
+-- Name: CARTA_FRONTE_RETRO CARTA_FRONTE_RETRO_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."CARTA_FRONTE_RETRO"
+    ADD CONSTRAINT "CARTA_FRONTE_RETRO_pkey" PRIMARY KEY ("Id_Carta");
+
+
+--
+-- Name: CARTA_RISP_MULTIPLA CARTA_RISP_MULTIPLA_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."CARTA_RISP_MULTIPLA"
+    ADD CONSTRAINT "CARTA_RISP_MULTIPLA_pkey" PRIMARY KEY ("Id_Carta");
+
+
+--
+-- Name: CARTA_VERO_FALSO CARTA_VERO_FALSO_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."CARTA_VERO_FALSO"
+    ADD CONSTRAINT "CARTA_VERO_FALSO_pkey" PRIMARY KEY ("Id_Carta");
+
+
+--
+-- Name: MAZZO MAZZO_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."MAZZO"
+    ADD CONSTRAINT "MAZZO_pkey" PRIMARY KEY ("Id_Mazzo");
+
+
+--
+-- Name: OPZIONI_RISP_MULTIPLA OPZIONI_RISP_MULTIPLA_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."OPZIONI_RISP_MULTIPLA"
+    ADD CONSTRAINT "OPZIONI_RISP_MULTIPLA_pkey" PRIMARY KEY ("Id_Opzione", "Id_Carta");
+
+
+--
+-- Name: POMODORO POMODORO_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."POMODORO"
+    ADD CONSTRAINT "POMODORO_pkey" PRIMARY KEY ("Id_Pomodoro");
+
+
+--
+-- Name: POM_ASSOCIATO POM_ASSOCIATO_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."POM_ASSOCIATO"
+    ADD CONSTRAINT "POM_ASSOCIATO_pkey" PRIMARY KEY ("Id_Pomodoro");
+
+
+--
+-- Name: PREFERENZE_TIMER PREFERENZE_TIMER_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."PREFERENZE_TIMER"
+    ADD CONSTRAINT "PREFERENZE_TIMER_pkey" PRIMARY KEY ("Username");
+
+
+--
+-- Name: SELEZIONA_BACKGROUND SELEZIONA_BACKGROUND_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."SELEZIONA_BACKGROUND"
+    ADD CONSTRAINT "SELEZIONA_BACKGROUND_pkey" PRIMARY KEY ("Username");
+
+
+--
+-- Name: SUONO SUONO_Nome_key; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."SUONO"
+    ADD CONSTRAINT "SUONO_Nome_key" UNIQUE ("Nome");
+
+
+--
+-- Name: SUONO SUONO_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."SUONO"
+    ADD CONSTRAINT "SUONO_pkey" PRIMARY KEY ("Id_Suono");
+
+
+--
+-- Name: UTENTE UTENTE_Email_key; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."UTENTE"
+    ADD CONSTRAINT "UTENTE_Email_key" UNIQUE ("Email");
+
+
+--
+-- Name: UTENTE UTENTE_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."UTENTE"
+    ADD CONSTRAINT "UTENTE_pkey" PRIMARY KEY ("Username");
+
+
+--
+-- Name: ATTIVITA ATTIVITA_Username_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."ATTIVITA"
+    ADD CONSTRAINT "ATTIVITA_Username_fkey" FOREIGN KEY ("Username") REFERENCES public."UTENTE"("Username") ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: CARTA_FRONTE_RETRO CARTA_FRONTE_RETRO_Id_Mazzo_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."CARTA_FRONTE_RETRO"
+    ADD CONSTRAINT "CARTA_FRONTE_RETRO_Id_Mazzo_fkey" FOREIGN KEY ("Id_Mazzo") REFERENCES public."MAZZO"("Id_Mazzo") ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: CARTA_RISP_MULTIPLA CARTA_RISP_MULTIPLA_Id_Mazzo_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."CARTA_RISP_MULTIPLA"
+    ADD CONSTRAINT "CARTA_RISP_MULTIPLA_Id_Mazzo_fkey" FOREIGN KEY ("Id_Mazzo") REFERENCES public."MAZZO"("Id_Mazzo") ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: CARTA_VERO_FALSO CARTA_VERO_FALSO_Id_Mazzo_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."CARTA_VERO_FALSO"
+    ADD CONSTRAINT "CARTA_VERO_FALSO_Id_Mazzo_fkey" FOREIGN KEY ("Id_Mazzo") REFERENCES public."MAZZO"("Id_Mazzo") ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: MAZZO MAZZO_Username_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."MAZZO"
+    ADD CONSTRAINT "MAZZO_Username_fkey" FOREIGN KEY ("Username") REFERENCES public."UTENTE"("Username") ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: OPZIONI_RISP_MULTIPLA OPZIONI_RISP_MULTIPLA_Id_Carta_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."OPZIONI_RISP_MULTIPLA"
+    ADD CONSTRAINT "OPZIONI_RISP_MULTIPLA_Id_Carta_fkey" FOREIGN KEY ("Id_Carta") REFERENCES public."CARTA_RISP_MULTIPLA"("Id_Carta") ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: POMODORO POMODORO_Username_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."POMODORO"
+    ADD CONSTRAINT "POMODORO_Username_fkey" FOREIGN KEY ("Username") REFERENCES public."UTENTE"("Username") ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: POM_ASSOCIATO POM_ASSOCIATO_Id_Attività_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."POM_ASSOCIATO"
+    ADD CONSTRAINT "POM_ASSOCIATO_Id_Attività_fkey" FOREIGN KEY ("Id_Attività") REFERENCES public."ATTIVITA"("Id_Attività") ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: POM_ASSOCIATO POM_ASSOCIATO_Id_Pomodoro_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."POM_ASSOCIATO"
+    ADD CONSTRAINT "POM_ASSOCIATO_Id_Pomodoro_fkey" FOREIGN KEY ("Id_Pomodoro") REFERENCES public."POMODORO"("Id_Pomodoro") ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: PREFERENZE_TIMER PREFERENZE_TIMER_Id_Suoneria_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."PREFERENZE_TIMER"
+    ADD CONSTRAINT "PREFERENZE_TIMER_Id_Suoneria_fkey" FOREIGN KEY ("Id_Suoneria") REFERENCES public."SUONO"("Id_Suono") ON UPDATE CASCADE ON DELETE SET NULL;
+
+
+--
+-- Name: PREFERENZE_TIMER PREFERENZE_TIMER_Username_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."PREFERENZE_TIMER"
+    ADD CONSTRAINT "PREFERENZE_TIMER_Username_fkey" FOREIGN KEY ("Username") REFERENCES public."UTENTE"("Username") ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: SELEZIONA_BACKGROUND SELEZIONA_BACKGROUND_Id_Suono_Background_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."SELEZIONA_BACKGROUND"
+    ADD CONSTRAINT "SELEZIONA_BACKGROUND_Id_Suono_Background_fkey" FOREIGN KEY ("Id_Suono_Background") REFERENCES public."SUONO"("Id_Suono") ON UPDATE CASCADE ON DELETE SET NULL;
+
+
+--
+-- Name: SELEZIONA_BACKGROUND SELEZIONA_BACKGROUND_Username_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."SELEZIONA_BACKGROUND"
+    ADD CONSTRAINT "SELEZIONA_BACKGROUND_Username_fkey" FOREIGN KEY ("Username") REFERENCES public."PREFERENZE_TIMER"("Username") ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- PostgreSQL database dump complete
+--
+
