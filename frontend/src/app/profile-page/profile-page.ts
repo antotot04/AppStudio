@@ -180,4 +180,18 @@ export class ProfilePage {
       this.execDelete();
     }
   }
+
+  execDeleteProfilePhoto(){
+    this.userService.deleteProfilePhoto(this.username).subscribe({
+      next: () => {
+        alert("refresh to see changes");
+      }
+    })
+  }
+
+  onDeletePhoto(){
+    if(confirm("Do you really want to delete your profile photo?")){
+      this.execDeleteProfilePhoto();
+    }
+  }
 }

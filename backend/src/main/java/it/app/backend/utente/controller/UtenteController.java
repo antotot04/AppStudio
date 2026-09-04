@@ -173,6 +173,16 @@ public class UtenteController {
         }
     }
 
+    @DeleteMapping("/{username}/profilePhoto")
+    public ResponseEntity<Void> deleteProfilePhoto(@PathVariable("username") String username){
+        try {
+            service.deleteUserProfilePhoto(username);
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).build(); 
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().build();
+        }
+    }
+
     @DeleteMapping("/{username}")
     public ResponseEntity<Void> deleteUtente(@PathVariable("username") String username){
         try {

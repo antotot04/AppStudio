@@ -33,4 +33,9 @@ export class UserInfo {
     const url = this.baseurl + `/${user}`;
     return this.service.delete(url); 
   }
+
+  deleteProfilePhoto(user: string){
+    const url = this.baseurl + `/${user}` + '/profilePhoto';
+    return this.service.delete(url);
+  }
 }

@@ -26,6 +26,7 @@
 
         <label for="user-photo">Photo: </label>
         <input type="file" id="user-photo" accept="image/jpeg, image/png" (change)="onUpdatePhoto($event)">
+        <button type="button" (click)="onDeletePhoto()" >Delete Photo</button>
 
         <button type="submit" [class]="generalState()">{{generalButtonText()}}</button>
         <span>{{ updateGeneralInfoError() }}</span>

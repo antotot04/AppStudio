@@ -196,4 +196,21 @@ public class UtenteService {
 
         repo.deleteById(username);
     }
+
+    /* Delete the profile photo of a user if not null. 
+     * If profile photo already null, nothing happens */
+    public void deleteUserProfilePhoto(String username) throws IllegalArgumentException{
+        if(username == null){
+            throw new IllegalArgumentException("username not valid");
+        }
+
+        Utente user = repo.findById(username)
+            .orElseThrow(() -> new IllegalArgumentException("User not found"));
+        
+        if(user.getFotoProfilo() != null){
+            user.setFotoProfilo(null);
+        }
+
+        repo.save(user);
+    }
 }
