@@ -48,44 +48,34 @@ export class TimerSettings implements OnInit {
   soundList = signal<SoundTrack[]>([]);
 
   getSoundList(){
-    this.service.getAllSounds().subscribe({
-      next: (resp) => {
-        this.soundList.set(resp);
-      },
-      error: () => {
-        console.log("getAllSounds: error");
-      }
+    this.service.getAllSounds().subscribe((resp) => {
+      this.soundList.set(resp);
     });
   }
 
   getSettings(){
-    this.service.getUserSettings(this.username()).subscribe({
-      next: (resp) => {
-        const freshSettings: PomoSettingsForm = {
-          timer: {
-            shortPause: resp.timer.shortPause / 60,
-            longPause: resp.timer.longPause / 60,
-            frequency: resp.timer.frequency
-          },
-          sound: {
-            ringtone: resp.suono.ringtone,
-            ringtone_volume: resp.suono.ringtone_volume,
-            background: resp.suono.background === null ? '' : resp.suono.background,
-            background_volume: resp.suono.background_volume
-          }
+    this.service.getUserSettings(this.username()).subscribe((resp) => {
+      const freshSettings: PomoSettingsForm = {
+        timer: {
+          shortPause: resp.timer.shortPause / 60,
+          longPause: resp.timer.longPause / 60,
+          frequency: resp.timer.frequency
+        },
+        sound: {
+          ringtone: resp.suono.ringtone,
+          ringtone_volume: resp.suono.ringtone_volume,
+          background: resp.suono.background === null ? '' : resp.suono.background,
+          background_volume: resp.suono.background_volume
         }
-
-        if(resp.suono.background === null){
-          this.backgroundToCreate.set(true);
-        }else{
-          this.backgroundToCreate.set(false);
-        }
-
-        this.formModel.set(freshSettings);
-      },
-      error: () => {
-        console.log("getSettings: error");
       }
+
+      if(resp.suono.background === null){
+        this.backgroundToCreate.set(true);
+      }else{
+        this.backgroundToCreate.set(false);
+      }
+
+      this.formModel.set(freshSettings);
     })
   }
 
@@ -104,14 +94,9 @@ export class TimerSettings implements OnInit {
       this.backgroundToCreate.set(true);
     }
 
-    forkJoin(requests).subscribe({
-      next: () => {
-        this.userSettingsEvent.emit(true); // to inform pomodoro component that new settings has been updated
-        console.log("userSettings updated");
-      },
-      error: () => {
-        console.log("error");
-      }
+    forkJoin(requests).subscribe(() => {
+      this.userSettingsEvent.emit(true); // to inform pomodoro component that new settings has been updated
+      console.log("userSettings updated");
     })
   }
 

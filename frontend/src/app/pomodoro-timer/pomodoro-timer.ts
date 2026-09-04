@@ -99,48 +99,36 @@ export class PomodoroTimer implements OnInit {
   });
 
   sendTimestamp(timestamp: Date){
-    this.timerService.sendTimestamp(this.username, timestamp).subscribe({
-      next: () => {
-        console.log("sendTimestamp: ok");
-      },
-      error: () => {
-        console.log("sendTimestamp: error");
-      }
-    })
+    this.timerService.sendTimestamp(this.username, timestamp).subscribe();
   }
 
   sendActTimestamp(timestamp: Date, activityId: string){
     /* NOTE: see comments related to this endpoint in activity-service.ts */
-    this.activityServivce.sendActivityPomodoro(this.username, activityId, timestamp).subscribe({
-      next: () => {
-        this.activityList.update((list) => {
-          const updatedList = list.map((act) => {
-            if(act.id === activityId){
-              return {
-                ... act,
-                currentPomos: act.currentPomos+1
-              }
-            }else{
-              return {
-                ... act,
-              }
+    this.activityServivce.sendActivityPomodoro(this.username, activityId, timestamp).subscribe(() => {
+      this.activityList.update((list) => {
+        const updatedList = list.map((act) => {
+          if(act.id === activityId){
+            return {
+              ... act,
+              currentPomos: act.currentPomos+1
             }
-          });
-          return updatedList;
-        })
+          }else{
+            return {
+              ... act,
+            }
+          }
+        });
+        return updatedList;
+      })
 
-        /* check if current activity is completed */
-        const selectedAct = this.activityList().find((act) => act.id === activityId);
-        if(selectedAct === undefined){
-          throw new Error("current selected activity is undefined");
-        }
+      /* check if current activity is completed */
+      const selectedAct = this.activityList().find((act) => act.id === activityId);
+      if(selectedAct === undefined){
+        throw new Error("current selected activity is undefined");
+      }
 
-        if(selectedAct.currentPomos === selectedAct.pomoCounter){
-          this.actChecked.set(undefined);
-        }
-      },
-      error: () => {
-        console.log("sendActTimestamp: error");
+      if(selectedAct.currentPomos === selectedAct.pomoCounter){
+        this.actChecked.set(undefined);
       }
     });
   }
@@ -269,25 +257,15 @@ export class PomodoroTimer implements OnInit {
   }
 
   getUpdatedSettings(){
-    this.timerService.getUserSettings(this.username).subscribe({
-      next: (resp) => {
-        this.userSettings.set(resp);
-        this.refreshTimer();
-      },
-      error: () => {
-        console.log("getSettings: error");
-      }
+    this.timerService.getUserSettings(this.username).subscribe((resp) => {
+      this.userSettings.set(resp);
+      this.refreshTimer();
     })
   }
 
   loadCurrUserActivities(){
-    this.activityServivce.getUserActivities(this.username).subscribe({
-      next: (resp) => {
-        this.activityList.set(resp);
-      },
-      error: () => {
-        console.log("loadCurrUserActivities: error");
-      }
+    this.activityServivce.getUserActivities(this.username).subscribe((resp) => {
+      this.activityList.set(resp);
     })
   }
 

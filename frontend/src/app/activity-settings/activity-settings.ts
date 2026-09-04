@@ -54,13 +54,8 @@ export class ActivitySettings implements OnInit{
       description: this.activityForm.description().value() === '' ? undefined : this.activityForm.description().value(),
       pomoCounter: this.activityForm.pomoCounter().value()
     }
-    this.service.registerUserActivity(this.username, data).subscribe({
-      next: () => {
-        this.hasTerminated.emit(true);
-      },
-      error: () => {
-        console.log("registerActivity: error");
-      }
+    this.service.registerUserActivity(this.username, data).subscribe(() => {
+      this.hasTerminated.emit(true);
     });
   }
 
@@ -72,13 +67,8 @@ export class ActivitySettings implements OnInit{
         description: this.activityForm.description().value() === '' ? undefined : this.activityForm.description().value(),
         pomoCounter: this.activityForm.pomoCounter().value()
       }
-      this.service.updateActivity(actData.id, data).subscribe({
-        next: () => {
-          this.hasTerminated.emit(true);
-        },
-        error: () => {
-          console.log("registerActivity: error");
-        }
+      this.service.updateActivity(actData.id, data).subscribe(() => {
+        this.hasTerminated.emit(true);
       });
     }
   }

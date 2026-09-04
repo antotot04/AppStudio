@@ -51,25 +51,15 @@ export class DeckSettings implements OnInit {
   });
 
   createUserDeck(deckData: DeckDTO){
-    this.studyService.registerUserDeck(this.username, deckData).subscribe({
-      next: () => {
-        this.hasTerminated.emit(true);
-      },
-      error: () => {
-        console.log("createUserDeck: error");
-      }
+    this.studyService.registerUserDeck(this.username, deckData).subscribe(() => {
+      this.hasTerminated.emit(true);
     })
   }
 
   editUserDeck(deckData: DeckDTO){
     if(this.deckId() !== undefined){
-      this.studyService.updateUserDeck(this.deckId()!, deckData).subscribe({
-        next: () => {
-          this.hasTerminated.emit(true);
-        },
-        error: () => {
-          console.log("editUserDeck: error");
-        }
+      this.studyService.updateUserDeck(this.deckId()!, deckData).subscribe(() => {
+        this.hasTerminated.emit(true);
       });
     }
   }
@@ -108,53 +98,43 @@ export class DeckSettings implements OnInit {
 
   getDeckInfo(){
     if(this.deckId() !== undefined){
-      this.studyService.getUserDeck(this.deckId()!).subscribe({
-        next: (resp) => {
-          this.formModel.set({
-            deckTitle: resp.title,
-            deckLayout: resp.layout
-          });
-          this.initTitle.set(resp.title);
-          this.initLayout.set(resp.layout);
-        },
-        error: () => {
-          console.log("getDeckInfo: error");
-        }
+      this.studyService.getUserDeck(this.deckId()!).subscribe((resp) => {
+        this.formModel.set({
+          deckTitle: resp.title,
+          deckLayout: resp.layout
+        });
+        this.initTitle.set(resp.title);
+        this.initLayout.set(resp.layout);
       })
     }
   }
 
   setDisabledOptions(){
     if(this.deckId() !== undefined){
-      this.studyService.getDeckCards(this.deckId()!).subscribe({
-        next: (resp) => {
-          const possibleLayout = resp[0].layout;
-          for(const card of resp){
-            if(card.layout !== possibleLayout){
-              this.doubleSidedDisabled.set(true);
-              this.trueFalseDisabled.set(true);
-              this.quizDisabled.set(true);
-              break;
-            }
+      this.studyService.getDeckCards(this.deckId()!).subscribe((resp) => {
+        const possibleLayout = resp[0].layout;
+        for(const card of resp){
+          if(card.layout !== possibleLayout){
+            this.doubleSidedDisabled.set(true);
+            this.trueFalseDisabled.set(true);
+            this.quizDisabled.set(true);
+            break;
           }
-          
-          if(!this.doubleSidedDisabled() && 
-          !this.trueFalseDisabled() && 
-          !this.quizDisabled()){
-            if(possibleLayout == "quiz"){
-              this.trueFalseDisabled.set(true);
-              this.doubleSidedDisabled.set(true);
-            }else if(possibleLayout == "double-sided"){
-              this.trueFalseDisabled.set(true);
-              this.quizDisabled.set(true);
-            }else{
-              this.doubleSidedDisabled.set(true);
-              this.quizDisabled.set(true);
-            }
+        }
+        
+        if(!this.doubleSidedDisabled() && 
+        !this.trueFalseDisabled() && 
+        !this.quizDisabled()){
+          if(possibleLayout == "quiz"){
+            this.trueFalseDisabled.set(true);
+            this.doubleSidedDisabled.set(true);
+          }else if(possibleLayout == "double-sided"){
+            this.trueFalseDisabled.set(true);
+            this.quizDisabled.set(true);
+          }else{
+            this.doubleSidedDisabled.set(true);
+            this.quizDisabled.set(true);
           }
-        },
-        error: () => {
-          console.log("setDisabledOptions: error");
         }
       })
     }

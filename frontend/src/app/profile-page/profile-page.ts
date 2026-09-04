@@ -95,8 +95,6 @@ export class ProfilePage {
         setTimeout(() => {this.generalState.set('')}, 1000);
       },
       error: (resp) => {
-        console.log("updateGeneralInfo: backend error");
-        console.log(resp);
         if(resp.status === 404){
           this.updateGeneralInfoError.set("User not found");
         }else{
@@ -149,14 +147,9 @@ export class ProfilePage {
     const newPassword = this.updateFormPassword.newPassword().value();
     console.log(newPassword);
 
-    this.userService.updatePassword(this.username, newPassword).subscribe({
-      next: () => {
-        this.passwordState.set('updated');
-        setTimeout(() => this.passwordState.set(''), 1000);
-      },
-      error: () => {
-        console.log("updatePassword: backend error");
-      }
+    this.userService.updatePassword(this.username, newPassword).subscribe(() => {
+      this.passwordState.set('updated');
+      setTimeout(() => this.passwordState.set(''), 1000);
     })
   }
 
@@ -165,13 +158,8 @@ export class ProfilePage {
   }
 
   execDelete(){
-    this.userService.deleteAccount(this.username).subscribe({
-      next: () => {
-        this.router.navigate(['/signup']);
-      },
-      error: () => {
-        console.log("delete: backend error");
-      }
+    this.userService.deleteAccount(this.username).subscribe(() => {
+      this.router.navigate(['/signup']);
     })
   }
 

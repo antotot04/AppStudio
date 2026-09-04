@@ -1,12 +1,11 @@
 <form class="search" (submit)="onSubmit($event)">
     <select id="select-layout" [formField]="this.searchForm.layout">
         <option value="">all</option>
-        <option value="general">general</option>
         <option value="quiz">quiz</option>
         <option value="true-false">true-false</option>
         <option value="double-sided">double-sided</option>
     </select>
-    <input type="text" id="search-content" placeholder="search a card here" [formField]="this.searchForm.word">
+    <input type="search" id="search-content" placeholder="search a card here" [formField]="this.searchForm.word">
     <button type="submit">Search</button>
 </form>
 

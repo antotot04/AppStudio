@@ -175,14 +175,9 @@ export class CardSettings implements OnInit {
   }
 
   deleteFullOption(opt: QuizOption){
-    this.cardService.deleteQuizOption(this.cardId()!, opt.idOption).subscribe({
-      next: () => {
-        console.log("deleteRemoteOption: ok");
-        this.deleteShallowOption(opt);
-      },
-      error: () => {
-        console.log("deleteRemoteOption: error");
-      }
+    this.cardService.deleteQuizOption(this.cardId()!, opt.idOption).subscribe(() => {
+      console.log("deleteRemoteOption: ok");
+      this.deleteShallowOption(opt);
     });
   }
 
@@ -255,29 +250,19 @@ export class CardSettings implements OnInit {
   /* CARD RELATED CALLS */
 
   registerCard(data: QuizCardData | TrueFalseCard | DoubleSidedCard){
-    this.cardService.reigsterCard(this.deckId, this.layoutEdited(), data).subscribe({
-      next: () => {
-        if(this.pageFunc() === "create"){
-          this.hasTerminated.emit(true);
-        }
-      },
-      error: () => {
-        console.log("registerCard: error");
+    this.cardService.reigsterCard(this.deckId, this.layoutEdited(), data).subscribe(() => {
+      if(this.pageFunc() === "create"){
+        this.hasTerminated.emit(true);
       }
     });
   }
 
   editCard(data: QuizCard | TrueFalseCard | DoubleSidedCard){
-    this.cardService.updateCard(this.cardId()!, this.layoutEdited(), data).subscribe({
-      next: () => {
-        if(this.layoutEdited() === "quiz" && this.tempOptIds().length !== 0){
-          this.registerNewOptions();
-        }else{
-          this.hasTerminated.emit(true);
-        }
-      },
-      error: () => {
-        console.log("editCard: error");
+    this.cardService.updateCard(this.cardId()!, this.layoutEdited(), data).subscribe(() => {
+      if(this.layoutEdited() === "quiz" && this.tempOptIds().length !== 0){
+        this.registerNewOptions();
+      }else{
+        this.hasTerminated.emit(true);
       }
     });
   }
@@ -291,14 +276,9 @@ export class CardSettings implements OnInit {
     if(oldCardLayout === undefined){
       throw new Error("initial layout is undefined");
     }
-    this.cardService.deleteDeckCard(oldCardId, oldCardLayout).subscribe({
-      next: () => {
-        console.log("deleteOldLayoutInstance: ok");
-        this.hasTerminated.emit(true);
-      },
-      error: () => {
-        console.log("deleteOldLayoutInstance: error");
-      }
+    this.cardService.deleteDeckCard(oldCardId, oldCardLayout).subscribe(() => {
+      console.log("deleteOldLayoutInstance: ok");
+      this.hasTerminated.emit(true);
     })
   }
 
@@ -431,39 +411,34 @@ export class CardSettings implements OnInit {
     console.log(thisId);
     console.log(thisLayout);
     if(thisId !== undefined && thisLayout !== undefined){
-      this.cardService.getDeckCard(thisId, thisLayout).subscribe({
-        next: (resp) => {
-          this.initCard = resp;
-          this.card.set(this.initCard);
+      this.cardService.getDeckCard(thisId, thisLayout).subscribe((resp) => {
+        this.initCard = resp;
+        this.card.set(this.initCard);
 
-          // form init here
-          switch(thisLayout){
-            case "double-sided":
-              this.formModel.set({
-                front: (resp as DoubleSidedCard).front,
-                back: (resp as DoubleSidedCard).back,
-                validity: "true"
-              });
-              break;
-            case "true-false":
-              this.formModel.set({
-                front: (resp as TrueFalseCard).front,
-                back: '',
-                validity: (resp as TrueFalseCard).validity ? "true" : "false"
-              });
-              break;
-            default:
-              this.formModel.set({
-                front: (resp as QuizCard).front,
-                back: '',
-                validity: "true"
-              });
-              this.optionFormList.set((resp as QuizCard).options);
-              break;
-          }
-        },
-        error: () => {
-          console.log("loadCard: error");
+        // form init here
+        switch(thisLayout){
+          case "double-sided":
+            this.formModel.set({
+              front: (resp as DoubleSidedCard).front,
+              back: (resp as DoubleSidedCard).back,
+              validity: "true"
+            });
+            break;
+          case "true-false":
+            this.formModel.set({
+              front: (resp as TrueFalseCard).front,
+              back: '',
+              validity: (resp as TrueFalseCard).validity ? "true" : "false"
+            });
+            break;
+          default:
+            this.formModel.set({
+              front: (resp as QuizCard).front,
+              back: '',
+              validity: "true"
+            });
+            this.optionFormList.set((resp as QuizCard).options);
+            break;
         }
       })
     }

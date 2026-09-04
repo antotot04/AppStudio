@@ -35,24 +35,14 @@ export class TimerLeaderboard implements OnInit {
   }
 
   getLoggedUser(timeSpan: "week" | "month" | "year"){
-    this.timerService.getUserLeaderboardData(this.username()!, timeSpan, this.quantity()).subscribe({
-      next: (resp) => {
-        this.loggedUser.set(resp);
-      },
-      error: () => {
-        console.log("getLoggedUser: error");
-      }
+    this.timerService.getUserLeaderboardData(this.username()!, timeSpan, this.quantity()).subscribe((resp) => {
+      this.loggedUser.set(resp);
     });
   }
 
   getLeaderboardUsers(timeSpan: "week" | "month" | "year"){
-    this.timerService.getLeaderboardData(this.quantity(), timeSpan).subscribe({
-      next: (resp) => {
-        this.leaderboardUsers.set(resp);
-      },
-      error: () => {
-        
-      }
+    this.timerService.getLeaderboardData(this.quantity(), timeSpan).subscribe((resp) => {
+      this.leaderboardUsers.set(resp);
     });
   }
 

@@ -92,59 +92,39 @@ export class DeckPage implements OnInit {
 
   onDeleteDeck(){
     if(confirm("Do you really want to delete this deck? (All your deck's data will be permanently deleted from your account)")){
-      this.studyService.deleteUserDeck(this.deckId).subscribe({
-        next: () => {
-          this.router.navigate([this.username, 'study']);
-        },
-        error: () => {
-          console.log("onDeleteDeck: error");
-        }
+      this.studyService.deleteUserDeck(this.deckId).subscribe(() => {
+        this.router.navigate([this.username, 'study']);
       });
     }
   }
 
   onDeleteCard(cardId: string, layout: "quiz" | "double-sided" | "true-false"){
     if(confirm("Do you really want to delete this card?")){
-      this.studyService.deleteDeckCard(cardId, layout).subscribe({
-        next: () => {
-          console.log("onDeleteCard: deleted")
-          this.getDeckCards();
-        },
-        error: () => {
-          console.log("onDeleteCard: error");
-        }
+      this.studyService.deleteDeckCard(cardId, layout).subscribe(() => {
+        console.log("onDeleteCard: deleted")
+        this.getDeckCards();
       });
     }
   }
 
   getDeckInfo(){
-    this.studyService.getUserDeck(this.deckId).subscribe({
-      next: (resp) => {
-        if(resp.layout === null){
-          resp.layout = "general";
-        }
-
-        this.deckInfo.set({
-          deckLayout: resp.layout,
-          deckTitle: resp.title
-        });
-      },
-      error: () => {
-        console.log("getDeckInfo: error");
+    this.studyService.getUserDeck(this.deckId).subscribe((resp) => {
+      if(resp.layout === null){
+        resp.layout = "general";
       }
+
+      this.deckInfo.set({
+        deckLayout: resp.layout,
+        deckTitle: resp.title
+      });
     })
   }
 
   getDeckCards(){
-    this.studyService.getDeckCards(this.deckId).subscribe({
-      next: (resp) => {
-        this.cardList = resp;
-        this.cardsToDisplay.set(this.cardList);
-        this.execSearch();
-      },
-      error: () => {
-        console.log("getDeckCards: error");
-      }
+    this.studyService.getDeckCards(this.deckId).subscribe((resp) => {
+      this.cardList = resp;
+      this.cardsToDisplay.set(this.cardList);
+      this.execSearch();
     })
   }
 

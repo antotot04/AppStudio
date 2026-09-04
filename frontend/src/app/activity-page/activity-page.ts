@@ -67,26 +67,16 @@ export class ActivityPage implements OnInit {
 
   onDelete(activityId: string){
     if(confirm("Do you really want to delete this activity?")){
-      this.actService.deleteActivity(activityId).subscribe({
-      next: () => {
-        this.loadUserActivities();
-      },
-      error: () => {
-        console.log("deleteFullActivity: error");
-      }
+      this.actService.deleteActivity(activityId).subscribe(() => {
+      this.loadUserActivities();
     })
     }
   }
 
   onDeleteAllCompleted(){
     if(confirm("Do you really want to delete all completed activities?")){
-      this.actService.deleteCompletedUserActivities(this.username).subscribe({
-        next: () => {
-          this.loadUserActivities();
-        },
-        error: () => {
-          console.log("deleteAllCompleted: error");
-        }
+      this.actService.deleteCompletedUserActivities(this.username).subscribe(() => {
+        this.loadUserActivities();
       })
     }
   }
@@ -104,15 +94,10 @@ export class ActivityPage implements OnInit {
   }
 
   loadUserActivities(){
-    this.actService.getUserActivities(this.username).subscribe({
-      next: (resp) => {
-        this.activityList = resp;
-        this.activitiesToDisplay.set(this.activityList);
-        this.execSearch();
-      },
-      error: () => {
-        console.log("loadUserActivities: error");
-      }
+    this.actService.getUserActivities(this.username).subscribe((resp) => {
+      this.activityList = resp;
+      this.activitiesToDisplay.set(this.activityList);
+      this.execSearch();
     })
   }
 
