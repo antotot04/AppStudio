@@ -23,24 +23,6 @@ export class ProfilePage {
     this.close.emit();
   }
 
-  generalState = signal<string>('');
-  generalButtonText = computed<string>(() => {
-    if(this.generalState() === 'updated'){
-      return 'info updated';
-    }else{
-      return 'update';
-    }
-  })
-
-  passwordState = signal<string>('');
-  passwordButtonText = computed<string>(() => {
-    if(this.passwordState() === 'updated'){
-      return 'password updated';
-    }else{
-      return 'update password';
-    }
-  })
-
   formModelGeneral = signal<{email: string}>({
     email: ''
   });
@@ -71,12 +53,10 @@ export class ProfilePage {
     }
   }
 
-  updateGeneralInfoError = signal('');
   onSubmitGeneral(event: Event){
     event.preventDefault();
 
     if(this.updateFormGeneral.email().invalid()){
-      this.generalState.set('not-valid');
       return;
     }
 
@@ -87,21 +67,9 @@ export class ProfilePage {
       dataToSend.append('photoType', this.newImage.type);
     }
 
-    this.userService.updateGeneralInfo(this.username, dataToSend).subscribe({
-      next: () => {
-        this.updateGeneralInfoError.set('');
-        this.generalState.set('updated');
-        alert("refresh to see changes");
-        setTimeout(() => {this.generalState.set('')}, 1000);
-      },
-      error: (resp) => {
-        if(resp.status === 404){
-          this.updateGeneralInfoError.set("User not found");
-        }else{
-          this.updateGeneralInfoError.set(resp.error.message);
-        }
-      }
-    })
+    this.userService.updateGeneralInfo(this.username, dataToSend).subscribe(() => {
+      alert("refresh to see changes");
+    });
   }
 
   showPassForm = false;
@@ -135,12 +103,10 @@ export class ProfilePage {
     event.preventDefault();
 
     if(this.updateFormPassword.newPassword().invalid()){
-      this.passwordState.set('not-valid');
       return;
     }
 
     if(this.updateFormPassword.newPassword().value() !== this.updateFormPassword.confirmedPassword().value()){
-      this.passwordState.set('not-valid');
       return;
     }
 
@@ -148,9 +114,8 @@ export class ProfilePage {
     console.log(newPassword);
 
     this.userService.updatePassword(this.username, newPassword).subscribe(() => {
-      this.passwordState.set('updated');
-      setTimeout(() => this.passwordState.set(''), 1000);
-    })
+      alert("password updated successfully");
+    });
   }
 
   onLogOut(){

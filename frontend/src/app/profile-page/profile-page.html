@@ -1,4 +1,4 @@
-<div>
+<div class="pop-up-container">
     <button class="exit-pop-up-btn" (click)="onExit()">
         <img
             src="/exit.svg"
@@ -10,66 +10,96 @@
 
     <h2>@{{this.username}}</h2>
 
-    <p>{{this.userInfos()!.email}}</p>
+    <p><span>Your email:</span> {{this.userInfos()!.email}}</p>
 
-    <form class="general-form" (submit)="onSubmitGeneral($event)">
-        <label for="user-email">Email: </label>
-        <input type="email" id="user-email" [placeholder]="this.userInfos()!.email" [formField]="this.updateFormGeneral.email">
+    <div class="form-content">
+        <form id="general" (submit)="onSubmitGeneral($event)">
+            <label for="user-email">Email: </label>
+            <input type="email" id="user-email" [placeholder]="this.userInfos()!.email" [formField]="this.updateFormGeneral.email">
 
-        @if(this.updateFormGeneral.email().invalid() && this.updateFormGeneral.email().touched()){
-            <ul>
-                @for(error of this.updateFormGeneral.email().errors(); track error.message){
-                    <li>{{ error.message }}</li>
-                }
-            </ul>
-        }
-
-        <label for="user-photo">Photo: </label>
-        <input type="file" id="user-photo" accept="image/jpeg, image/png" (change)="onUpdatePhoto($event)">
-        <button type="button" (click)="onDeletePhoto()" >Delete Photo</button>
-
-        <button type="submit" [class]="generalState()">{{generalButtonText()}}</button>
-        <span>{{ updateGeneralInfoError() }}</span>
-    </form>
-
-    @if(!showPassForm){
-        <button (click)="onClickChangePass()">Change Password</button>
-    }@else{
-        <form class="password-form" (submit)="onSubmitPassword($event)">
-            @if(checkPass()){
-                <label for="user-old-password">Insert your password: </label>
-                <input type="password" id="user-old-password" placeholder="**********" [formField]="this.updateFormPassword.oldPassword">
-                <button (click)="validate($event)">Confirm</button>
-
-                @if(validationFailed()){ 
-                    <span>password is invalid</span>
-                }
-            }@else{
-                <label for="user-password">Password: </label>
-                <input type="password" id="user-password" placeholder="**********" [formField]="this.updateFormPassword.newPassword">
-
-                @if(this.updateFormPassword.newPassword().invalid() && this.updateFormPassword.newPassword().touched()){
-                    <ul>
-                        @for(error of this.updateFormPassword.newPassword().errors(); track error.message){
-                            <li>{{ error.message }}</li>
-                        }
-                    </ul>
-                }
-
-                <label for="user-confirm-password">Confirm new password: </label>
-                <input type="password" id="user-confirm-password" placeholder="confirm new password" [formField]="this.updateFormPassword.confirmedPassword">
-
-                @if(this.updateFormPassword.confirmedPassword().touched() && 
-                    updateFormPassword.confirmedPassword().value() !== this.updateFormPassword.newPassword().value()){
-                        <span>passwords do not match</span>
-                }
-
-                <button type="submit" [class]="passwordState()">{{ passwordButtonText() }}</button>
+            @if(this.updateFormGeneral.email().invalid() && this.updateFormGeneral.email().touched()){
+                <ul class="error-form-list">
+                    @for(error of this.updateFormGeneral.email().errors(); track error.message){
+                        <li class="error-form-item">{{ error.message }}</li>
+                    }
+                </ul>
             }
-        </form>
-    }
+            <div class="user-photo-group">
+                <label for="user-photo">Upload Profile Picture</label>
+                <input type="file" id="user-photo" accept="image/jpeg, image/png" (change)="onUpdatePhoto($event)">
+                <button type="button" (click)="onDeletePhoto()" >
+                    <img
+                        src="/delete-bin.svg"
+                        width=20px
+                        height=20px
+                        alt="delete button image"
+                    />
+                </button>
+            </div>
 
-    <button (click)="onDeleteAccount()">DELETE ACCOUNT</button>
-    
-    <button (click)="onLogOut()">LOG OUT</button>
+            <button class="update-form-btn" type="submit"> 
+                <img
+                    src="/edit-pen.svg"
+                    width=14px
+                    height=14px
+                    alt="a pen. Update button image"
+                />
+                update
+            </button>
+        </form>
+
+        <div class="pass-form-content">
+            @if(!showPassForm){
+                <button class="change-pass-btn" (click)="onClickChangePass()">Change Password</button>
+            }@else{
+                <form class="password-form" (submit)="onSubmitPassword($event)">
+                    @if(checkPass()){
+                        <label for="user-old-password">Insert your password: </label>
+                        <div>
+                            <input type="password" id="user-old-password" placeholder="**********" [formField]="this.updateFormPassword.oldPassword">
+                            <button (click)="validate($event)">Confirm</button>
+                        </div>
+
+                        @if(validationFailed()){ 
+                            <span class="error-form-item">password is invalid</span>
+                        }
+                    }@else{
+                        <label for="user-password">Password: </label>
+                        <input type="password" id="user-password" placeholder="**********" [formField]="this.updateFormPassword.newPassword">
+
+                        @if(this.updateFormPassword.newPassword().invalid() && this.updateFormPassword.newPassword().touched()){
+                            <ul class="error-form-list">
+                                @for(error of this.updateFormPassword.newPassword().errors(); track error.message){
+                                    <li class="error-form-item">{{ error.message }}</li>
+                                }
+                            </ul>
+                        }
+
+                        <label for="user-confirm-password">Confirm new password: </label>
+                        <input type="password" id="user-confirm-password" placeholder="confirm new password" [formField]="this.updateFormPassword.confirmedPassword">
+
+                        @if(this.updateFormPassword.confirmedPassword().touched() && 
+                            updateFormPassword.confirmedPassword().value() !== this.updateFormPassword.newPassword().value()){
+                                <span class="error-form-item">passwords do not match</span>
+                        }
+
+                        <button class="update-form-btn" type="submit">
+                            <img
+                                src="/edit-pen.svg"
+                                width=14px
+                                height=14px
+                                alt="a pen. Update button image"
+                            />
+                            update password
+                        </button>
+                    }
+                </form>
+            }
+        </div>
+    </div>
+
+    <div class="core-buttons">
+        <button (click)="onDeleteAccount()">DELETE ACCOUNT</button>
+        <button (click)="onLogOut()">LOG OUT</button>
+    </div>
 </div>

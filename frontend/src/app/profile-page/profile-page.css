@@ -5,3 +5,190 @@
 .updated {
     background-color: green;
 }
+
+h2 {
+    font-size: 45px;
+    margin: 0px 0px 30px 90px;
+}
+
+h2 + p span {
+    font-weight: bold;
+    font-size: 1.2em;
+    margin-left: 90px;
+}
+
+.form-content {
+    display: grid;
+    grid-template-columns: 510px 510px;
+    margin: 40px 90px;
+}
+
+/* -- GENERAL FORM STYLE -- */
+form > * {
+    display: block;
+    margin-left: 5px;
+}
+
+/* email styling */
+label:not([for="user-photo"]){
+    font-size: 20px;
+    font-weight: bold;
+}
+
+input:not(#user-photo){
+    height: 25px;
+    width: 300px;
+    border: solid 1px black;
+    border-radius: 5px;
+}
+
+/* profile photo styling */
+.user-photo-group {
+    margin-top: 40px;
+    margin-bottom: 50px;
+    display: flex;
+}
+
+#user-photo{
+    opacity: 0;
+    width: 0.1px;
+    height: 0.1px;
+    position: absolute;
+}
+
+label[for="user-photo"], .change-pass-btn{
+    font-weight: 500;
+    border: solid 2px black;
+    border-radius: 10px;
+    width:fit-content;
+    padding: 5px;
+    background-color: #F29479;
+    cursor: pointer;
+}
+
+label[for="user-photo"]:hover, .change-pass-btn:hover{
+    background-color: #e08971;
+    transition-duration: 300ms;
+}
+
+/* delete photo styling */
+.user-photo-group button{
+    margin-left: 7px;
+    position: relative;
+    top: 3.5px;
+    padding: 4px;
+    padding-bottom: 3px;
+    border: solid 2px black;
+    border-radius: 4px;
+    background-color: #CB1B16;
+    cursor: pointer;
+}
+
+.user-photo-group button:hover{
+    background-color: #b81a14;
+    transition-duration: 300ms;
+}
+
+/* update button */
+.update-form-btn{
+    height: 30px;
+    width: 100px;
+    font-size: 16px;
+    font-weight: 500;
+    background-color: #24A0ED;
+    color: #ffffff;
+    border: solid 2px black;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+.update-form-btn:hover{
+    background-color: #1f90d6;
+    transition-duration: 300ms;
+}
+
+/* -- UPDATE PASSWORD FORM STYLING -- */
+
+.change-pass-btn{
+    position: relative;
+    top: 24px;
+}
+
+label[for="user-confirm-password"] + div{
+    display: flex;
+}
+
+#user-old-password + button{
+    height: 29px;
+    margin-left: 7px;
+    border: solid 1px black;
+    border-radius: 5px;
+}
+
+#user-old-password + button:hover{
+    transition-duration: 300ms;
+}
+
+label[for="user-confirm-password"]{
+    margin-top: 16px;
+}
+
+.password-form .update-form-btn{
+    margin-top: 20px;
+    width: 180px;
+}
+
+/* -- FINAL BUTTONS -- */
+.core-buttons {
+    display: flex;
+    gap: 60%;
+    justify-content: center;
+    position: absolute;
+    top: calc(100% - 80px);
+    width: inherit;
+}
+
+/* delete btn */
+.core-buttons button {
+    cursor:pointer;
+}
+.core-buttons button:first-child {
+    height: 40px;
+    width: 150px;
+    font-size: 15px;
+    color: #F6F6F6;
+    border: solid 1px black;
+    border-radius: 10px;
+    background-color: #CB1B16;
+}
+
+.core-buttons button:first-child:hover {
+    background-color: #b81a14;
+    transition-duration: 300ms;
+}
+
+/* login btn */
+.core-buttons button + button{
+    height: 42px;
+    width: 152px;
+    font-size: 15px;
+    color: #F6F6F6;
+    border:none;
+    border-radius: 10px;
+    background-color: rgb(50, 50, 50);
+}
+
+.core-buttons button + button:hover {
+    background-color: rgba(0, 0, 0);
+    transition-duration: 300ms;
+}
+
+.error-form-list{
+    margin: 0;
+}
+
+.error-form-item{
+    margin: 5px 0;
+    color: #CB1B16;
+    font-weight: bolder;
+}
