@@ -49,28 +49,6 @@ input:not(#user-photo){
     display: flex;
 }
 
-#user-photo{
-    opacity: 0;
-    width: 0.1px;
-    height: 0.1px;
-    position: absolute;
-}
-
-label[for="user-photo"], .change-pass-btn{
-    font-weight: 500;
-    border: solid 2px black;
-    border-radius: 10px;
-    width:fit-content;
-    padding: 5px;
-    background-color: #F29479;
-    cursor: pointer;
-}
-
-label[for="user-photo"]:hover, .change-pass-btn:hover{
-    background-color: #e08971;
-    transition-duration: 300ms;
-}
-
 /* delete photo styling */
 .user-photo-group button{
     margin-left: 7px;

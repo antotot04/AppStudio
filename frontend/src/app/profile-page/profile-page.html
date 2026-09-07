@@ -25,8 +25,8 @@
                 </ul>
             }
             <div class="user-photo-group">
-                <label for="user-photo">Upload Profile Picture</label>
-                <input type="file" id="user-photo" accept="image/jpeg, image/png" (change)="onUpdatePhoto($event)">
+                <label class="pomo-form-upload-photo-btn" for="user-photo">Upload Profile Picture</label>
+                <input class="pomo-form-photo-input" type="file" id="user-photo" accept="image/jpeg, image/png" (change)="onUpdatePhoto($event)">
                 <button type="button" (click)="onDeletePhoto()" >
                     <img
                         src="/delete-bin.svg"
@@ -50,7 +50,7 @@
 
         <div class="pass-form-content">
             @if(!showPassForm){
-                <button class="change-pass-btn" (click)="onClickChangePass()">Change Password</button>
+                <button class="pomo-form-common-btn" (click)="onClickChangePass()">Change Password</button>
             }@else{
                 <form class="password-form" (submit)="onSubmitPassword($event)">
                     @if(checkPass()){

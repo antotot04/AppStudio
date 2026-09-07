@@ -1,55 +1,62 @@
-<div>
-    <h1>Sign Up</h1>
-    <form (submit)="onSubmit($event)">
-        <label for="username">Username: </label>
-        <input type="text" id="username" placeholder="create your username" (input)="lengthLeft($event)" [formField]="signupForm.username">
-        @if(chars() <= 10){
-            <span>{{ chars() }} left</span>
-        }
+<div class="pop-up-container">
+    <h1 class="enter-page-title">Sign Up</h1>
+    <form class="enter-form" (submit)="onSubmit($event)">
+        <div id="general-form-row">
+            <label for="username">Username: </label>
+            <input type="text" id="username" placeholder="create your username" (input)="lengthLeft($event)" [formField]="signupForm.username">
+            @if(chars() <= 10){
+                <span>{{ chars() }} left</span>
+            }
 
-        @if(signupForm.username().touched() && signupForm.username().invalid()){
-            <ul>
-                @for(error of signupForm.username().errors(); track error.message){
-                    <li>{{ error.message }}</li>
-                }
-            </ul>
-        }
+            @if(signupForm.username().touched() && signupForm.username().invalid() || errorMessage().startsWith("Username")){
+                <ul class="error-form-list">
+                    @for(error of signupForm.username().errors(); track error.message){
+                        <li class="error-form-item">{{ error.message }}</li>
+                    }
+                    @if(errorMessage().startsWith("Username")){
+                        <li class="error-form-item"> {{ errorMessage() }} </li>
+                    }
+                </ul>
+            }
 
-        <label for="email">Email: </label>
-        <input type="email" id="email" placeholder="insert your email" [formField]="signupForm.email">
+            <label for="email">Email: </label>
+            <input type="email" id="email" placeholder="insert your email" [formField]="signupForm.email">
 
-        @if(signupForm.email().touched() && signupForm.email().invalid()){
-            <ul>
-                @for(error of signupForm.email().errors(); track error.message){
-                    <li>{{ error.message }}</li>
-                }
-            </ul>
-        }
+            @if(signupForm.email().touched() && signupForm.email().invalid() || errorMessage().startsWith("Email")){
+                <ul class="error-form-list">
+                    @for(error of signupForm.email().errors(); track error.message){
+                        <li class="error-form-item">{{ error.message }}</li>
+                    }
+                    @if(errorMessage().startsWith("Email")){
+                        <li class="error-form-item"> {{ errorMessage() }} </li>
+                    }
+                </ul>
+            }
 
-        <label for="password">Password: </label>
-        <input type="password" id="password" placeholder="e.g. MyPomoPassword1234!" [formField]="signupForm.password">
+            <label class="pomo-form-upload-photo-btn" for="profile-photo">Upload Photo</label>
+            <input class="pomo-form-photo-input" type="file" id="profile-photo" accept="image/jpeg, image/png" (change)="onPhotoUpload($event)">
+        </div>
+        <div id="pass-form-row">
+            <label for="password">Password: </label>
+            <input type="password" id="password" placeholder="e.g. MyPomoPassword1234!" [formField]="signupForm.password">
 
-        @if(signupForm.password().touched() && signupForm.password().invalid()){
-            <ul>
-                @for(error of signupForm.password().errors(); track error.message){
-                    <li>{{ error.message }}</li>
-                }
-            </ul>
-        }
+            @if(signupForm.password().touched() && signupForm.password().invalid()){
+                <ul class="error-form-list">
+                    @for(error of signupForm.password().errors(); track error.message){
+                        <li class="error-form-item">{{ error.message }}</li>
+                    }
+                </ul>
+            }
 
-        <label for="confirm-password">Confirm Password: </label>
-        <input type="password" id="confirm-password" placeholder="confirm password" [formField]="signupForm.confirmPassword">
+            <label for="confirm-password">Confirm Password: </label>
+            <input type="password" id="confirm-password" placeholder="confirm password" [formField]="signupForm.confirmPassword">
 
-        @if(signupForm.confirmPassword().value() !== signupForm.password().value() &&
-            signupForm.confirmPassword().touched()){
-            <span>passwords don't match</span>
-        }
-
-        <label for="profile-photo">Upload Photo</label>
-        <input type="file" id="profile-photo" accept="image/jpeg, image/png" (change)="onPhotoUpload($event)">
-
-        <button type="submit" [class]="ifInvalid()">Sign Up</button>
-        <span> {{ errorMessage() }} </span>
+            @if(signupForm.confirmPassword().value() !== signupForm.password().value() &&
+                signupForm.confirmPassword().touched()){
+                <span class="error-form-item">passwords don't match</span>
+            }
+        </div>
+        <button type="submit">Sign Up</button>
     </form>
     <p>Already have an account? <a [routerLink]="['']">Log In</a></p>
 </div>

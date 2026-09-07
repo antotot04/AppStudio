@@ -1,9 +1,9 @@
 <div class="pop-up-container">
-    <h2>Login</h2>
+    <h1 class="enter-page-title">Login</h1>
     <div class="log-in-content">
         <div>
             <p id="form-access-phrase">Access to your Pomo account</p>
-            <form (submit)="onSubmit($event)">
+            <form class="enter-form" (submit)="onSubmit($event)">
                 <label for="username">Username:</label>
                 <input type="text" id="username" placeholder="myUsername" [formField]="loginForm.username">
 
@@ -25,7 +25,7 @@
                         }
                     </ul>
                 }  
-                <button type="submit" [class]="isFailed()">Log In</button>
+                <button type="submit">Log In</button>
             </form>
             <p>Don't have an account? <a [routerLink]="['/signup']">Sign Up</a></p>
         </div>

@@ -10,6 +10,7 @@ body {
     overflow: scroll;
 }
 
+/* -- CONTAINER RELATED STYLING -- */
 .pop-up-container{
     position: fixed;
     top: 50%;
@@ -31,6 +32,7 @@ body {
     cursor: pointer;
 }
 
+/* -- form error -- */
 .error-form-list{
     margin: 0;
 }
@@ -39,4 +41,103 @@ body {
     margin: 5px 0;
     color: #CB1B16;
     font-weight: bolder;
+}
+
+/* -- LOGIN AND SIGNUP FORM COMMON STYLING -- */
+.enter-page-title{
+    position: absolute;
+    margin: 0;
+    top: 30px;
+    width: 1200px;
+    text-align: center;
+    font-size: 50px;
+}
+
+.enter-form label{
+    font-size: 20px;
+    font-weight: lighter;
+    margin-bottom: 5px;
+}
+
+.enter-form input{
+    margin-top: 5px;
+    margin-bottom: 15px;
+    height: 35px;
+    width: 450px;
+    border: none;
+    border-radius: 10px;
+}
+
+.enter-form button[type="submit"]{
+    margin-top: 30px;
+    margin-inline: auto;
+    width: 150px;
+    height: 40px;
+    border: none;
+    border-radius: 15px;
+    font-size: 15px;
+    font-weight: 400;
+    color: white;
+    background-color: #4091C9;
+    cursor: pointer;
+}
+
+.enter-form button[type="submit"]:hover{
+    background-color: #3981b5;
+    transition-duration: 300ms;
+}
+
+.enter-form + p{
+    font-size: small;
+    text-align: center;
+}
+
+.enter-form + p a{
+    color: #0000EE;
+    text-decoration: none;
+}
+
+.enter-form + p a:hover{
+    color: #00009c;
+    text-decoration: underline;
+    transition-duration: 300ms;
+}
+
+
+/* -- POMO FORM COMMON STYLING -- */
+.pomo-form-upload-photo-btn{
+    font-weight: 500;
+    border: solid 2px black;
+    border-radius: 10px;
+    width:fit-content;
+    padding: 5px;
+    background-color: #F29479;
+    cursor: pointer;
+}
+
+.pomo-form-upload-photo-btn:hover{
+    background-color: #e08971;
+    transition-duration: 300ms;
+}
+
+.pomo-form-photo-input{
+    opacity: 0;
+    width: 0.1px;
+    height: 0.1px;
+    position: absolute;
+}
+
+.pomo-form-common-btn{
+    font-weight: 500;
+    border: solid 2px black;
+    border-radius: 10px;
+    width:fit-content;
+    padding: 5px;
+    background-color: #F29479;
+    cursor: pointer;
+}
+
+.pomo-form-common-btn:hover{
+    background-color: #e08971;
+    transition-duration: 300ms;
 }
