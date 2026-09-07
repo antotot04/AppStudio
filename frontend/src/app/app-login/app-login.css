@@ -31,3 +31,7 @@
 img{
     margin: auto;
 }
+
+button[type="submit"] + span{
+    text-align: center;
+}
