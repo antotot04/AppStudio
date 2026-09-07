@@ -182,13 +182,3 @@ label[for="user-confirm-password"]{
     background-color: rgba(0, 0, 0);
     transition-duration: 300ms;
 }
-
-.error-form-list{
-    margin: 0;
-}
-
-.error-form-item{
-    margin: 5px 0;
-    color: #CB1B16;
-    font-weight: bolder;
-}

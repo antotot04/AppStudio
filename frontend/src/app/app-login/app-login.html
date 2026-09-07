@@ -1,34 +1,34 @@
-<div>
+<div class="pop-up-container">
     <h2>Login</h2>
-    <div>
-        <form (submit)="onSubmit($event)">
-            <p>Access to your Pomo account</p>
+    <div class="log-in-content">
+        <div>
+            <p id="form-access-phrase">Access to your Pomo account</p>
+            <form (submit)="onSubmit($event)">
+                <label for="username">Username:</label>
+                <input type="text" id="username" placeholder="myUsername" [formField]="loginForm.username">
 
-            <label for="username">Username:</label>
-            <input type="text" id="username" placeholder="myUsername" [formField]="loginForm.username">
+                @if(loginForm.username().touched() && loginForm.username().invalid()){
+                    <ul class="error-form-list">
+                        @for(error of loginForm.username().errors(); track error.message){
+                            <li class="error-form-item">{{ error.message }}</li>
+                        }
+                    </ul>
+                }
 
-            @if(loginForm.username().touched() && loginForm.username().invalid()){
-                <ul>
-                    @for(error of loginForm.username().errors(); track error.message){
-                        <li>{{ error.message }}</li>
-                    }
-                </ul>
-            }
+                <label for="password">Password:</label>
+                <input type="password" id="password"  placeholder="**********" [formField]="loginForm.password"> 
 
-            <label for="password">Password:</label>
-            <input type="password" id="password"  placeholder="**********" [formField]="loginForm.password"> 
-
-            @if(loginForm.password().touched() && loginForm.password().invalid()){
-                <ul>
-                    @for(error of loginForm.password().errors(); track error.message){
-                        <li>{{ error.message }}</li>
-                    }
-                </ul>
-            }  
-            <button type="submit" [class]="isFailed()">Log In</button>
-        </form>
-
-        <p>Don't have an account? <a [routerLink]="['/signup']">Sign Up</a></p>
+                @if(loginForm.password().touched() && loginForm.password().invalid()){
+                    <ul class="error-form-list">
+                        @for(error of loginForm.password().errors(); track error.message){
+                            <li class="error-form-item">{{ error.message }}</li>
+                        }
+                    </ul>
+                }  
+                <button type="submit" [class]="isFailed()">Log In</button>
+            </form>
+            <p>Don't have an account? <a [routerLink]="['/signup']">Sign Up</a></p>
+        </div>
 
         <img 
         src="/PomoLogo.svg" 

@@ -30,3 +30,13 @@ body {
     margin-left: 10px;
     cursor: pointer;
 }
+
+.error-form-list{
+    margin: 0;
+}
+
+.error-form-item{
+    margin: 5px 0;
+    color: #CB1B16;
+    font-weight: bolder;
+}
