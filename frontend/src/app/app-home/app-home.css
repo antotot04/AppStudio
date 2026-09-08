@@ -99,6 +99,7 @@ footer{
     position: relative;
     justify-self:right;
     justify-content: center;
+    z-index: 1;
 }
 
 footer section h3{
@@ -115,6 +116,7 @@ footer section h3{
     position: relative;
     justify-self: left;
     justify-content: center;
+    z-index: 1;
 }
 
 footer section ul{

@@ -1,19 +1,19 @@
 <nav>
     <img
-        src="/PomoLogo.svg"
+        src="/logo-nav.svg"
         width="100"
         height="100"
         alt="Pomo Logo"
     />
     <ul>
         <li>
-            <a [routerLink]="['activities']">ACTIVITIES</a>
+            <a (click)="styleNavArea($event)" [routerLink]="['activities']">ACTIVITIES</a>
         </li>
         <li>
-            <a [routerLink]="['timer']">POMO TIMER</a>
+            <a (click)="styleNavArea($event)" [routerLink]="['timer']">POMO TIMER</a>
         </li>
         <li>
-            <a [routerLink]="['study']">STUDY ZONE</a>
+            <a (click)="styleNavArea($event)" [routerLink]="['study']">STUDY ZONE</a>
         </li>
     </ul>
     <button (click)="setProfile()">
