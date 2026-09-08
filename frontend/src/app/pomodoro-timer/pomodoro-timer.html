@@ -1,30 +1,30 @@
-<button (click)="onSettingsClick()">
-    <img
-        src="/Timer/Settings.svg"
-        width="90"
-        height="90"
-        alt="timer settings"
-    />
-</button>
+<div id="sub-page-btns">
+    <button (click)="onSettingsClick()">
+        <img
+            src="/Timer/Settings.svg"
+            width="80"
+            height="80"
+            alt="timer settings"
+        />
+    </button>
 
-<button (click)="onLeaderboardClick()">
-    <img
-        src="/Timer/Leaderboard.svg"
-        width="90"
-        height="90"
-        alt="timer leaderboard"
-    />
-</button>
-
-<div>
-    @if(onPopUpState() === "settings"){
-        <app-timer-settings [username]="this.username" (exitEvent)="onPopUpExit($event)" (userSettingsEvent)="onUserSettings($event)"></app-timer-settings>
-    }@else if(onPopUpState() === "leaderboard"){
-        <app-timer-leaderboard [username]="this.username" (exitEvent)="onPopUpExit($event)"></app-timer-leaderboard>
-    }
+    <button (click)="onLeaderboardClick()">
+        <img
+            src="/Timer/Leaderboard.svg"
+            width="80"
+            height="80"
+            alt="timer leaderboard"
+        />
+    </button>
 </div>
 
-<div class="timer-container">
+@if(onPopUpState() === "settings"){
+    <app-timer-settings [username]="this.username" (exitEvent)="onPopUpExit($event)" (userSettingsEvent)="onUserSettings($event)"></app-timer-settings>
+}@else if(onPopUpState() === "leaderboard"){
+    <app-timer-leaderboard [username]="this.username" (exitEvent)="onPopUpExit($event)"></app-timer-leaderboard>
+}
+
+<div id="timer-container">
     <audio class="ringtone"
         [src]="`/api/timer/sound/${userSettings().suono.ringtone}`"
         (play)="setRingtoneVolume($event)"
@@ -39,7 +39,7 @@
         </audio>
     }
 
-    <div class="timer-status">
+    <div id="timer-status">
         @if(timerState() === "short"){
             Short Pause
         }@else if(timerState() === "long"){
@@ -49,63 +49,75 @@
         }
     </div>
 
-    <div class="timer">
+    <div id="timer-counter">
         {{ currentTime() * 1000 | date:'mm:ss' }}
     </div>
-    @if(pause()){
-        <button (click)="onPlay()">
-            <img
-                src="/Timer/Play.svg"
-                width="85"
-                height="85"
-                alt="play icon"
-            />
-        </button>
-    }@else{
-        <button (click)="onStop()">
-            <img
-                src="/Timer/Pause.svg"
-                width="85"
-                height="85"
-                alt="pause icon"
-            />
-        </button>
-    }
+    <div id="timer-btn-container">
+        @if(pause()){
+            <button (click)="onPlay()">
+                <img
+                    src="/Timer/Play.svg"
+                    width="85"
+                    height="85"
+                    alt="play icon"
+                />
+            </button>
+        }@else{
+            <button (click)="onStop()">
+                <img
+                    src="/Timer/Pause.svg"
+                    width="85"
+                    height="85"
+                    alt="pause icon"
+                />
+            </button>
+        }
 
-    @if(timerState() === "short" || timerState() === "long"){
-        <button (click)="onSkip()">
-            <img
-                src="/Timer/Skip.svg"
-                width="85" 
-                height="85"
-                alt="skip icon"
-            />
-        </button>
-    }
+        @if(timerState() === "short" || timerState() === "long"){
+            <button (click)="onSkip()">
+                <img
+                    src="/Timer/Skip.svg"
+                    width="85" 
+                    height="85"
+                    alt="skip icon"
+                />
+            </button>
+        }
+    </div>
 
     <div class="progress-bar-container">
         <div class="progress">
         </div>
     </div>
 
-    <h2>Current Activities</h2>
+    <section id="activities-ext">
+        <h2>Current Activities</h2>
 
-    @if(activityList().length !== 0){
-        @for (activity of activityList(); track activity.id) {
-            <input class="act-checkbox" type="checkbox" [checked]="activity.currentPomos === activity.pomoCounter" [disabled]="activity.currentPomos === activity.pomoCounter" [id]="activity.id" (change)="onActChange($event)">
-            <label [attr.for]="activity.id">{{activity.title}}</label>
-            <p>{{"current pomdoros: " + `${activity.currentPomos}/${activity.pomoCounter}`}}</p>
-            @if (activity.description) {
-                <p [id]="'act-description-' + activity.id">{{"Description:\n" + renderDescription(activity.description)}}</p>
-                @if(activity.description.length > 40){
-                    <button (click)="onMoreDescription($event, activity.description, activity.id)">Show more</button>
-                }
+        @if(activityList().length !== 0){
+            @if(activitiesCompleted()){
+                <p>Congratulations! You completed all your activities 🥳. Go create some others!</p>
+            }@else {
+                <p>Select activities to complete</p>
             }
+            <div id="activity-list">
+                @for (activity of activityList(); track activity.id) {
+                    <div class="activity-item">
+                        <input class="act-checkbox" type="checkbox" [checked]="activity.currentPomos === activity.pomoCounter" [disabled]="activity.currentPomos === activity.pomoCounter" [id]="activity.id" (change)="onActChange($event)">
+                        <label [attr.for]="activity.id">{{activity.title}}</label>
+                        <p class="act-counter">current pomdoros: <span>{{`${activity.currentPomos}/${activity.pomoCounter}`}}</span></p>
+                        @if (activity.description) {
+                            <div class="act-description">
+                                <p [id]="'act-description-' + activity.id">{{renderDescription(activity.description)}}</p>
+                                @if(activity.description.length > 40){
+                                    <button (click)="onMoreDescription($event, activity.description, activity.id)">Show more</button>
+                                }
+                            </div>
+                        }
+                    </div>
+                }
+            </div>
+        }@else{
+            <p>No activities to complete at the moment. Go to activities page and create some</p>
         }
-        @if(activitiesCompleted()){
-            <p>Congratulations! You completed all your activities 🥳. Go make some others!</p>
-        }
-    }@else{
-        <p>No activities to select at the moment</p>
-    }
+    </section>
 </div>

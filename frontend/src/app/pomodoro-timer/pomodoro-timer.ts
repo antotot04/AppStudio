@@ -72,18 +72,18 @@ export class PomodoroTimer implements OnInit {
     command ? audioEle.play() : audioEle.pause();
   }
 
-  /* progress bar dynamic styling */
-  progressColor = computed(() => {
+  /* progress bar, timer status and timer counter dynamic styling */
+  progressColor(){
       const progress = document.querySelector(".progress") as HTMLElement;
       if(this.timerState() === ''){
-        progress.style.backgroundColor = 'red';
+        progress.style.backgroundColor = '#CB1B16';
       }else if(this.timerState() === 'short'){
-        progress.style.backgroundColor = 'lightblue';
+        progress.style.backgroundColor = '#4091C9';
       }else{
-        progress.style.backgroundColor = 'blue';
+        progress.style.backgroundColor = '#033270';
       }
-  });
-  progressWidth = computed(() => {
+  };
+  progressWidth(){
     const progressContainer = document.querySelector(".progress-bar-container") as HTMLElement;
     const progressBar = document.querySelector(".progress") as HTMLElement;
     let timeMeasure = this.pomodoroTime;
@@ -96,7 +96,27 @@ export class PomodoroTimer implements OnInit {
 
     const computedWidth = (this.currentTime() / timeMeasure) * (progressContainer.clientWidth);
     progressBar.style.width = `${computedWidth}px`;
-  });
+  };
+  timerStatusColor() {
+    const timerStatus = document.querySelector("#timer-status") as HTMLElement;
+    if(this.timerState() === 'short'){
+      timerStatus.style.backgroundColor = "#4091C9";
+    }else if(this.timerState() === 'long'){
+      timerStatus.style.backgroundColor = "#033270";
+    }else{
+      timerStatus.style.backgroundColor = "#CB1B16";
+    }
+  };
+  timerCounterColor() {
+    const timerCounter = document.querySelector("#timer-counter") as HTMLElement;
+    if(this.timerState() === 'short'){
+      timerCounter.style.backgroundColor = "#4091C9";
+    }else if(this.timerState() === 'long'){
+      timerCounter.style.backgroundColor = "#033270";
+    }else{
+      timerCounter.style.backgroundColor = "#CB1B16";
+    }
+  }
 
   sendTimestamp(timestamp: Date){
     this.timerService.sendTimestamp(this.username, timestamp).subscribe();
@@ -135,24 +155,30 @@ export class PomodoroTimer implements OnInit {
 
   prepareLongPause(){
     this.timerState.set('long');
-    this.progressColor();
     this.longFreqCounter.set(0); // reset frequency counter 
     this.currentTime.set(this.longPause());
+    this.timerStatusColor();
+    this.timerCounterColor();
+    this.progressColor();
     this.progressWidth();
   }
 
   prepareShortPause(){
     this.timerState.set('short');
-    this.progressColor();
     this.longFreqCounter.set(this.longFreqCounter()+1); // increase frequency counter
     this.currentTime.set(this.shortPause());
+    this.timerStatusColor();
+    this.timerCounterColor();
+    this.progressColor();
     this.progressWidth();
   }
 
   preparePomodoro(){
     this.timerState.set('');
-    this.progressColor();
     this.currentTime.set(this.pomodoroTime);
+    this.timerStatusColor();
+    this.timerCounterColor();
+    this.progressColor();
     this.progressWidth();
   }
 
@@ -160,6 +186,7 @@ export class PomodoroTimer implements OnInit {
     this.intervalId = setInterval(() => {
         if(this.currentTime() === 0){
           clearInterval(this.intervalId);
+          this.playRingtone(true);
 
           if(this.timerState() === ''){
             const timestamp = new Date();
@@ -173,7 +200,6 @@ export class PomodoroTimer implements OnInit {
             if(this.userSettings().suono.background !== null){
               this.playBackground(false);
             }
-            this.playRingtone(true);
           }
 
           if(this.longFreqCounter() === this.longFrequency() && this.timerState() === ''){
@@ -281,7 +307,7 @@ export class PomodoroTimer implements OnInit {
     const target = document.querySelector("#act-description-" + activityId) as HTMLParagraphElement;
 
     if(thisBtn.textContent === "Show more"){
-      target.textContent = "Description:\n" + description;
+      target.textContent = description;
       thisBtn.textContent = "Hide";
     }else{
       target.textContent = this.renderDescription(description);

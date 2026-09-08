@@ -1,13 +1,15 @@
 nav{
     display: flex;
-    position: relative;
+    position: sticky;
+    top: 10px;
     justify-content: space-between;
     margin: 10px 20px 0 20px;
-    background-color: #cb1c16ba;
+    background-color: #D95049;
     padding: 0 10px;
     border: solid 2px black;
     border-radius: 35px;
     box-shadow: 5px 5px 8px rgba(0, 0, 0, 0.250);
+    z-index: 5; /* right. below pop-up-content */
 }
 
 nav ul{
@@ -69,11 +71,6 @@ nav button img{
 nav button img:hover{
     opacity: 0.8;
     transition-duration: 300ms;
-}
-
-main{
-    height: 100vh;
-    overflow: scroll;
 }
 
 footer{
