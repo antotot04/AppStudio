@@ -17,10 +17,13 @@
             <label for="user-email">Email: </label>
             <input type="email" id="user-email" [placeholder]="this.userInfos()!.email" [formField]="this.updateFormGeneral.email">
 
-            @if(this.updateFormGeneral.email().invalid() && this.updateFormGeneral.email().touched()){
+            @if((this.updateFormGeneral.email().invalid() && this.updateFormGeneral.email().touched()) || emailInUseError() !== undefined){
                 <ul class="error-form-list">
                     @for(error of this.updateFormGeneral.email().errors(); track error.message){
                         <li class="error-form-item">{{ error.message }}</li>
+                    }
+                    @if(emailInUseError() !== undefined){
+                        <li class="error-form-item">{{ emailInUseError() }}</li>
                     }
                 </ul>
             }

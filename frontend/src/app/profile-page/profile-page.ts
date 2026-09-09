@@ -53,11 +53,17 @@ export class ProfilePage {
     }
   }
 
+  emailInUseError = signal<string | undefined>(undefined);
+
   onSubmitGeneral(event: Event){
     event.preventDefault();
 
     if(this.updateFormGeneral.email().invalid()){
       return;
+    }
+
+    if(this.emailInUseError() !== undefined){
+      this.emailInUseError.set(undefined);
     }
 
     const dataToSend = new FormData();
@@ -67,8 +73,15 @@ export class ProfilePage {
       dataToSend.append('photoType', this.newImage.type);
     }
 
-    this.userService.updateGeneralInfo(this.username, dataToSend).subscribe(() => {
-      alert("refresh to see changes");
+    this.userService.updateGeneralInfo(this.username, dataToSend).subscribe({
+      next: () => {
+        alert("refresh to see changes");
+      },
+      error: (resp) => {
+        if(resp.status === 400 && resp.error.message === "Email already in use by another user"){
+          this.emailInUseError.set(resp.error.message);
+        }
+      }
     });
   }
 
@@ -148,3 +161,7 @@ export class ProfilePage {
     }
   }
 }
+function next(value: Object): void {
+  throw new Error('Function not implemented.');
+}
+
