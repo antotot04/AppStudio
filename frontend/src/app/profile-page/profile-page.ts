@@ -40,7 +40,7 @@ export class ProfilePage {
   updateFormPassword = form(this.formModelPassword, (schemaPath) => {
     required(schemaPath.newPassword, {message: "a new password is required"});
     minLength(schemaPath.newPassword, 6, {message: "password is too short"});
-    pattern(schemaPath.newPassword, new RegExp(/^(?=.*[\d].*)(?=.*[^\d].*)(?=.*[^\n]$)/), {message: "password invalid"});
+    pattern(schemaPath.newPassword, new RegExp(/^(?=.*[\d].*$)(?=.*[^\d].*$)/), {message: "password invalid"});
   });
 
 

@@ -40,7 +40,7 @@ export class PomodoroTimer implements OnInit {
 
   onPopUpState = signal<'settings' | 'leaderboard' | ''>('');
 
-  readonly pomodoroTime = 3; // pomodoro unit: 25 min
+  readonly pomodoroTime = 10; // pomodoro unit: 25 min
   shortPause = computed(() => {
     return this.userSettings().timer.shortPause;
   });
@@ -57,6 +57,7 @@ export class PomodoroTimer implements OnInit {
   pause = signal(true);
   currentTime = signal(this.pomodoroTime);
   intervalId = 0;
+  runUpdatedBackground = signal(false);
 
   playRingtone(command: boolean | 'restart'){
     const audioEle = document.querySelector("audio.ringtone") as HTMLAudioElement;
@@ -69,6 +70,7 @@ export class PomodoroTimer implements OnInit {
 
   playBackground(command: boolean){
     const audioEle = document.querySelector("audio.background") as HTMLAudioElement;
+    if(audioEle === null) return;
     command ? audioEle.play() : audioEle.pause();
   }
 
@@ -156,7 +158,8 @@ export class PomodoroTimer implements OnInit {
   prepareLongPause(){
     this.timerState.set('long');
     this.longFreqCounter.set(0); // reset frequency counter 
-    this.currentTime.set(this.longPause());
+    const longPause = this.longPause();
+    this.currentTime.set(longPause);
     this.timerStatusColor();
     this.timerCounterColor();
     this.progressColor();
@@ -165,8 +168,9 @@ export class PomodoroTimer implements OnInit {
 
   prepareShortPause(){
     this.timerState.set('short');
-    this.longFreqCounter.set(this.longFreqCounter()+1); // increase frequency counter
-    this.currentTime.set(this.shortPause());
+    this.longFreqCounter.update((oldFreq) => oldFreq+1); // increase frequency counter
+    const shortPause = this.shortPause();
+    this.currentTime.set(shortPause);
     this.timerStatusColor();
     this.timerCounterColor();
     this.progressColor();
@@ -201,8 +205,8 @@ export class PomodoroTimer implements OnInit {
               this.playBackground(false);
             }
           }
-
-          if(this.longFreqCounter() === this.longFrequency() && this.timerState() === ''){
+          /* Note: changed to >= so I can handle frequency changes when timer is running */
+          if(this.longFreqCounter() >= this.longFrequency() && this.timerState() === ''){
             this.prepareLongPause();
           }else if(this.timerState() === ''){
             this.prepareShortPause();
@@ -214,6 +218,12 @@ export class PomodoroTimer implements OnInit {
         }else{
           this.currentTime.update((lastValue) => lastValue - 1);
           this.progressWidth();
+        }
+
+        /* runs new updated background once and without stopping the timer */
+        if(this.runUpdatedBackground() && this.timerState() === ''){
+          this.playBackground(true);
+          this.runUpdatedBackground.set(false);
         }
     }, 1000);
   }
@@ -271,22 +281,36 @@ export class PomodoroTimer implements OnInit {
     return minutes * 60 + seconds;
   }
 
-  refreshTimer(){
+  scaleCurrTime(oldTimeLength: number, newTimeLength: number){
+    this.currentTime.update((currTime) => {
+      const newCurrTime = newTimeLength - (oldTimeLength - currTime);
+      if(newCurrTime > 0){
+        return newCurrTime;
+      }else
+        return 0;
+    });
+  }
+
+  updateCurrTimerVariables(oldInfos: UserSettings, newInfos: UserSettings){
     if(this.timerState() === 'short'){
-      this.prepareShortPause();
-      this.longFreqCounter.set(0);
+      this.scaleCurrTime(oldInfos.timer.shortPause, newInfos.timer.shortPause);
+      this.progressWidth();
     }else if(this.timerState() === 'long'){
-      this.prepareLongPause();
-    }else if(this.timerState() === ''){
-      this.longFreqCounter.set(0);
+      this.scaleCurrTime(oldInfos.timer.longPause, newInfos.timer.longPause);
+      this.progressWidth();
+    }else{
+      if(newInfos.suono.background !== null && oldInfos.suono.background !== newInfos.suono.background){
+        this.runUpdatedBackground.set(true);
+      }
     }
   }
 
   getUpdatedSettings(){
     this.timerService.getUserSettings(this.username).subscribe((resp) => {
+      const oldSettings = this.userSettings();
       this.userSettings.set(resp);
-      this.refreshTimer();
-    })
+      this.updateCurrTimerVariables(oldSettings, resp);
+    });
   }
 
   loadCurrUserActivities(){
@@ -338,16 +362,11 @@ export class PomodoroTimer implements OnInit {
     }
     return true;
   }
-
-  onUserSettings(settingsUpdated: boolean){
-    if(settingsUpdated){
+  
+  onPopUpExit(onChanges: boolean){
+    this.onPopUpState.set('');
+    if(onChanges){
       this.getUpdatedSettings();
-    }
-  }
-
-  onPopUpExit(condition: boolean){
-    if(condition){
-      this.onPopUpState.set('');
     }
   }
 

@@ -1,52 +1,66 @@
-<h2>SETTINGS</h2>
+<div class="pop-up-container">
+    <button class="exit-pop-up-btn" (click)="onClickExit()">
+        <img
+            src="/exit.svg"
+            width="50"
+            height="50"
+            alt="exit"
+        /> 
+    </button>
 
-<button (click)="onClickExit()">
-    <img
-        src="/exit.svg"
-        width="50"
-        height="50"
-        alt="exit"
-    /> 
-</button>
+    <h2>SETTINGS</h2>
 
-<form (submit)="onSubmit($event)">
-    <fieldset>
-        <legend>Timer</legend>
+    <form class="pomo-form" (submit)="onSubmit($event)">
+        <fieldset class="pomo-form-sub-container">
+            <legend>Timer</legend>
 
-        <label for="short-pause">Short Pause</label>
-        <input type="number" id="short-pause" [formField]="this.settingsForm.timer.shortPause">
-
-        <label for="long-pause">Long Pause</label>
-        <input type="number" id="long-pause" [formField]="this.settingsForm.timer.longPause">
-
-        <label type="long-frequency">Long Pause Frequency</label>
-        <input type="number" id="long-frequency" [formField]="this.settingsForm.timer.frequency">
-
-    </fieldset>
-    <fieldset>
-        <legend>Sound</legend>
-
-        <label for="ringtone-select">Ringtone</label>
-        <select id="ringtone-select" [formField]="this.settingsForm.sound.ringtone">
-            <option value="">--Please choose an option--</option>
-            @for(option of this.ringtoneOptions(); track option.id){
-                <option [value]="option.id">{{option.name}}</option>
+            <label for="short-pause">Short Pause (minutes)</label>
+            <input type="number" id="short-pause" [formField]="this.settingsForm.timer.shortPause">
+            @if (settingsForm.timer.shortPause().invalid() && settingsForm.timer.shortPause().touched()) {
+                <p class="error-form-item">{{settingsForm.timer.shortPause().errors()[0].message}}</p>
             }
-        </select>
 
-        <label for="ringtone-volume">Ringtone volume</label>
-        <input type="range" id="ringtone-volume" step="1" [formField]="this.settingsForm.sound.ringtone_volume">
-
-        <label for="background-select">Background (not required)</label>
-        <select id="background-select" [formField]="this.settingsForm.sound.background">
-            <option value="">--Choose an option--</option>
-            @for(option of this.backgroundOptions(); track option.id){
-                <option [value]="option.id">{{option.name}}</option>
+            <label for="long-pause">Long Pause (minutes)</label>
+            <input type="number" id="long-pause" [formField]="this.settingsForm.timer.longPause">
+            @if (settingsForm.timer.longPause().invalid() && settingsForm.timer.longPause().touched()) {
+                <p class="error-form-item">{{settingsForm.timer.longPause().errors()[0].message}}</p>
             }
-        </select>
 
-        <label for="timer-volume">Background volume</label>
-        <input type="range" id="timer-volume" step="1" [formField]="this.settingsForm.sound.background_volume">
-    </fieldset>
-    <button type="submit">Save</button>
-</form>
+            <label type="long-frequency">Long Pause Frequency</label>
+            <input type="number" id="long-frequency" [formField]="this.settingsForm.timer.frequency">
+            @if (settingsForm.timer.frequency().invalid() && settingsForm.timer.frequency().touched()) {
+                <p class="error-form-item">{{settingsForm.timer.frequency().errors()[0].message}}</p>
+            }
+
+        </fieldset>
+        <fieldset class="pomo-form-sub-container">
+            <legend>Sound</legend>
+
+            <label for="ringtone-select">Ringtone</label>
+            <select id="ringtone-select" [formField]="this.settingsForm.sound.ringtone">
+                <option value="">--Please choose an option--</option>
+                @for(option of this.ringtoneOptions(); track option.id){
+                    <option [value]="option.id">{{option.name}}</option>
+                }
+            </select>
+            @if (settingsForm.sound.ringtone().value() === "" && settingsForm.sound.ringtone().touched()) {
+                <p class="error-form-item">a ringtone must be selected</p>
+            }
+
+            <label for="ringtone-volume">Ringtone volume</label>
+            <input type="range" id="ringtone-volume" step="1" [formField]="this.settingsForm.sound.ringtone_volume">
+
+            <label for="background-select">Background (not required)</label>
+            <select id="background-select" [formField]="this.settingsForm.sound.background">
+                <option value="">--Choose an option--</option>
+                @for(option of this.backgroundOptions(); track option.id){
+                    <option [value]="option.id">{{option.name}}</option>
+                }
+            </select>
+
+            <label for="timer-volume">Background volume</label>
+            <input type="range" id="timer-volume" step="1" [formField]="this.settingsForm.sound.background_volume">
+        </fieldset>
+        <button type="submit">Save</button>
+    </form>
+</div>

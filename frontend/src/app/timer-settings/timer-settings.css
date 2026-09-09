@@ -1,0 +1,46 @@
+form{
+    position: relative;
+    bottom: 10px;
+    width: inherit;
+    height: 470px;
+    display: grid;
+    grid-template-areas: 
+    "firstField secondField"
+    ". saveBtn";
+    justify-content: center;
+    column-gap: 20px;
+}
+
+form fieldset{
+    margin: 0;
+    border: 0;
+    padding: 10px;
+    width: 560px;
+    height: 430px;
+}
+
+fieldset legend{
+    float: left;
+    width: 100%;
+    text-align: center;
+}
+
+label{
+    margin-block: 10px;
+}
+
+form fieldset:nth-child(1){
+    grid-area: firstField;
+}
+
+form fieldset:nth-child(2){
+    grid-area: secondField;
+}
+
+form button[type="submit"]{
+    position: relative;
+    bottom: 60px;
+    grid-area: saveBtn;
+    justify-self: right;
+    align-self: flex-end;
+}

@@ -19,7 +19,7 @@
 </div>
 
 @if(onPopUpState() === "settings"){
-    <app-timer-settings [username]="this.username" (exitEvent)="onPopUpExit($event)" (userSettingsEvent)="onUserSettings($event)"></app-timer-settings>
+    <app-timer-settings [username]="this.username" (exitEvent)="onPopUpExit($event)"></app-timer-settings>
 }@else if(onPopUpState() === "leaderboard"){
     <app-timer-leaderboard [username]="this.username" (exitEvent)="onPopUpExit($event)"></app-timer-leaderboard>
 }

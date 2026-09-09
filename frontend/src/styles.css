@@ -26,11 +26,26 @@ body {
 }
 
 .exit-pop-up-btn{
-    background: none;
-    border: none;
+    width: 50px;
+    height: 50px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 100%;
     margin-top: 10px;
     margin-left: 10px;
     cursor: pointer;
+}
+
+/* pop-up title */
+.pop-up-container h2{
+    font-size: 60px;
+    font-weight: 500;
+    text-align: center;
+    margin-inline: 90px;
+    position: relative;
+    top: -30px;
+    margin-block: 0;
 }
 
 /* -- form error -- */
@@ -106,6 +121,63 @@ body {
 
 
 /* -- POMO FORM COMMON STYLING -- */
+.pomo-form * {
+    display: block;
+}
+
+.pomo-form-sub-container{
+    background-color: #F6F6F6;
+    border: none;
+    border-radius: 25px;
+}
+
+.pomo-form fieldset legend{
+    font-size: 50px;
+    font-weight: 450;
+    margin-inline: auto;
+}
+
+.pomo-form label{
+    font-size: 25px;
+}
+
+.pomo-form input[type="number"]{
+    font-size: 20px;
+    height: 40px;
+    width: 50px;
+    padding-inline: 10px;
+    border: solid 2px black;
+    border-radius: 10px;
+    background-color: #D9D9D9;
+}
+
+.pomo-form select{
+    font-size: 20px;
+    height: 40px;
+    width: 300px;
+    padding-inline: 10px;
+    border: solid 2px black;
+    border-radius: 10px;
+    background-color: #D9D9D9;
+}
+
+.pomo-form button[type="submit"]{
+    width: fit-content;
+    height: fit-content;
+    padding: 15px 40px;
+    border: none;
+    border-radius: 25px;
+    color: white;
+    font-size: 25px;
+    font-weight: 400;
+    background-color: rgba(55, 55, 55);
+}
+
+.pomo-form button[type="submit"]:hover{
+    background-color: black;
+    transition-duration: 300ms;
+}
+
 .pomo-form-upload-photo-btn{
     font-weight: 500;
     border: solid 2px black;
