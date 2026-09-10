@@ -48,7 +48,7 @@
             }
 
             <label for="ringtone-volume">Ringtone volume</label>
-            <input type="range" id="ringtone-volume" step="1" [formField]="this.settingsForm.sound.ringtone_volume">
+            <input type="range" id="ringtone-volume" step="1" (input)="changeVolumeRange($event)" [formField]="this.settingsForm.sound.ringtone_volume">
 
             <label for="background-select">Background (not required)</label>
             <select id="background-select" [formField]="this.settingsForm.sound.background">
@@ -59,7 +59,7 @@
             </select>
 
             <label for="timer-volume">Background volume</label>
-            <input type="range" id="timer-volume" step="1" [formField]="this.settingsForm.sound.background_volume">
+            <input type="range" id="timer-volume" step="1" (input)="changeVolumeRange($event)" [formField]="this.settingsForm.sound.background_volume">
         </fieldset>
         <button type="submit">Save</button>
     </form>

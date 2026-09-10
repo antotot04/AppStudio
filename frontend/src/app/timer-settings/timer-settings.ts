@@ -1,4 +1,4 @@
-import { Component, computed, inject, input, OnInit, output, signal } from '@angular/core';
+import { afterEveryRender, afterNextRender, AfterViewInit, Component, computed, inject, input, OnInit, output, signal } from '@angular/core';
 import { SoundTrack } from '../dto/sound-track';
 import { TimerService } from '../service/timer/timer-service';
 import { PomoSettingsForm } from '../dto/pomo-settings-form';
@@ -19,6 +19,7 @@ export class TimerSettings implements OnInit {
   username = input<string>('');
   exitEvent = output<boolean>();
 
+  renderCounter = signal(0); // angular render tracker: increases after every render
   initSettings: PomoSettingsForm = {
     timer: {
       shortPause: 5, // minutes
@@ -71,8 +72,8 @@ export class TimerSettings implements OnInit {
           background_volume: resp.suono.background_volume
         }
       }
-
       this.formModel.set(this.initSettings);
+      this.computeInitVolumeRange();
     })
   }
 
@@ -147,6 +148,22 @@ export class TimerSettings implements OnInit {
     }else{
       this.exitEvent.emit(false);
     }
+  }
+
+  computeInitVolumeRange(){
+    const ringInput = document.querySelector("#ringtone-volume") as HTMLInputElement;
+    const backInput = document.querySelector("#timer-volume") as HTMLInputElement;
+    const rawRingInitVal = this.initSettings.sound.ringtone_volume.toString().concat('%');
+    const rawBackInitVal = this.initSettings.sound.background_volume.toString().concat('%');
+    console.log(rawRingInitVal);
+    ringInput.style.setProperty("--perc", rawRingInitVal);
+    backInput.style.setProperty("--perc", rawBackInitVal);
+  }
+
+  changeVolumeRange(event: Event){
+    const input = event.target as HTMLInputElement;
+    const rawCurrVal = input.value.toString().concat('%');
+    input.style.setProperty('--perc', rawCurrVal);
   }
 
   ngOnInit(): void {

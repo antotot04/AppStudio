@@ -141,6 +141,97 @@ body {
     font-size: 25px;
 }
 
+.pomo-form input[type="range"]{
+    --perc: 50%;
+    appearance: none;
+    width: 50%;
+    background: transparent;
+}
+
+.pomo-form input[type="range"]:disabled{
+    opacity: 0.5;
+}
+
+/* -- INPUT RANGE FIREFOX VERSION -- */
+
+/* thumb styling */
+.pomo-form input[type="range"]::-moz-range-thumb {
+    box-shadow: 2px 2px 7px rgba(0, 0, 0, 0.250);
+    border: 1px solid #000000;
+    height: 23px;
+    width: 15px;
+    border-radius: 5px;
+    background: #ffffff;
+    cursor: pointer;
+}
+
+.pomo-form input[type="range"]:focus::-moz-range-thumb{
+    height: 26px;
+    width: 18px;
+    background-color: #f1f1f1;
+    transition-duration: 300ms;
+}
+
+.pomo-form input[type="range"]:disabled::-moz-range-thumb{
+    cursor:initial;
+}
+
+/* track styling */
+.pomo-form input[type="range"]::-moz-range-track{
+    height: 8.4px;
+    box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.250);
+    border-radius: 3px;
+    border: 0.5px solid black;
+    background: linear-gradient(to right, #FEDFD4 var(--perc), white var(--perc));
+}
+
+.pomo-form input[type="range"]:focus::-moz-range-track{
+    background: linear-gradient(to right, #fccebd var(--perc), white var(--perc));
+}
+/* ----------------------------- */
+
+/* -- INPUT RANGE CHROME VERSION -- */
+
+/* thumb styling */
+.pomo-form input[type="range"]::-webkit-slider-thumb {
+    appearance: none;
+    margin-top: -7px;
+    box-shadow: 2px 2px 7px rgba(0, 0, 0, 0.250);
+    border: 1px solid #000000;
+    height: 23px;
+    width: 15px;
+    border-radius: 5px;
+    background: #ffffff;
+    cursor: pointer;
+}
+
+.pomo-form input[type="range"]:focus::-webkit-slider-thumb {
+    position: relative;
+    bottom: 3px;
+    height: 26px;
+    width: 18px;
+    background-color: #f1f1f1;
+    transition-duration: 300ms;
+}
+
+.pomo-form input[type="range"]:disabled::-webkit-slider-thumb{
+    cursor:initial;
+}
+
+.pomo-form input[type="range"]::-webkit-slider-runnable-track{
+    height: 8.4px;
+    box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.250);
+    background: #FEDFD4;
+    border-radius: 3px;
+    border: 0.5px solid black;
+    background: linear-gradient(to right, #FEDFD4 var(--perc), white var(--perc));
+}
+
+.pomo-form input[type="range"]:focus::-webkit-slider-runnable-track {
+    background: linear-gradient(to right, #fccebd var(--perc), white var(--perc));
+}
+/* ----------------------------- */
+
 .pomo-form input[type="number"]{
     font-size: 20px;
     height: 40px;
