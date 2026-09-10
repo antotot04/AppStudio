@@ -1,60 +1,66 @@
-<h2>Ranking</h2>
+<div class="pop-up-container">
+    <button class="exit-pop-up-btn" (click)="onClickExit()">
+        <img
+            src="/exit.svg"
+            width="50"
+            height="50"
+            alt="exit"
+        /> 
+    </button>
 
-<button (click)="onClickExit()">
-    <img
-        src="/exit.svg"
-        width="50"
-        height="50"
-        alt="exit"
-    /> 
-</button>
+    <h2>RANKING</h2>
 
-<select id="time-selector" (change)="onSelect($event)">
-    <option value="week">week</option>
-    <option value="month">month</option>
-    <option value="year">year</option>
-</select>
+    <select id="time-selector" (change)="onSelect($event)">
+        <option value="week">Week</option>
+        <option value="month">Month</option>
+        <option value="year">Year</option>
+    </select>
 
-<table>
-    <thead>
-        <tr>
-            <th scope="col" colspan="2"></th>
-            <th scope="col">USER</th>
-            <th scope="col">POMODORO</th>
-        </tr>
-    </thead>
-    <tbody>
-        @for (user of leaderboardUsers(); track user.rank) {
+    <table>
+        <thead>
             <tr>
-                <th scope="row">{{ user.rank }}</th>
-                <td>
-                    <img 
-                        [src]="`api/utenti/${user.username}/profilePhoto`"
-                        onerror="this.onerror=null; this.src='/Profile/Profile_Photo.svg'"
-                        width="50"
-                        height="50"
-                        alt="leaderboard user profilePhoto"
-                    />
-                </td>
-                <td>{{ user.username }}</td>
-                <td>{{ user.pomodoroCounter }}</td>
+                <th scope="col" colspan="2"></th>
+                <th scope="col">USER</th>
+                <th scope="col">POMODORO</th>
             </tr>
-        }
-    </tbody>
-    <tfoot>
-        <tr>
-                <th scope="row">{{ loggedUser().username !== '' ? loggedUser().rank : '.' }}</th>
+        </thead>
+        <tbody>
+            @for (user of leaderboardUsers(); track user.rank) {
+                <tr class="leader-table-row">
+                    <th class="numeric-item" scope="row">{{ user.rank }}</th>
+                    <td>
+                        <div class="leader-img-overlay">
+                            <img 
+                                [src]="`api/utenti/${user.username}/profilePhoto`"
+                                onerror="this.onerror=null; this.src='/Profile/Profile_Photo.svg'"
+                                width="50"
+                                height="50"
+                                alt="user profilePhoto"
+                            />
+                        </div>
+                    </td>
+                    <td class="user-text">{{ user.username }}</td>
+                    <td class="pomo-counter">{{ user.pomodoroCounter }}</td>
+                </tr>
+            }
+        </tbody>
+        <tfoot>
+            <tr class="leader-table-row">
+                <th class="numeric-item" scope="row">{{ loggedUser().username !== '' ? loggedUser().rank : '.' }}</th>
                 <td>
-                    <img 
-                        [src]="`api/utenti/${username()}/profilePhoto`"
-                        onerror="this.onerror=null; this.src='/Profile/Profile_Photo.svg'"
-                        width="50"
-                        height="50"
-                        alt="your profile photo"
-                    />
+                    <div class="leader-img-overlay">
+                        <img 
+                            [src]="`api/utenti/${username()}/profilePhoto`"
+                            onerror="this.onerror=null; this.src='/Profile/Profile_Photo.svg'"
+                            width="50"
+                            height="50"
+                            alt="your profile photo"
+                        />
+                    </div>
                 </td>
-                <td>{{ username() }}</td>
-                <td>{{ loggedUser().pomodoroCounter }}</td>
-        </tr>
-    </tfoot>
-</table>
+                <td class="user-text">{{ username() }}</td>
+                <td class="pomo-counter">{{ loggedUser().pomodoroCounter }}</td>
+            </tr>
+        </tfoot>
+    </table>
+</div>
