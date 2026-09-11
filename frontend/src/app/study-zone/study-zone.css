@@ -1,0 +1,146 @@
+.study-zone-top{
+    margin-top: 30px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.main-page-btn{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 50px;
+    padding: 0 10px;
+    margin-right: 40px;
+}
+
+.main-page-btn span{
+    font-size: 40px;
+    margin-right: 5px;
+    margin-bottom: 3.5px;
+}
+
+.search{
+    width: 100%;
+}
+
+ul{
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+
+.deck-container{
+    width: 95%;
+    margin-block: 50px;
+    margin-inline: auto;
+    display: flex;
+    flex-wrap: wrap;
+}
+
+/* deck-item's width:
+ * 
+ * (deck-container width) - ( (border-inline + margin-inline + padding-inline)*3 items )
+ * -------------------------------------------------------------------------------------
+ *                                        3 items
+ */
+.deck-item{
+    position: relative;
+    width: calc((100% - (4px + 40px + 20px)*3) / 3); 
+    height: 195px;
+    border: solid 2px black;
+    border-radius: 20px;
+    margin: 20px;
+    padding: 10px;
+    background-color: #D9D9D9;
+    overflow: hidden;
+    box-shadow: 5px 5px 8px rgba(0, 0, 0, 0.250);
+}
+
+.deck-item .edit-deck{
+    float: right;
+    background: none;
+    border: none;
+    padding: 10px 15px 5px 5px;
+    font-size: 20px;
+    font-weight: 500;
+    border-bottom-left-radius: 10px;
+    border-top-right-radius: 20px;
+    margin-top: -10px;
+    margin-right: -10px;
+}
+
+.deck-item .edit-deck::before{
+    content: '';
+    display: inline-block;
+    width: 24px;
+    height: 24px;
+    margin-bottom: 5px;
+    margin-right: -3px;
+    background-image: url("/edit-deck.svg");
+    background-size: contain;
+    background-repeat: no-repeat;
+    vertical-align: middle;
+
+}
+
+.deck-item .edit-deck:hover{
+    transform: scale(1.05);
+    border-left: solid 2px black;
+    border-bottom: solid 2px black;
+    background-color: white;
+    box-shadow: 5px 5px 8px rgba(0, 0, 0, 0.250);
+    transition-duration: 300ms;
+}
+
+.deck-item .item-title{
+    margin-block: 0;
+    font-size: 24px;
+    font-weight: 500;
+    width: 75%;
+}
+
+.deck-item div{
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding-inline: 10px;
+    padding-bottom: 10px;
+    display: flex;
+    justify-content: space-between;
+}
+
+.deck-item div button{
+    font-size: 20px;
+    border: solid 2px black;
+    border-radius: 15px;
+    padding: 8px 25px;
+    cursor: pointer;
+}
+
+.study-deck{
+    color: white;
+    background-color: #9D2427;
+}
+
+.study-deck:hover{
+    background-color:#902122;
+    transition-duration: 300ms;
+}
+
+.deck-item div button.study-deck:disabled{
+    background-color: white;
+    color: black;
+    opacity: 0.5;
+}
+
+.deck-item div .open-deck{
+    color: white;
+    background-color: rgba(0, 0, 0, 0.850);
+}
+
+.deck-item div .open-deck:hover{
+    background-color: black;
+    transition-duration: 300ms;
+}

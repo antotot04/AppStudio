@@ -1,7 +1,7 @@
 import { Component, computed, inject, input, OnInit, output, signal } from '@angular/core';
 import { StudyService } from '../service/study/study-service';
 import { DeckDTO } from '../dto/deck-dto';
-import { form, required, FormField } from '@angular/forms/signals';
+import { form, required, FormField, maxLength } from '@angular/forms/signals';
 import { Router } from '@angular/router';
 
 @Component({
@@ -47,7 +47,8 @@ export class DeckSettings implements OnInit {
   });
 
   deckForm = form(this.formModel, (schemaPath) => {
-    required(schemaPath.deckTitle, {message: "title is required"});
+    maxLength(schemaPath.deckTitle, 50);
+    required(schemaPath.deckTitle);
   });
 
   createUserDeck(deckData: DeckDTO){
@@ -112,6 +113,9 @@ export class DeckSettings implements OnInit {
   setDisabledOptions(){
     if(this.deckId() !== undefined){
       this.studyService.getDeckCards(this.deckId()!).subscribe((resp) => {
+        if(resp.length === 0) /* no cards in deck -> can be any layout */
+          return;
+          
         const possibleLayout = resp[0].layout;
         for(const card of resp){
           if(card.layout !== possibleLayout){

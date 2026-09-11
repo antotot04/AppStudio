@@ -29,6 +29,7 @@ export class StudyZone implements OnInit {
   deckPopUp = signal(false);
   pageFunc = signal<'create' | 'edit'>('create');
   deckId = signal<undefined | string>(undefined);
+  emptyDecksMessage = signal("No deck created. Go and create one!");
 
   formModel = signal<SearchEntry>({
     layout: '',
@@ -79,8 +80,12 @@ export class StudyZone implements OnInit {
   }
 
   onSubmit(event: Event){
-    event.preventDefault(); 
+    event.preventDefault();
     this.execSearch();
+
+    if(this.decksToDisplay().length === 0){
+      this.emptyDecksMessage.set("No decks found");
+    }
   }
 
   onNewDeck(){
