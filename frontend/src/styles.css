@@ -49,7 +49,11 @@ body {
 }
 
 /* -- MAIN COMMON ELEMENTS -- */
-/* general main page button */
+
+button{
+    cursor: pointer;
+}
+
 .main-page-btn{
     padding: 10px 20px;
     font-size: 20px;
@@ -59,7 +63,6 @@ body {
     border-radius: 15px;
     background-color: #000000;
     box-shadow: 5px 5px 8px rgba(0, 0, 0, 0.250);
-    cursor: pointer;
 }
 
 .main-page-btn:hover{
@@ -182,11 +185,21 @@ body {
     font-size: 25px;
 }
 
+.pomo-form input{
+    width: fit-content;
+    padding: 10px 20px;
+    border: solid 2px black;
+    border-radius: 10px;
+    font-size: 1em;
+    background-color: #D9D9D9;
+}
+
 .pomo-form input[type="range"]{
     --perc: 50%;
     appearance: none;
     width: 50%;
     background: transparent;
+    border: none;
 }
 
 .pomo-form input[type="range"]:disabled{

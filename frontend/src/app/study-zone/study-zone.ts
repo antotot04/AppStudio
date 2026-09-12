@@ -43,15 +43,17 @@ export class StudyZone implements OnInit {
       this.decksToDisplay.update(() => 
         this.deckList.filter((deck) => 
           deck.layout === this.searchForm.layout().value() &&
-          deck.title.includes(this.searchForm.word().value())
+          deck.title.toLowerCase().includes(this.searchForm.word().value().toLowerCase())
         )
       );
     }else{
+      console.log("executing search");
       this.decksToDisplay.update(() => 
         this.deckList.filter((deck) => 
-          deck.title.includes(this.searchForm.word().value())
+          deck.title.toLowerCase().includes(this.searchForm.word().value().toLowerCase())
         )
       );
+      console.log(this.decksToDisplay());
     }
   }
 
@@ -70,7 +72,7 @@ export class StudyZone implements OnInit {
         );
         forkJoin(serviceList).subscribe((realResp) => {
           this.deckList = realResp;
-          this.decksToDisplay.set(this.deckList);
+          this.execSearch();
         })
       },
       error: () => {
@@ -94,10 +96,23 @@ export class StudyZone implements OnInit {
     this.deckId.set(undefined);
   }
 
-  onClose(updateState: boolean){
+  onClose(successful: boolean){
     this.deckPopUp.set(false);
-    if(updateState){
-      this.getAllUserDecks(); // refresh deck state
+
+    if(successful){
+      this.getAllUserDecks();
+      if(this.pageFunc() === "create"){
+        /* reset search infos */
+        this.formModel.update((model) => {
+          return {
+            layout: '',
+            word: ''
+          }
+        }); 
+      }else{
+        this.execSearch();
+        console.log("here");
+      }
     }
   }
 
