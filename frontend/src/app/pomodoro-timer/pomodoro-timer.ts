@@ -1,4 +1,4 @@
-import { Component, computed, inject, OnInit, signal } from '@angular/core';
+import { afterEveryRender, Component, computed, inject, OnInit, signal } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import { TimerService } from '../service/timer/timer-service';
 import { Router } from '@angular/router';
@@ -40,7 +40,7 @@ export class PomodoroTimer implements OnInit {
 
   onPopUpState = signal<'settings' | 'leaderboard' | ''>('');
 
-  readonly pomodoroTime = 10; // pomodoro unit: 25 min
+  readonly pomodoroTime = 1500; // pomodoro unit: 25 min
   shortPause = computed(() => {
     return this.userSettings().timer.shortPause;
   });
@@ -219,12 +219,6 @@ export class PomodoroTimer implements OnInit {
           this.currentTime.update((lastValue) => lastValue - 1);
           this.progressWidth();
         }
-
-        /* runs new updated background once and without stopping the timer */
-        if(this.runUpdatedBackground() && this.timerState() === ''){
-          this.playBackground(true);
-          this.runUpdatedBackground.set(false);
-        }
     }, 1000);
   }
  
@@ -299,7 +293,8 @@ export class PomodoroTimer implements OnInit {
       this.scaleCurrTime(oldInfos.timer.longPause, newInfos.timer.longPause);
       this.progressWidth();
     }else{
-      if(newInfos.suono.background !== null && oldInfos.suono.background !== newInfos.suono.background){
+      if(newInfos.suono.background !== null && oldInfos.suono.background !== newInfos.suono.background || 
+        newInfos.suono.background_volume !== oldInfos.suono.background_volume){
         this.runUpdatedBackground.set(true);
       }
     }
@@ -368,6 +363,20 @@ export class PomodoroTimer implements OnInit {
     if(onChanges){
       this.getUpdatedSettings();
     }
+  }
+
+  constructor(){
+    afterEveryRender({
+      write: () => {
+        if(this.runUpdatedBackground() && this.timerState() === ''){
+          this.playBackground(true);
+          const background = document.querySelector(".background") as HTMLAudioElement;
+          if(background !== null)
+            background.volume = this.userSettings().suono.background_volume * Math.pow(10, -2);
+          this.runUpdatedBackground.set(false);
+        }
+      }
+    })
   }
 
   ngOnInit(){
