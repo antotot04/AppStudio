@@ -1,4 +1,4 @@
-<div class="study-zone-top">
+<div class="page-top">
     <form class="search" (submit)="onSubmit($event)">
         <div id="search-icon-overlay">
             <img
@@ -51,13 +51,22 @@
         </li>
     }
     @if(decksToDisplay().length === 0){
-        <div id="err-img-wrapper">
+        @if (onSearch()) {
+            <div id="err-img-wrapper">
+                <img
+                    src="/unhappy-result.svg"
+                    width="200"
+                    height="200"
+                />
+            </div>
+        }@else{
             <img
-                src="/unhappy-result.svg"
+                id="empty-container"
+                src="/empty-folder.svg"
                 width="200"
                 height="200"
             />
-        </div>
+        }
         <p id="empty-list-message">{{ emptyDecksMessage() }}</p>
     }
 </ul>

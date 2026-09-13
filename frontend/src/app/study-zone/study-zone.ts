@@ -29,7 +29,10 @@ export class StudyZone implements OnInit {
   deckPopUp = signal(false);
   pageFunc = signal<'create' | 'edit'>('create');
   deckId = signal<undefined | string>(undefined);
-  emptyDecksMessage = signal("No deck created. Go and create one!");
+  noDecksMess = "No Decks found";
+  emptyZoneMess = "No decks created. Create one to get started!";
+  emptyDecksMessage = signal(this.emptyZoneMess);
+  onSearch = signal(false);
 
   formModel = signal<SearchEntry>({
     layout: '',
@@ -39,6 +42,7 @@ export class StudyZone implements OnInit {
   searchForm = form(this.formModel);
 
   execSearch(){
+    this.onSearch.set(true);
     if(this.searchForm.layout().value() !== ''){
       this.decksToDisplay.update(() => 
         this.deckList.filter((deck) => 
@@ -47,13 +51,15 @@ export class StudyZone implements OnInit {
         )
       );
     }else{
-      console.log("executing search");
       this.decksToDisplay.update(() => 
         this.deckList.filter((deck) => 
           deck.title.toLowerCase().includes(this.searchForm.word().value().toLowerCase())
         )
       );
-      console.log(this.decksToDisplay());
+    }
+
+    if(this.decksToDisplay().length === 0){
+      this.emptyDecksMessage.set(this.noDecksMess);
     }
   }
 
@@ -72,7 +78,12 @@ export class StudyZone implements OnInit {
         );
         forkJoin(serviceList).subscribe((realResp) => {
           this.deckList = realResp;
-          this.execSearch();
+          if(this.deckList.length !== 0){
+            this.execSearch();
+          }else{
+            this.onSearch.set(false);
+            this.emptyDecksMessage.set(this.emptyZoneMess);
+          }
         })
       },
       error: () => {
@@ -84,10 +95,6 @@ export class StudyZone implements OnInit {
   onSubmit(event: Event){
     event.preventDefault();
     this.execSearch();
-
-    if(this.decksToDisplay().length === 0){
-      this.emptyDecksMessage.set("No decks found");
-    }
   }
 
   onNewDeck(){

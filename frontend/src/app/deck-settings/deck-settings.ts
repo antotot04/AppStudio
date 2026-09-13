@@ -102,10 +102,10 @@ export class DeckSettings implements OnInit {
       this.studyService.getUserDeck(this.deckId()!).subscribe((resp) => {
         this.formModel.set({
           deckTitle: resp.title,
-          deckLayout: resp.layout
+          deckLayout: resp.layout === null ? "general" : resp.layout
         });
         this.initTitle.set(resp.title);
-        this.initLayout.set(resp.layout);
+        resp.layout === null ? this.initLayout.set("general") : this.initLayout.set(resp.layout);
       })
     }
   }

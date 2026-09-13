@@ -48,6 +48,14 @@ body {
     margin-block: 0;
 }
 
+.page-top{
+    margin-top: 30px;
+    margin-inline: 40px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
 /* -- MAIN COMMON ELEMENTS -- */
 
 button{
@@ -93,6 +101,10 @@ button{
     border-radius: 20px;
     background-color: #D9D9D9;
     box-shadow: 5px 5px 8px rgba(0, 0, 0, 0.250);
+    margin-inline: auto;
+}
+
+#empty-container{
     margin-inline: auto;
 }
 
@@ -359,6 +371,7 @@ button{
 /* -- SEARCH BAR COMMON STYLING -- */
 /* Note: to be applied on a <form> element */
 form.search {
+    width: 100%;
     display: flex;
     justify-content: center;
     height: 60px;
