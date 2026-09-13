@@ -368,7 +368,8 @@ export class PomodoroTimer implements OnInit {
   constructor(){
     afterEveryRender({
       write: () => {
-        if(this.runUpdatedBackground() && this.timerState() === ''){
+        /* update while timer is running */
+        if(!this.pause() && this.runUpdatedBackground() && this.timerState() === ''){
           this.playBackground(true);
           const background = document.querySelector(".background") as HTMLAudioElement;
           if(background !== null)
