@@ -321,57 +321,61 @@ export class CardSettings implements OnInit {
     let editedInfos = false;
     let card: QuizCard | DoubleSidedCard | TrueFalseCard = this.initCard;
 
-    switch(this.layoutEdited()){
-      case "quiz":
-        card = this.initCard as QuizCard;
-        if(this.pageFunc() === "edit"){
-          if(card.front !== this.cardForm.front().value() || 
-          !this.listOptComp(card.options, this.optionFormList())){
-            editedInfos = true;
+    if(this.layoutEdited() !== this.layout()){
+      editedInfos = true;
+    }else{
+      switch(this.layoutEdited()){
+        case "quiz":
+          card = this.initCard as QuizCard;
+          if(this.pageFunc() === "edit"){
+            if(card.front !== this.cardForm.front().value() || 
+            !this.listOptComp(card.options, this.optionFormList())){
+              editedInfos = true;
+            }
+          }else{
+            if(this.cardForm.front().value() !== '' ||
+            this.optionFormList().filter((opt) => 
+              opt.answerText !== '' ||
+              opt.validity !== false
+            ).length !== 0
+            ){
+              editedInfos = true;
+            }
           }
-        }else{
-          if(this.cardForm.front().value() !== '' ||
-          this.optionFormList().filter((opt) => 
-            opt.answerText !== '' ||
-            opt.validity !== false
-          ).length !== 0
-          ){
-            editedInfos = true;
+          break;
+        case "double-sided":
+          card = this.initCard as DoubleSidedCard;
+          if(this.pageFunc() === "edit"){
+            if(card.front !== this.cardForm.front().value() || 
+            card.back !== this.cardForm.back().value()){
+              editedInfos = true;
+            }
+          }else{
+            if(this.cardForm.front().value() !== '' ||
+            this.cardForm.back().value() !== ''){
+              editedInfos = true;
+            }
           }
-        }
-        break;
-      case "double-sided":
-        card = this.initCard as DoubleSidedCard;
-        if(this.pageFunc() === "edit"){
-          if(card.front !== this.cardForm.front().value() || 
-          card.back !== this.cardForm.back().value()){
-            editedInfos = true;
+          break;
+        default:
+          card = this.initCard as TrueFalseCard;
+          if(this.pageFunc() === "edit"){
+            let validity = false;
+            if(this.cardForm.validity().value() === "true"){
+              validity = true;
+            }
+            if(card.front !== this.cardForm.front().value() || 
+            card.validity !== validity){
+              editedInfos = true;
+            }
+          }else{
+            if(this.cardForm.front().value() !== '' ||
+            this.cardForm.validity().value() !== "true"){
+              editedInfos = true;
+            }
           }
-        }else{
-          if(this.cardForm.front().value() !== '' ||
-          this.cardForm.back().value() !== ''){
-            editedInfos = true;
-          }
-        }
-        break;
-      default:
-        card = this.initCard as TrueFalseCard;
-        if(this.pageFunc() === "edit"){
-          let validity = false;
-          if(this.cardForm.validity().value() === "true"){
-            validity = true;
-          }
-          if(card.front !== this.cardForm.front().value() || 
-          card.validity !== validity){
-            editedInfos = true;
-          }
-        }else{
-          if(this.cardForm.front().value() !== '' ||
-          this.cardForm.validity().value() !== "true"){
-            editedInfos = true;
-          }
-        }
-        break;
+          break;
+      }
     }
 
     if(!editedInfos){
