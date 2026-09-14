@@ -118,8 +118,10 @@
     font-size: 20px;
     font-weight: lighter;
     text-align: center;
-    line-height: 1;
+    line-height: 1.2;
     margin-top: 0;
+    width: 75%;
+    margin-inline: auto;
 }
 
 #options-back #add-opt{

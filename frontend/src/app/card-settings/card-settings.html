@@ -41,8 +41,8 @@
                 </fieldset>
             }@else if(this.layoutEdited() === "quiz"){
                 <fieldset id="options-back">
-                    <legend>OPTIONS (required)</legend>
-                    <p>Select the correct options <br> a maximum of 5 options can be created</p>
+                    <legend>OPTIONS</legend>
+                    <p>Select the correct options, a minimum of one option is required and a maximum of 5 options can be created</p>
                     <button id="add-opt" type="button" (click)="onAddOption()">+</button>
                     @for (option of optionFormList(); track option.idOption) {
                         <div>
