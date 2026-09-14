@@ -23,6 +23,7 @@ body {
     border-radius: 10px;
     box-shadow: 5px 5px 8px rgba(0, 0, 0, 0.250);
     z-index: 6; /* high-value to make sure it's always in front */
+    overflow: hidden;
 }
 
 .exit-pop-up-btn{

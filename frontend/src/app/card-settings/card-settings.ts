@@ -182,7 +182,7 @@ export class CardSettings implements OnInit {
   }
 
   onDeleteOption(index: string){
-    if(!confirm("Do you really want to delete this option?")){
+    if(!confirm("Do you really want to delete this option?\n(this option will be deleted even if you exit without saving your changes)")){
       return;
     }
 
