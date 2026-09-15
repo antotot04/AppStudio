@@ -3,7 +3,7 @@ import { StudyService } from '../service/study/study-service';
 import { QuizCard } from '../dto/quiz-card';
 import { TrueFalseCard } from '../dto/true-false-card';
 import { DoubleSidedCard } from '../dto/double-sided-card';
-import { form, maxLength, required, FormField } from '@angular/forms/signals';
+import { form, maxLength, required, FormField, schema } from '@angular/forms/signals';
 import { QuizOption } from '../dto/quiz-option';
 import { Router } from '@angular/router';
 import { QuizOptionData } from '../dto/quiz-option-data';
@@ -96,16 +96,7 @@ export class CardSettings implements OnInit {
   cardForm = form(this.formModel, (schemaPath) => {
     required(schemaPath.front);
     maxLength(schemaPath.front, 600);
-    switch(this.layoutEdited()){
-      case "double-sided":
-        required(schemaPath.back);
-        break;
-      case "true-false":
-        required(schemaPath.validity);
-        break;
-      default:
-        break;
-    }
+    required(schemaPath.back, { when: () => this.layoutEdited() === "double-sided"});
   });
 
   onChangeLayout(event: Event){
