@@ -51,6 +51,8 @@ export class StudyDeck implements OnInit {
   /* solution state */
   onSolution = signal(false);
   isCorrect = signal(false);
+  /* DOM element of the choosen response */
+  choosenInput = signal<HTMLDivElement | undefined>(undefined);
   isDone = signal(false);
   isFinalOutcome = signal(false);
   outcomeCounter = signal<number>(0);
@@ -92,14 +94,6 @@ export class StudyDeck implements OnInit {
 
   optionFormList = signal<{ id: string, validity: boolean }[]>([]);
 
-  setOption(event: Event, index: string){
-    const input = event.target as HTMLInputElement;
-    this.optionFormList.update((list) => {
-      list.filter((opt) => opt.id === index).forEach((opt) => opt.validity = input.checked);
-      return list;
-    });
-  }
-
   printAnswerText(id: string): string{
     const option = this.currCardInfo().quiz.options.find((opt) => opt.idOption === id);
     if(option === undefined){
@@ -110,7 +104,7 @@ export class StudyDeck implements OnInit {
 
   updateProgressBar(){
     const fullWidth = (document.querySelector(".progress-bar-container") as HTMLElement).clientWidth;
-    const barContent = document.querySelector(".progress-bar-content") as HTMLElement;
+    const barContent = document.querySelector(".progress") as HTMLElement;
     const contentWidth = (this.currCardCounter() / this.cardList.length) * fullWidth;
     barContent.style.width = `${contentWidth}px`
   }
@@ -134,6 +128,9 @@ export class StudyDeck implements OnInit {
     });
 
     this.updateProgressBar();
+    if(this.currCard().layout === "true-false"){
+      this.colorTrueFalse(true);
+    }
 
     if(this.currCardCounter() >= this.cardList.length){
       this.isFinalOutcome.set(true);
@@ -143,6 +140,88 @@ export class StudyDeck implements OnInit {
     this.currCard.set(this.cardList[this.currCardCounter()]);
     this.isDone.set(false);
     this.getCardInfo();
+  }
+
+  setChoosenInput(){
+    const inputList = document.querySelectorAll("#true-false-field input") as NodeList;
+    let respChecked = '';
+
+    if(!inputList) return;
+
+    inputList.forEach((input) => {
+      const radio = input as HTMLInputElement;
+      if(radio.checked){
+        respChecked = radio.id;
+      }
+    });
+
+    if(respChecked === "resp2"){
+      this.choosenInput.set(document.querySelector("#true-false-field div:nth-child(2)") as HTMLDivElement);
+    }else if(respChecked === "resp1"){
+      this.choosenInput.set(document.querySelector("#true-false-field div:nth-child(1)") as HTMLDivElement);
+    }
+  }
+
+  /* change the state of the choosen button for a response to
+   * a 'true-false' card. State can be default, correct or wrong. */
+  colorTrueFalse(setDefault: boolean){
+    if(!this.isDone()){
+      this.setChoosenInput();
+    }
+
+    const divToColor = this.choosenInput();
+
+    if(!divToColor) return;
+
+    /* clearing class list */
+    for(const token of divToColor.classList){
+      divToColor.classList.remove(token);
+    }
+
+    /* default class */
+    if(setDefault){
+      divToColor.classList.add("default");
+      return;
+    }
+
+    /* adding class */
+    if(this.isCorrect()){
+      divToColor.classList.add("correct");
+    }else{
+      divToColor.classList.add("wrong");
+    }
+  }
+
+  /* dynamically adds a message under an option field to reveal its validity */
+  revealValidity(optionId: string, isCorrect: boolean){
+    const currentLab = document.querySelector(`#quiz-field label[for="${optionId}"]`) as HTMLLabelElement;
+    const newPar = document.createElement("p");
+    let newParContent;
+    if(isCorrect){
+      newParContent = document.createTextNode("this option was correct!");
+      newPar.style.color = "#28A745";
+    }else{
+      newParContent = document.createTextNode("this option was wrong!");
+      newPar.style.color = "#cb1c16";
+    }
+    newPar.appendChild(newParContent);
+    newPar.style.fontSize = "20px";
+    newPar.style.fontWeight = "500";
+    currentLab.insertAdjacentElement("afterend", newPar);
+  }
+
+  /* change the state of current option based on 'isCorrect' */
+  colorOptionField(optionId: string, isCorrect: boolean){
+    const labToColor = document.querySelector(`#quiz-field label[for="${optionId}"]`) as HTMLLabelElement;
+    if(!labToColor) return;
+
+    let cl = 'correct';
+    if(!isCorrect){
+      cl = 'wrong';
+    }
+
+    labToColor.classList.remove('default');
+    labToColor.classList.add(cl);
   }
 
   computeSolution(): boolean{
@@ -156,14 +235,36 @@ export class StudyDeck implements OnInit {
         return false;
       }
     }else if(this.currCard().layout === "quiz"){
-      const optionList = this.currCardInfo().quiz.options;
-      for(const trueOption of optionList){
-        for(const optToValidate of this.optionFormList()){
-          if(optToValidate.id === trueOption.idOption && 
-            optToValidate.validity !== trueOption.validity){
-              return false;
+      const optionList = document.querySelectorAll("#quiz-field input") as NodeList;
+      if(!optionList) return false;
+
+      const correctOptionList = this.currCardInfo().quiz.options;
+      let invalidResp = false;
+      for(const trueOption of correctOptionList){
+        optionList.forEach((node) => {
+          const current = node as HTMLInputElement;
+          if(current.id === trueOption.idOption){
+
+            if(trueOption.validity){
+              /* change state as correct */
+              this.colorOptionField(current.id, true);
+            }else{
+              if(current.checked){ /* checked but it was false */
+                /* change state as wrong */
+                this.colorOptionField(current.id, false);
+              }     
+            }
+
+            if(current.checked !== trueOption.validity){
+              this.revealValidity(current.id, trueOption.validity);
+              invalidResp = true;
+            }
           }
-        }
+        })
+      }
+
+      if(invalidResp){
+        return false;
       }
       return true;
     }else{
@@ -201,6 +302,11 @@ export class StudyDeck implements OnInit {
         });
         console.log("outcome counter: " + this.outcomeCounter());
       }
+
+      if(this.currCard().layout === "true-false"){
+        this.colorTrueFalse(false);
+      }
+
       this.isDone.set(true);
     }
 
@@ -226,6 +332,7 @@ export class StudyDeck implements OnInit {
             });
             break;
           default:
+            /* correct options */
             this.currCardInfo.update((card) => {
               card.quiz = resp as QuizCard;
               return card;
@@ -242,8 +349,6 @@ export class StudyDeck implements OnInit {
               }
               return newList;
             })
-
-            console.log(this.optionFormList());
             break;
         }
       }
