@@ -25,28 +25,53 @@
     <app-activity-settings [pageFunc]="settingsMode()" [activityData]="currActData()" (hasTerminated)="onSettingsTerm($event)"></app-activity-settings>
 }
 
-<ul class="activity-container">
-    @for (activity of activitiesToDisplay(); track activity.id) {
-        <li class="activity-item">
-            <div class="act-item-top">
-                <p class="title">
-                    {{ activity.title }}
+<div class="activity-container">
+    <ul>
+        @for (activity of activitiesToDisplay(); track activity.id) {
+            <li class="activity-item">
+                <div class="act-item-top">
+                    <p class="title">
+                        {{ activity.title }}
+                    </p>
+                    <p class="pomo-counter">
+                        {{ `${activity.currentPomos}/${activity.pomoCounter} ` + (activity.currentPomos === activity.pomoCounter ? 'completed!' : '') }}
+                    </p>
+                </div>
+                <p class="description">
+                    {{renderDescription(activity.description)}}
                 </p>
-                <p class="pomo-counter">
-                    {{ `${activity.currentPomos}/${activity.pomoCounter} ` + (activity.currentPomos === activity.pomoCounter ? 'completed!' : '') }}
-                </p>
+                <div class="act-item-down">
+                    <button class="edit-activity" (click)="onEdit(activity.id)">
+                        EDIT
+                    </button>
+                    <button class="delete-activity" (click)="onDelete(activity.id)">
+                        DELETE
+                    </button>
+                </div>
+            </li>
+        }
+    </ul>
+
+    @if (activitiesToDisplay().length === 0) {
+        @if (onSearch()) {
+            <div id="err-img-wrapper">
+                <img 
+                    id="no-deck-cards"
+                    src="/unhappy-result.svg"
+                    width="200"
+                    height="200"
+                    alt="big lens with an unhappy face inside it"
+                />
             </div>
-            <p class="description">
-                {{renderDescription(activity.description)}}
-            </p>
-            <div class="act-item-down">
-                <button class="edit-activity" (click)="onEdit(activity.id)">
-                    EDIT
-                </button>
-                <button class="delete-activity" (click)="onDelete(activity.id)">
-                    DELETE
-                </button>
-            </div>
-        </li>
+        }@else {
+            <img 
+                id="empty-container"
+                src="/task-list.svg"
+                width="200"
+                height="200"
+                alt="task list image"
+            />
+        }
+        <p id="empty-list-message">{{ emptyActivitiesMessage() }}</p>
     }
-</ul>
+</div>

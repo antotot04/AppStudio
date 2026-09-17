@@ -151,3 +151,8 @@ ul{
 .act-item-down .edit-activity:hover{
     background-color: black;
 }
+
+#empty-container{
+    width: 100%;
+    margin-block: 20px;
+}

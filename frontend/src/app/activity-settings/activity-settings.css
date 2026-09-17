@@ -1,0 +1,63 @@
+.pomo-form{
+    position: relative;
+    bottom: 35px;
+    height: 80%;
+    display: flex;
+    justify-content: center;
+    margin-inline: 10px;
+}
+
+.pomo-form button[type="submit"]{
+    position: absolute;
+    align-self: flex-end;
+    right: 0;
+}
+
+.pomo-form-sub-container{
+    margin-inline: 20px;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+
+.form-group{
+    margin-block: 20px;
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+}
+
+label{
+    font-weight: 500;
+    align-content: center;
+}
+
+#title{
+    width: 60%;
+}
+
+label[for="duration"]{
+    text-align: center;
+}
+
+#duration{
+    min-width: 100px;
+}
+
+label[for="description"]{
+    margin-bottom: 10px;
+    margin-left: 20px;
+}
+
+#description{
+    resize: none;
+    width: 80%;
+    height: 45%;
+    margin-left: 20px;
+    margin-bottom: 20px;
+    border: solid 2px black;
+    border-radius: 10px;
+    background-color: #D9D9D9;
+    padding: 10px;
+    overflow: scroll;
+}

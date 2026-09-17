@@ -32,7 +32,7 @@ export class ActivitySettings implements OnInit{
     required(schemaPath.title, { message: "title is required" });
     maxLength(schemaPath.title, 100);
     required(schemaPath.pomoCounter, { message: "duration is required" });
-    min(schemaPath.pomoCounter, 0, { message: "you can't select a lower duration than your current pomodoros on this activity" });
+    min(schemaPath.pomoCounter, 0, { message: "duration can't be lower than 0 pomodoros" });
   })
   readonly minDurationErrorMessage = "total pomodoro duration cannot be lower than the total of your already completed pomodoros";
   showMinDurationErrorMessage = signal(false);

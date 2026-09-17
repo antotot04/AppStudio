@@ -29,6 +29,10 @@ export class ActivityPage implements OnInit {
     word: '',
   });
   searchForm = form(this.formModel);
+  onSearch = signal(false);
+  readonly emptySearch = "Activities not found";
+  readonly noActivities = "You don't have any activities at the moment. Start by creating one!"
+  emptyActivitiesMessage = signal<string>(this.noActivities);
 
   execSearch(){
     this.activitiesToDisplay.update(() =>
@@ -38,7 +42,11 @@ export class ActivityPage implements OnInit {
 
   onSubmit(event: Event){
     event.preventDefault();
+    this.onSearch.set(true);
     this.execSearch();
+    if(this.activitiesToDisplay().length === 0){
+      this.emptyActivitiesMessage.set(this.emptySearch);
+    }
   }
 
   onNewActivity(){
@@ -97,6 +105,10 @@ export class ActivityPage implements OnInit {
       this.activityList = resp;
       this.activitiesToDisplay.set(this.activityList);
       this.execSearch();
+      this.onSearch.set(false);
+      if(this.activitiesToDisplay().length === 0){
+        this.emptyActivitiesMessage.set(this.noActivities);
+      }
     })
   }
 
