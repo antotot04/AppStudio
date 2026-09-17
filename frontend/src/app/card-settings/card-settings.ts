@@ -3,7 +3,7 @@ import { StudyService } from '../service/study/study-service';
 import { QuizCard } from '../dto/quiz-card';
 import { TrueFalseCard } from '../dto/true-false-card';
 import { DoubleSidedCard } from '../dto/double-sided-card';
-import { form, maxLength, required, FormField } from '@angular/forms/signals';
+import { form, maxLength, required, FormField, schema } from '@angular/forms/signals';
 import { QuizOption } from '../dto/quiz-option';
 import { Router } from '@angular/router';
 import { QuizOptionData } from '../dto/quiz-option-data';
@@ -96,16 +96,7 @@ export class CardSettings implements OnInit {
   cardForm = form(this.formModel, (schemaPath) => {
     required(schemaPath.front);
     maxLength(schemaPath.front, 600);
-    switch(this.layoutEdited()){
-      case "double-sided":
-        required(schemaPath.back);
-        break;
-      case "true-false":
-        required(schemaPath.validity);
-        break;
-      default:
-        break;
-    }
+    required(schemaPath.back, { when: () => this.layoutEdited() === "double-sided"});
   });
 
   onChangeLayout(event: Event){
@@ -182,7 +173,7 @@ export class CardSettings implements OnInit {
   }
 
   onDeleteOption(index: string){
-    if(!confirm("Do you really want to delete this option?")){
+    if(!confirm("Do you really want to delete this option?\n(this option will be deleted even if you exit without saving your changes)")){
       return;
     }
 
@@ -321,57 +312,61 @@ export class CardSettings implements OnInit {
     let editedInfos = false;
     let card: QuizCard | DoubleSidedCard | TrueFalseCard = this.initCard;
 
-    switch(this.layoutEdited()){
-      case "quiz":
-        card = this.initCard as QuizCard;
-        if(this.pageFunc() === "edit"){
-          if(card.front !== this.cardForm.front().value() || 
-          !this.listOptComp(card.options, this.optionFormList())){
-            editedInfos = true;
+    if(this.layoutEdited() !== this.layout()){
+      editedInfos = true;
+    }else{
+      switch(this.layoutEdited()){
+        case "quiz":
+          card = this.initCard as QuizCard;
+          if(this.pageFunc() === "edit"){
+            if(card.front !== this.cardForm.front().value() || 
+            !this.listOptComp(card.options, this.optionFormList())){
+              editedInfos = true;
+            }
+          }else{
+            if(this.cardForm.front().value() !== '' ||
+            this.optionFormList().filter((opt) => 
+              opt.answerText !== '' ||
+              opt.validity !== false
+            ).length !== 0
+            ){
+              editedInfos = true;
+            }
           }
-        }else{
-          if(this.cardForm.front().value() !== '' ||
-          this.optionFormList().filter((opt) => 
-            opt.answerText !== '' ||
-            opt.validity !== false
-          ).length !== 0
-          ){
-            editedInfos = true;
+          break;
+        case "double-sided":
+          card = this.initCard as DoubleSidedCard;
+          if(this.pageFunc() === "edit"){
+            if(card.front !== this.cardForm.front().value() || 
+            card.back !== this.cardForm.back().value()){
+              editedInfos = true;
+            }
+          }else{
+            if(this.cardForm.front().value() !== '' ||
+            this.cardForm.back().value() !== ''){
+              editedInfos = true;
+            }
           }
-        }
-        break;
-      case "double-sided":
-        card = this.initCard as DoubleSidedCard;
-        if(this.pageFunc() === "edit"){
-          if(card.front !== this.cardForm.front().value() || 
-          card.back !== this.cardForm.back().value()){
-            editedInfos = true;
+          break;
+        default:
+          card = this.initCard as TrueFalseCard;
+          if(this.pageFunc() === "edit"){
+            let validity = false;
+            if(this.cardForm.validity().value() === "true"){
+              validity = true;
+            }
+            if(card.front !== this.cardForm.front().value() || 
+            card.validity !== validity){
+              editedInfos = true;
+            }
+          }else{
+            if(this.cardForm.front().value() !== '' ||
+            this.cardForm.validity().value() !== "true"){
+              editedInfos = true;
+            }
           }
-        }else{
-          if(this.cardForm.front().value() !== '' ||
-          this.cardForm.back().value() !== ''){
-            editedInfos = true;
-          }
-        }
-        break;
-      default:
-        card = this.initCard as TrueFalseCard;
-        if(this.pageFunc() === "edit"){
-          let validity = false;
-          if(this.cardForm.validity().value() === "true"){
-            validity = true;
-          }
-          if(card.front !== this.cardForm.front().value() || 
-          card.validity !== validity){
-            editedInfos = true;
-          }
-        }else{
-          if(this.cardForm.front().value() !== '' ||
-          this.cardForm.validity().value() !== "true"){
-            editedInfos = true;
-          }
-        }
-        break;
+          break;
+      }
     }
 
     if(!editedInfos){

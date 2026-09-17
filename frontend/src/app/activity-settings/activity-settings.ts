@@ -1,7 +1,7 @@
 import { Component, computed, inject, input, OnInit, output, signal } from '@angular/core';
 import { ActivityDTO } from '../dto/activity-dto';
 import { ActivityData } from '../dto/activity-data';
-import { form, min, required, FormField } from '@angular/forms/signals';
+import { form, min, required, FormField, maxLength } from '@angular/forms/signals';
 import { ActivityService } from '../service/activity/activity-service';
 import { Router } from '@angular/router';
 
@@ -30,8 +30,9 @@ export class ActivitySettings implements OnInit{
   });
   activityForm = form(this.formModel, (schemaPath) => {
     required(schemaPath.title, { message: "title is required" });
+    maxLength(schemaPath.title, 100);
     required(schemaPath.pomoCounter, { message: "duration is required" });
-    min(schemaPath.pomoCounter, 0, { message: "you can't select a lower duration than your current pomodoros on this activity" });
+    min(schemaPath.pomoCounter, 0, { message: "duration can't be lower than 0 pomodoros" });
   })
   readonly minDurationErrorMessage = "total pomodoro duration cannot be lower than the total of your already completed pomodoros";
   showMinDurationErrorMessage = signal(false);

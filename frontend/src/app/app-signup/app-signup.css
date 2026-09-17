@@ -1,3 +1,40 @@
-button.invalid{
-    background-color: red;
+.pop-up-container{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    border-radius: 100px;
+}
+
+.enter-form{
+    margin-top: 50px;
+    display: grid;
+    grid-template-areas: 
+    "general-form pass-form"
+    "sign-button sign-button";
+}
+
+#general-form-row{
+    grid-area: general-form;
+    margin-left: 80px;
+}
+
+#pass-form-row{
+    grid-area: pass-form;
+}
+
+.enter-form button{
+    grid-area: sign-button;
+}
+
+.enter-form div > *{
+    display: block;
+}
+
+.pomo-form-upload-photo-btn{
+    margin-top: 30px;
+}
+
+.enter-form button[type="submit"] + span{
+    width: fit-content;
+    justify-self: center;
 }

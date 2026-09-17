@@ -29,6 +29,10 @@ export class StudyZone implements OnInit {
   deckPopUp = signal(false);
   pageFunc = signal<'create' | 'edit'>('create');
   deckId = signal<undefined | string>(undefined);
+  noDecksMess = "No Decks found";
+  emptyZoneMess = "No decks created. Create one to get started!";
+  emptyDecksMessage = signal(this.emptyZoneMess);
+  onSearch = signal(false);
 
   formModel = signal<SearchEntry>({
     layout: '',
@@ -38,19 +42,24 @@ export class StudyZone implements OnInit {
   searchForm = form(this.formModel);
 
   execSearch(){
+    this.onSearch.set(true);
     if(this.searchForm.layout().value() !== ''){
       this.decksToDisplay.update(() => 
         this.deckList.filter((deck) => 
           deck.layout === this.searchForm.layout().value() &&
-          deck.title.includes(this.searchForm.word().value())
+          deck.title.toLowerCase().includes(this.searchForm.word().value().toLowerCase())
         )
       );
     }else{
       this.decksToDisplay.update(() => 
         this.deckList.filter((deck) => 
-          deck.title.includes(this.searchForm.word().value())
+          deck.title.toLowerCase().includes(this.searchForm.word().value().toLowerCase())
         )
       );
+    }
+
+    if(this.decksToDisplay().length === 0){
+      this.emptyDecksMessage.set(this.noDecksMess);
     }
   }
 
@@ -69,7 +78,12 @@ export class StudyZone implements OnInit {
         );
         forkJoin(serviceList).subscribe((realResp) => {
           this.deckList = realResp;
-          this.decksToDisplay.set(this.deckList);
+          if(this.deckList.length !== 0){
+            this.execSearch();
+          }else{
+            this.onSearch.set(false);
+            this.emptyDecksMessage.set(this.emptyZoneMess);
+          }
         })
       },
       error: () => {
@@ -79,7 +93,7 @@ export class StudyZone implements OnInit {
   }
 
   onSubmit(event: Event){
-    event.preventDefault(); 
+    event.preventDefault();
     this.execSearch();
   }
 
@@ -89,10 +103,23 @@ export class StudyZone implements OnInit {
     this.deckId.set(undefined);
   }
 
-  onClose(updateState: boolean){
+  onClose(successful: boolean){
     this.deckPopUp.set(false);
-    if(updateState){
-      this.getAllUserDecks(); // refresh deck state
+
+    if(successful){
+      this.getAllUserDecks();
+      if(this.pageFunc() === "create"){
+        /* reset search infos */
+        this.formModel.update((model) => {
+          return {
+            layout: '',
+            word: ''
+          }
+        }); 
+      }else{
+        this.execSearch();
+        console.log("here");
+      }
     }
   }
 

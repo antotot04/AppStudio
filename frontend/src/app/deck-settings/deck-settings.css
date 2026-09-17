@@ -1,0 +1,44 @@
+.pomo-form{
+    position: absolute;
+    height: 70%;
+    bottom: 0;
+    left: 0;
+    right: 0;
+}
+
+.pomo-form-sub-container{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+    margin-inline: 10%;
+}
+
+.pomo-form-sub-container > :first-child{
+    margin-top: 20px;
+}
+
+.pomo-form-sub-container > :last-child{
+    margin-bottom: 50px;
+}
+
+.pomo-form-sub-container label{
+    font-size: 2em;
+    font-weight: 450;
+    margin: 0;
+    margin-bottom: 10px;
+    margin-top: 30px;
+}
+
+.pomo-form-sub-container input[type="text"], 
+.pomo-form-sub-container label[for="deck-layout"]{
+    font-size: 1.5em;
+}
+
+.pomo-form button[type="submit"]{
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    margin-bottom: 20px;
+    margin-right: 20px;
+}

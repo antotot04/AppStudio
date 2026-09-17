@@ -1,0 +1,162 @@
+.main-page-btn span{
+    font-size: 40px;
+    margin-right: 5px;
+    margin-bottom: 3.5px;
+}
+
+.main-page-btn{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 50px;
+    padding: 0 10px;
+}
+
+.main-page-btn:first-child::before{
+    content: "";
+    width: 24px;
+    height: 24px;
+    background-image: url("/delete-bin.svg");
+    background-repeat: no-repeat;
+    background-size: contain;
+}
+
+.page-top .main-page-btn:first-child{
+    background-color: #CB1B16;
+    border: solid 2px black;
+}
+
+.page-top .main-page-btn:first-child:hover{
+    background-color: #b21813; 
+}
+
+.deck-content{
+    position: relative;
+    background-color: white;
+    border: solid 2px black;
+    border-radius: 5px;
+    margin: 50px 40px;
+    box-shadow: 5px 5px 8px rgba(0, 0, 0, 0.250);
+}
+
+.deck-content h1{
+    margin-top: 30px;
+    font-size: 50px;
+    text-align: center;
+}
+
+.deck-content-top{
+    width: 100%;
+    position: absolute;
+    top: 30px;
+    height: 64px;
+    left: 0px;
+    right: 0px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.deck-content-top p{
+    font-size: 30px;
+    margin: 0;
+    margin-inline: 30px;
+}
+
+ul{
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+
+.card-container{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    margin-inline: 30px;
+}
+
+.card-item{
+    height: 66px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    border: solid 1.5px black;
+    border-radius: 10px;
+    background-color: #D9D9D9;
+    padding-inline: 10px;
+}
+
+.card-item > p{
+    margin: 0;
+    height: calc(100% - 20px);
+    padding: 10px;
+    align-content: center;
+    font-size: 20px;
+    word-wrap: break-word;
+    overflow-y: scroll;
+}
+
+.card-item .card-front{
+    width: 40%;
+    font-weight: 500;
+}
+
+.card-item .card-layout{
+    width: 10%;
+    text-align: center;
+    margin-right: 10%;
+}
+
+.card-item button{
+    font-size: 20px;
+    font-weight: 400;
+    color: white;
+    padding: 10px 25px;
+    border: solid 1px black;
+    border-radius: 15px;
+}
+
+.card-item .card-edit-btn::before{
+    display: inline-block;
+    content: "";
+    background-image: url("/edit-pen.svg");
+    margin-right: 5px;
+    margin-bottom: -2px;
+    width: 20px;
+    height: 20px;
+    background-size: contain;
+    background-repeat: no-repeat;
+}
+
+.card-item .card-edit-btn{
+    background-color: rgba(0, 0, 0, 0.8);
+}
+
+.card-item .card-edit-btn:hover{
+    background-color: rgba(0, 0, 0, 1);
+}
+
+.card-item .card-delete-btn::before{
+    display: inline-block;
+    content: "";
+    background-image: url("/delete-bin.svg");
+    margin-bottom: -2px;
+    width: 20px;
+    height: 20px;
+    background-size: contain;
+    background-repeat: no-repeat;
+}
+
+.card-item .card-delete-btn{
+    background-color: #CB1B16;
+}
+
+.card-item .card-delete-btn:hover{
+    background-color: #b21813;
+}
+
+#err-img-wrapper{
+    box-shadow: none;
+}

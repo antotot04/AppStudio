@@ -1,0 +1,158 @@
+#delete-completed-btn{
+    background-color: #CB1B16;
+    border: solid 2px black;
+    padding-block: 13px;
+    width: 30%;
+}
+
+#delete-completed-btn:hover{
+    background-color: #af1813;
+}
+
+#create-activity-btn{
+    display: flex;
+    width: fit-content;
+    border: solid 2px black;
+    padding: 0;
+    padding-inline: 20px;
+    justify-content: center;
+    align-items: center;
+}
+
+#create-activity-btn span{
+    font-size: 40px;
+    margin-right: 8px;
+    margin-bottom: 3.5px;
+}
+
+form.search #search-content{
+    width: 35%;
+}
+
+.activity-container{
+    position: relative;
+    left: 0;
+    right: 0;
+    margin: 50px 30px;
+    padding: 30px;
+    background-color: white;
+    border: solid 2px black;
+    border-radius: 10px;
+    box-shadow: 5px 5px 8px rgba(0, 0, 0, 0.250);
+}
+
+ul{
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+
+.activity-item{
+    position: relative;
+    height: 200px;
+    margin-bottom: 20px;
+    padding: 10px;
+    padding-left: 15px;
+    border: solid 1.5px black;
+    border-radius: 20px;
+    background-color: #D9D9D9;
+}
+
+.activity-item:last-child{
+    margin-bottom: 0;
+}
+
+.act-item-top{
+    display: flex;
+    justify-content: space-between;
+    margin-right: 20px;
+    margin-top: 10px;
+}
+
+.act-item-down{
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    display: flex;
+    justify-content: end;
+    gap: 15px;
+    margin-bottom: 15px;
+    margin-right: 15px;
+}
+
+.act-item-top *{
+    margin: 0;
+}
+
+.act-item-top .title{
+    max-width: 82%;
+    overflow-wrap: anywhere; /* word longer than max-width is broken onto the next line */
+    font-size: 30px;
+    font-weight: 500;
+}
+
+.act-item-top .pomo-counter{
+    font-size: 25px;
+    font-weight: lighter;
+    text-align: end;
+}
+
+.description{
+    width: 82%;
+    margin-bottom: 0;
+}
+
+.act-item-down button{
+    font-size: 20px;
+    font-weight: 450;
+    color: white;
+    padding: 10px 20px;
+    border: solid 1px black;
+    border-radius: 15px;
+}
+
+.act-item-down .delete-activity::before{
+    display: inline-block;
+    content: "";
+    width: 20px;
+    height: 20px;
+    margin-bottom: -2px;
+    margin-right: -5px;
+    background-image: url("/delete-bin.svg");
+    background-size: contain;
+    background-repeat: no-repeat;
+}
+
+.act-item-down .delete-activity{
+    background-color: #CB1B16;
+}
+
+.act-item-down .delete-activity:hover{
+    background-color: #af1813;
+}
+
+.act-item-down .edit-activity::before{
+    display: inline-block;
+    content: "";
+    width: 20px;
+    height: 20px;
+    margin-bottom: -2px;
+    margin-right: 0px;
+    background-image: url("/edit-pen.svg");
+    background-size: contain;
+    background-repeat: no-repeat;
+}
+
+.act-item-down .edit-activity{
+    background-color: rgba(0, 0, 0, 0.800);
+}
+
+.act-item-down .edit-activity:hover{
+    background-color: black;
+}
+
+#empty-container{
+    width: 100%;
+    margin-block: 20px;
+}

@@ -1,4 +1,4 @@
-import { Component, computed, inject, OnInit, signal } from '@angular/core';
+import { afterEveryRender, Component, computed, inject, OnInit, signal } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import { TimerService } from '../service/timer/timer-service';
 import { Router } from '@angular/router';
@@ -40,7 +40,7 @@ export class PomodoroTimer implements OnInit {
 
   onPopUpState = signal<'settings' | 'leaderboard' | ''>('');
 
-  readonly pomodoroTime = 3; // pomodoro unit: 25 min
+  readonly pomodoroTime = 1500; // pomodoro unit: 25 min
   shortPause = computed(() => {
     return this.userSettings().timer.shortPause;
   });
@@ -57,6 +57,7 @@ export class PomodoroTimer implements OnInit {
   pause = signal(true);
   currentTime = signal(this.pomodoroTime);
   intervalId = 0;
+  runUpdatedBackground = signal(false);
 
   playRingtone(command: boolean | 'restart'){
     const audioEle = document.querySelector("audio.ringtone") as HTMLAudioElement;
@@ -69,21 +70,22 @@ export class PomodoroTimer implements OnInit {
 
   playBackground(command: boolean){
     const audioEle = document.querySelector("audio.background") as HTMLAudioElement;
+    if(audioEle === null) return;
     command ? audioEle.play() : audioEle.pause();
   }
 
-  /* progress bar dynamic styling */
-  progressColor = computed(() => {
+  /* progress bar, timer status and timer counter dynamic styling */
+  progressColor(){
       const progress = document.querySelector(".progress") as HTMLElement;
       if(this.timerState() === ''){
-        progress.style.backgroundColor = 'red';
+        progress.style.backgroundColor = '#CB1B16';
       }else if(this.timerState() === 'short'){
-        progress.style.backgroundColor = 'lightblue';
+        progress.style.backgroundColor = '#4091C9';
       }else{
-        progress.style.backgroundColor = 'blue';
+        progress.style.backgroundColor = '#033270';
       }
-  });
-  progressWidth = computed(() => {
+  };
+  progressWidth(){
     const progressContainer = document.querySelector(".progress-bar-container") as HTMLElement;
     const progressBar = document.querySelector(".progress") as HTMLElement;
     let timeMeasure = this.pomodoroTime;
@@ -96,7 +98,27 @@ export class PomodoroTimer implements OnInit {
 
     const computedWidth = (this.currentTime() / timeMeasure) * (progressContainer.clientWidth);
     progressBar.style.width = `${computedWidth}px`;
-  });
+  };
+  timerStatusColor() {
+    const timerStatus = document.querySelector("#timer-status") as HTMLElement;
+    if(this.timerState() === 'short'){
+      timerStatus.style.backgroundColor = "#4091C9";
+    }else if(this.timerState() === 'long'){
+      timerStatus.style.backgroundColor = "#033270";
+    }else{
+      timerStatus.style.backgroundColor = "#CB1B16";
+    }
+  };
+  timerCounterColor() {
+    const timerCounter = document.querySelector("#timer-counter") as HTMLElement;
+    if(this.timerState() === 'short'){
+      timerCounter.style.backgroundColor = "#4091C9";
+    }else if(this.timerState() === 'long'){
+      timerCounter.style.backgroundColor = "#033270";
+    }else{
+      timerCounter.style.backgroundColor = "#CB1B16";
+    }
+  }
 
   sendTimestamp(timestamp: Date){
     this.timerService.sendTimestamp(this.username, timestamp).subscribe();
@@ -135,24 +157,32 @@ export class PomodoroTimer implements OnInit {
 
   prepareLongPause(){
     this.timerState.set('long');
-    this.progressColor();
     this.longFreqCounter.set(0); // reset frequency counter 
-    this.currentTime.set(this.longPause());
+    const longPause = this.longPause();
+    this.currentTime.set(longPause);
+    this.timerStatusColor();
+    this.timerCounterColor();
+    this.progressColor();
     this.progressWidth();
   }
 
   prepareShortPause(){
     this.timerState.set('short');
+    this.longFreqCounter.update((oldFreq) => oldFreq+1); // increase frequency counter
+    const shortPause = this.shortPause();
+    this.currentTime.set(shortPause);
+    this.timerStatusColor();
+    this.timerCounterColor();
     this.progressColor();
-    this.longFreqCounter.set(this.longFreqCounter()+1); // increase frequency counter
-    this.currentTime.set(this.shortPause());
     this.progressWidth();
   }
 
   preparePomodoro(){
     this.timerState.set('');
-    this.progressColor();
     this.currentTime.set(this.pomodoroTime);
+    this.timerStatusColor();
+    this.timerCounterColor();
+    this.progressColor();
     this.progressWidth();
   }
 
@@ -160,6 +190,7 @@ export class PomodoroTimer implements OnInit {
     this.intervalId = setInterval(() => {
         if(this.currentTime() === 0){
           clearInterval(this.intervalId);
+          this.playRingtone(true);
 
           if(this.timerState() === ''){
             const timestamp = new Date();
@@ -173,10 +204,9 @@ export class PomodoroTimer implements OnInit {
             if(this.userSettings().suono.background !== null){
               this.playBackground(false);
             }
-            this.playRingtone(true);
           }
-
-          if(this.longFreqCounter() === this.longFrequency() && this.timerState() === ''){
+          /* Note: changed to >= so I can handle frequency changes when timer is running */
+          if(this.longFreqCounter() >= this.longFrequency() && this.timerState() === ''){
             this.prepareLongPause();
           }else if(this.timerState() === ''){
             this.prepareShortPause();
@@ -245,22 +275,37 @@ export class PomodoroTimer implements OnInit {
     return minutes * 60 + seconds;
   }
 
-  refreshTimer(){
+  scaleCurrTime(oldTimeLength: number, newTimeLength: number){
+    this.currentTime.update((currTime) => {
+      const newCurrTime = newTimeLength - (oldTimeLength - currTime);
+      if(newCurrTime > 0){
+        return newCurrTime;
+      }else
+        return 0;
+    });
+  }
+
+  updateCurrTimerVariables(oldInfos: UserSettings, newInfos: UserSettings){
     if(this.timerState() === 'short'){
-      this.prepareShortPause();
-      this.longFreqCounter.set(0);
+      this.scaleCurrTime(oldInfos.timer.shortPause, newInfos.timer.shortPause);
+      this.progressWidth();
     }else if(this.timerState() === 'long'){
-      this.prepareLongPause();
-    }else if(this.timerState() === ''){
-      this.longFreqCounter.set(0);
+      this.scaleCurrTime(oldInfos.timer.longPause, newInfos.timer.longPause);
+      this.progressWidth();
+    }else{
+      if(newInfos.suono.background !== null && oldInfos.suono.background !== newInfos.suono.background || 
+        newInfos.suono.background_volume !== oldInfos.suono.background_volume){
+        this.runUpdatedBackground.set(true);
+      }
     }
   }
 
   getUpdatedSettings(){
     this.timerService.getUserSettings(this.username).subscribe((resp) => {
+      const oldSettings = this.userSettings();
       this.userSettings.set(resp);
-      this.refreshTimer();
-    })
+      this.updateCurrTimerVariables(oldSettings, resp);
+    });
   }
 
   loadCurrUserActivities(){
@@ -281,7 +326,7 @@ export class PomodoroTimer implements OnInit {
     const target = document.querySelector("#act-description-" + activityId) as HTMLParagraphElement;
 
     if(thisBtn.textContent === "Show more"){
-      target.textContent = "Description:\n" + description;
+      target.textContent = description;
       thisBtn.textContent = "Hide";
     }else{
       target.textContent = this.renderDescription(description);
@@ -312,17 +357,27 @@ export class PomodoroTimer implements OnInit {
     }
     return true;
   }
-
-  onUserSettings(settingsUpdated: boolean){
-    if(settingsUpdated){
+  
+  onPopUpExit(onChanges: boolean){
+    this.onPopUpState.set('');
+    if(onChanges){
       this.getUpdatedSettings();
     }
   }
 
-  onPopUpExit(condition: boolean){
-    if(condition){
-      this.onPopUpState.set('');
-    }
+  constructor(){
+    afterEveryRender({
+      write: () => {
+        /* update while timer is running */
+        if(!this.pause() && this.runUpdatedBackground() && this.timerState() === ''){
+          this.playBackground(true);
+          const background = document.querySelector(".background") as HTMLAudioElement;
+          if(background !== null)
+            background.volume = this.userSettings().suono.background_volume * Math.pow(10, -2);
+          this.runUpdatedBackground.set(false);
+        }
+      }
+    })
   }
 
   ngOnInit(){

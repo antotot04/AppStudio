@@ -1,1 +1,453 @@
-/* You can add global styles to this file, and also import other style files */
+body {
+    padding: 0px;
+    border: 0px;
+    margin: 0px;
+    min-height: 100vh;
+    font-family: "Space Grotesk", sans-serif;
+    font-optical-sizing: auto;
+    font-style: normal;
+    background-color: #FEDFD4;
+    overflow: scroll;
+}
+
+/* -- CONTAINER RELATED STYLING -- */
+.pop-up-container{
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 1200px;
+    height: 600px;
+    background-color: #D9D9D9;
+    border: 2px solid black;
+    border-radius: 10px;
+    box-shadow: 5px 5px 8px rgba(0, 0, 0, 0.250);
+    z-index: 6; /* high-value to make sure it's always in front */
+    overflow: hidden;
+}
+
+.exit-pop-up-btn{
+    width: 50px;
+    height: 50px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 100%;
+    margin-top: 10px;
+    margin-left: 10px;
+    cursor: pointer;
+}
+
+/* pop-up title */
+.pop-up-container h1{
+    font-size: 60px;
+    font-weight: 500;
+    text-align: center;
+    margin-inline: 90px;
+    position: relative;
+    top: -30px;
+    margin-block: 0;
+}
+
+.page-top{
+    margin-top: 30px;
+    margin-inline: 40px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/* -- MAIN COMMON ELEMENTS -- */
+
+.progress-bar-container{
+    margin-inline: auto;
+    border: 1px solid black;
+    height: 15px;
+    width: 988px;
+    border-radius: 10px;
+    background-color: #D9D9D9;
+    box-shadow: 5px 5px 6px rgba(0, 0, 0, 0.300);
+}
+
+.progress{
+    background-color: red;
+    height: 15px;
+    width: 988px;
+    border-radius: inherit;
+    transition-duration: 500ms;
+}
+
+button{
+    cursor: pointer;
+}
+
+.main-page-btn{
+    padding: 10px 20px;
+    font-size: 20px;
+    font-weight: 500;
+    color: white;
+    border: none;
+    border-radius: 15px;
+    background-color: #000000;
+    box-shadow: 5px 5px 8px rgba(0, 0, 0, 0.250);
+}
+
+.main-page-btn:hover{
+    transform: scale(1.05);
+    transition-duration: 300ms;
+}
+
+:disabled{
+    cursor: not-allowed !important;
+}
+
+/* -- form error -- */
+.error-form-list{
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    align-content: center;
+}
+
+.error-form-item{
+    margin: 5px 0;
+    color: #CB1B16;
+    font-weight: bolder;
+}
+
+#err-img-wrapper{
+    width: fit-content;
+    height: fit-content;
+    padding: 50px;
+    border: solid 3px black;
+    border-radius: 20px;
+    background-color: #D9D9D9;
+    box-shadow: 5px 5px 8px rgba(0, 0, 0, 0.250);
+    margin-inline: auto;
+}
+
+#empty-container{
+    margin-inline: auto;
+}
+
+#empty-list-message{
+    font-size: 30px;
+    font-weight: 500;
+    width: 100%;
+    text-align: center;
+}
+
+/* -- LOGIN AND SIGNUP FORM COMMON STYLING -- */
+.enter-page-title{
+    position: absolute;
+    margin: 0;
+    top: 30px;
+    width: 1200px;
+    text-align: center;
+    font-size: 50px;
+}
+
+.enter-form label{
+    font-size: 20px;
+    font-weight: lighter;
+    margin-bottom: 5px;
+}
+
+.enter-form input{
+    margin-top: 5px;
+    margin-bottom: 15px;
+    height: 35px;
+    width: 450px;
+    border: none;
+    border-radius: 10px;
+}
+
+.enter-form button[type="submit"]{
+    margin-top: 30px;
+    margin-inline: auto;
+    width: 150px;
+    height: 40px;
+    border: none;
+    border-radius: 15px;
+    font-size: 15px;
+    font-weight: 400;
+    color: white;
+    background-color: #4091C9;
+    cursor: pointer;
+}
+
+.enter-form button[type="submit"]:hover{
+    background-color: #3981b5;
+    transition-duration: 300ms;
+}
+
+.enter-form + p{
+    font-size: small;
+    text-align: center;
+}
+
+.enter-form + p a{
+    color: #0000EE;
+    text-decoration: none;
+}
+
+.enter-form + p a:hover{
+    color: #00009c;
+    text-decoration: underline;
+    transition-duration: 300ms;
+}
+
+
+/* -- POMO FORM COMMON STYLING -- */
+.pomo-form * {
+    display: block;
+}
+
+.pomo-form-sub-container{
+    background-color: #F6F6F6;
+    border: none;
+    border-radius: 25px;
+}
+
+.pomo-form fieldset legend{
+    font-size: 50px;
+    font-weight: 450;
+    margin-inline: auto;
+}
+
+.pomo-form label{
+    font-size: 25px;
+}
+
+.pomo-form input{
+    width: fit-content;
+    padding: 10px 20px;
+    border: solid 2px black;
+    border-radius: 10px;
+    font-size: 1em;
+    background-color: #D9D9D9;
+}
+
+.pomo-form input[type="range"]{
+    --perc: 50%;
+    appearance: none;
+    width: 50%;
+    background: transparent;
+    border: none;
+}
+
+.pomo-form input[type="range"]:disabled{
+    opacity: 0.5;
+}
+
+/* -- INPUT RANGE FIREFOX VERSION -- */
+
+/* thumb styling */
+.pomo-form input[type="range"]::-moz-range-thumb {
+    box-shadow: 2px 2px 7px rgba(0, 0, 0, 0.250);
+    border: 1px solid #000000;
+    height: 23px;
+    width: 15px;
+    border-radius: 5px;
+    background: #ffffff;
+    cursor: pointer;
+}
+
+.pomo-form input[type="range"]:focus::-moz-range-thumb{
+    transform: scale(1.2);
+    background-color: #f1f1f1;
+    transition-duration: 300ms;
+}
+
+.pomo-form input[type="range"]:disabled::-moz-range-thumb{
+    cursor: not-allowed;
+}
+
+/* track styling */
+.pomo-form input[type="range"]::-moz-range-track{
+    height: 8.4px;
+    box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.250);
+    border-radius: 3px;
+    border: 0.5px solid black;
+    background: linear-gradient(to right, #FEDFD4 var(--perc), white var(--perc));
+}
+
+.pomo-form input[type="range"]:focus::-moz-range-track{
+    background: linear-gradient(to right, #fccebd var(--perc), white var(--perc));
+}
+/* ----------------------------- */
+
+/* -- INPUT RANGE CHROME VERSION -- */
+
+/* thumb styling */
+.pomo-form input[type="range"]::-webkit-slider-thumb {
+    appearance: none;
+    margin-top: -7px;
+    box-shadow: 2px 2px 7px rgba(0, 0, 0, 0.250);
+    border: 1px solid #000000;
+    height: 23px;
+    width: 15px;
+    border-radius: 5px;
+    background: #ffffff;
+    cursor: pointer;
+}
+
+.pomo-form input[type="range"]:focus::-webkit-slider-thumb {
+    transform: scale(1.2);
+    background-color: #f1f1f1;
+    transition-duration: 300ms;
+}
+
+.pomo-form input[type="range"]:disabled::-webkit-slider-thumb{
+    cursor: not-allowed;
+}
+
+.pomo-form input[type="range"]::-webkit-slider-runnable-track{
+    height: 8.4px;
+    box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.250);
+    background: #FEDFD4;
+    border-radius: 3px;
+    border: 0.5px solid black;
+    background: linear-gradient(to right, #FEDFD4 var(--perc), white var(--perc));
+}
+
+.pomo-form input[type="range"]:focus::-webkit-slider-runnable-track {
+    background: linear-gradient(to right, #fccebd var(--perc), white var(--perc));
+}
+/* ----------------------------- */
+
+.pomo-form input[type="number"]{
+    font-size: 20px;
+    height: 40px;
+    width: 50px;
+    padding-inline: 10px;
+    border: solid 2px black;
+    border-radius: 10px;
+    background-color: #D9D9D9;
+}
+
+.pomo-form select{
+    font-size: 20px;
+    height: 40px;
+    width: 300px;
+    padding-inline: 10px;
+    border: solid 2px black;
+    border-radius: 10px;
+    background-color: #D9D9D9;
+}
+
+.pomo-form button[type="submit"]{
+    width: fit-content;
+    height: fit-content;
+    padding: 15px 40px;
+    border: none;
+    border-radius: 25px;
+    color: white;
+    font-size: 25px;
+    font-weight: 400;
+    background-color: rgba(55, 55, 55);
+}
+
+.pomo-form button[type="submit"]:hover{
+    background-color: black;
+    transition-duration: 300ms;
+}
+
+.pomo-form-upload-photo-btn{
+    font-weight: 500;
+    border: solid 2px black;
+    border-radius: 10px;
+    width:fit-content;
+    padding: 5px;
+    background-color: #F29479;
+    cursor: pointer;
+}
+
+.pomo-form-upload-photo-btn:hover{
+    background-color: #e08971;
+    transition-duration: 300ms;
+}
+
+.pomo-form-photo-input{
+    opacity: 0;
+    width: 0.1px;
+    height: 0.1px;
+    position: absolute;
+}
+
+.pomo-form-common-btn{
+    font-weight: 500;
+    border: solid 2px black;
+    border-radius: 10px;
+    width:fit-content;
+    padding: 5px;
+    background-color: #F29479;
+    cursor: pointer;
+}
+
+.pomo-form-common-btn:hover{
+    background-color: #e08971;
+    transition-duration: 300ms;
+}
+
+/* -- SEARCH BAR COMMON STYLING -- */
+/* Note: to be applied on a <form> element */
+form.search {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    height: 60px;
+}
+
+form.search :not(div img){
+    border: solid 2px black;
+    border-radius: 15px;
+    box-shadow: 5px 5px 8px rgba(0, 0, 0, 0.250);
+    font-size: 15px;
+    background-color: #D9D9D9;
+}
+
+form.search :not(button[type="submit"], #search-icon-overlay img){
+    margin-right: 10px;
+}
+
+form.search :not(#search-icon-overlay){
+    height: 50px;
+    align-self: center;
+}
+
+form.search #search-icon-overlay{
+    width: 60px;
+    height: 60px;
+    border-radius: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+form.search #select-layout{
+    text-align: center;
+    width: fit-content;
+    padding-inline: 5px;
+    font-weight: 500;
+    cursor: pointer;
+}
+
+form.search #search-content{
+    width: 25%;
+    padding-inline: 20px;
+}
+
+form.search button[type="submit"]{
+    padding-inline: 20px;
+    cursor: pointer;
+    font-size: 20px;
+    font-weight: 500;
+}
+
+form.search button[type="submit"]:hover{
+    transform: scale(1.05);
+    background-color: #cccccc;
+    transition-duration: 300ms;
+}

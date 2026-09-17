@@ -1,22 +1,31 @@
-<form class="search" (submit)="onSubmit($event)">
-    <select id="select-layout" [formField]="this.searchForm.layout">
-        <option value="">all</option>
-        <option value="quiz">quiz</option>
-        <option value="true-false">true-false</option>
-        <option value="double-sided">double-sided</option>
-    </select>
-    <input type="search" id="search-content" placeholder="search a card here" [formField]="this.searchForm.word">
-    <button type="submit">Search</button>
-</form>
+<div class="page-top">
+    <button class="main-page-btn" (click)="onDeleteDeck()">
+    DELETE
+    </button>
 
+    <form class="search" (submit)="onSubmit($event)">
+        <div id="search-icon-overlay">
+            <img
+                src="/SearchIcon.svg"
+                width="35"
+                height="35"
+                alt="search icon"
+            />
+        </div>
+        <select id="select-layout" [formField]="this.searchForm.layout">
+            <option value="">all</option>
+            <option value="quiz">quiz</option>
+            <option value="true-false">true-false</option>
+            <option value="double-sided">double-sided</option>
+        </select>
+        <input type="search" id="search-content" placeholder="search a card here" [formField]="this.searchForm.word">
+        <button type="submit">Search</button>
+    </form>
 
-<button (click)="onNewCard()">
-New Card
-</button>
-
-<button (click)="onDeleteDeck()">
-Delete Deck
-</button>
+    <button class="main-page-btn" (click)="onNewCard()">
+    <span>+</span> card
+    </button>
+</div>
 
 @if(popUpCardSettings()){
     <app-card-settings [pageFunc]="cardSettingsMode()" [deckLayout]="deckInfo().deckLayout" [cardId]="this.currCardId()" [layout]="this.currCardLayout()" (hasTerminated)="onCardSettingsTerminated($event)"></app-card-settings>
@@ -24,23 +33,50 @@ Delete Deck
 
 <div class="deck-content">
     <h1>{{ deckInfo().deckTitle }}</h1>
-    <p>{{ cardsCounter() === 1 ? "1 card" : cardsCounter() + " cards" }}</p>
-    <p>{{ deckInfo().deckLayout }}</p>
+    <div class="deck-content-top">
+        <p>{{ cardsCounter() === 1 ? "1 card" : cardsCounter() + " cards" }}</p>
+        <p>{{ deckInfo().deckLayout }}</p>
+    </div>
 
-    @for (cardItem of cardsToDisplay(); track cardItem.cardId) {
-        <div>
-            <p>
-                {{ cardItem.front }}
-            </p>
-            <p>
-                {{ cardItem.layout }}
-            </p>
-            <button (click)="onEditCard(cardItem.cardId, cardItem.layout)">
-                EDIT
-            </button>
-            <button (click)="onDeleteCard(cardItem.cardId, cardItem.layout)">
-                DELETE
-            </button>
-        </div>
-    }
+    <ul class="card-container">
+        @for (cardItem of cardsToDisplay(); track cardItem.cardId) {
+            <li class="card-item">
+                <p class="card-front">
+                    {{ cardItem.front }}
+                </p>
+                <p class="card-layout">
+                    {{ cardItem.layout }}
+                </p>
+                <button class="card-edit-btn" (click)="onEditCard(cardItem.cardId, cardItem.layout)">
+                    EDIT
+                </button>
+                <button class="card-delete-btn" (click)="onDeleteCard(cardItem.cardId, cardItem.layout)">
+                    DELETE
+                </button>
+            </li>
+        }
+        
+        @if (cardsToDisplay().length === 0) {
+            @if (onSearch()) {
+                <div id="err-img-wrapper">
+                    <img 
+                        id="no-deck-cards"
+                        src="/unhappy-result.svg"
+                        width="200"
+                        height="200"
+                        alt="big lens with an unhappy face inside it"
+                    />
+                </div>
+            }@else {
+                <img 
+                    id="empty-container"
+                    src="/flashcard.svg"
+                    width="200"
+                    height="200"
+                    alt="three flashcards holded togheter"
+                />
+            }
+            <p id="empty-list-message">{{ emptyCardsMessage() }}</p>
+        }
+    </ul>
 </div>

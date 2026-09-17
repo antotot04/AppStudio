@@ -4,7 +4,6 @@ import { ActivityService } from '../service/activity/activity-service';
 import { form, FormField } from '@angular/forms/signals';
 import { ActivityDTO } from '../dto/activity-dto';
 import { ActivitySettings } from "../activity-settings/activity-settings";
-import { ActivityData } from '../dto/activity-data';
 
 @Component({
   selector: 'app-activity-page',
@@ -30,6 +29,10 @@ export class ActivityPage implements OnInit {
     word: '',
   });
   searchForm = form(this.formModel);
+  onSearch = signal(false);
+  readonly emptySearch = "Activities not found";
+  readonly noActivities = "You don't have any activities at the moment. Start by creating one!"
+  emptyActivitiesMessage = signal<string>(this.noActivities);
 
   execSearch(){
     this.activitiesToDisplay.update(() =>
@@ -39,7 +42,11 @@ export class ActivityPage implements OnInit {
 
   onSubmit(event: Event){
     event.preventDefault();
+    this.onSearch.set(true);
     this.execSearch();
+    if(this.activitiesToDisplay().length === 0){
+      this.emptyActivitiesMessage.set(this.emptySearch);
+    }
   }
 
   onNewActivity(){
@@ -86,8 +93,8 @@ export class ActivityPage implements OnInit {
       return '';
     }
 
-    if(description.length > 40){
-      return description.slice(0, 40).concat("...");
+    if(description.length > 150){
+      return description.slice(0, 150).concat("...");
     }
 
     return description;
@@ -98,6 +105,10 @@ export class ActivityPage implements OnInit {
       this.activityList = resp;
       this.activitiesToDisplay.set(this.activityList);
       this.execSearch();
+      this.onSearch.set(false);
+      if(this.activitiesToDisplay().length === 0){
+        this.emptyActivitiesMessage.set(this.noActivities);
+      }
     })
   }
 

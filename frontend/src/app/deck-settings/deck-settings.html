@@ -1,33 +1,35 @@
-<h2>
-    @if(onNewDeck()) {
-        NEW DECK
-    }@else {
-        EDIT DECK
-    }
-</h2>
+<div class="pop-up-container">
+    <button class="exit-pop-up-btn" (click)="onExit()">
+        <img
+            src="/exit.svg"
+            width="50"
+            height="50"
+            alt="exit"
+        />
+    </button>
 
-<button (click)="onExit()">
-    <img
-        src="/exit.svg"
-        width="50"
-        height="50"
-        alt="exit"
-    />
-</button>
+    <h1>
+        @if(onNewDeck()) {
+            NEW DECK
+        }@else {
+            EDIT DECK
+        }
+    </h1>
 
-<form (submit)="onSubmit($event)">
-    <div class="inputs-container">
-        <label for="deck-title">Deck Title</label>
-        <input type="text" id="deck-title" placeholder="title here" [formField]="this.deckForm.deckTitle">
+    <form class="pomo-form" (submit)="onSubmit($event)">
+        <div class="pomo-form-sub-container">
+            <label for="deck-title">Deck Title</label>
+            <input type="text" id="deck-title" placeholder="title here" [formField]="this.deckForm.deckTitle">
 
-        <label for="deck-layout">Layout (Optional)</label>
-        <select id="deck-layout" [formField]="this.deckForm.deckLayout">
-            <option value="general">--choose an option--</option>
-            <option [disabled]="quizDisabled()" value="quiz">quiz</option>
-            <option [disabled]="trueFalseDisabled()" value="true-false">true-false</option>
-            <option [disabled]="doubleSidedDisabled()" value="double-sided">double-sided</option>
-        </select>
-    </div>
+            <label for="deck-layout">Layout (Optional)</label>
+            <select id="deck-layout" [formField]="this.deckForm.deckLayout">
+                <option value="general">general</option>
+                <option [disabled]="quizDisabled()" value="quiz">quiz</option>
+                <option [disabled]="trueFalseDisabled()" value="true-false">true-false</option>
+                <option [disabled]="doubleSidedDisabled()" value="double-sided">double-sided</option>
+            </select>
+        </div>
 
-    <button type="submit">Save</button>
-</form>
+        <button type="submit">Save</button>
+    </form>
+</div>

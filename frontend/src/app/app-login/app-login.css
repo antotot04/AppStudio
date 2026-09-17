@@ -1,3 +1,37 @@
-button.failed{
-    background-color: red;
+.pop-up-container{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    border-radius: 100px;
+}
+
+.log-in-content{
+    display: grid;
+    grid-template-columns: 510px 510px;
+    justify-content: center;
+    height: 460px;
+}
+
+/* first grid column */ 
+.log-in-content div{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.log-in-content form > *{
+    display: block;
+}
+
+#form-access-phrase{
+    margin-top: 50px;
+    font-size: 25px;
+}
+
+img{
+    margin: auto;
+}
+
+button[type="submit"] + span{
+    text-align: center;
 }

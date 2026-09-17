@@ -34,6 +34,10 @@ export class DeckPage implements OnInit {
   cardsCounter = computed<number>(() => {
     return this.cardsToDisplay().length;
   });
+  noCardsMess = "No Cards here yet. Create a card to get started!";
+  emptySearchMess = "No cards found";
+  emptyCardsMessage = signal(this.noCardsMess);
+  onSearch = signal(false);
 
   formModel = signal<SearchEntry>({
     layout: '',
@@ -43,19 +47,24 @@ export class DeckPage implements OnInit {
   searchForm = form(this.formModel);
 
   execSearch(){
+    this.onSearch.set(true);
     if(this.searchForm.layout().value() !== ''){
       this.cardsToDisplay.update(() => 
         this.cardList.filter((card) => 
           card.layout === this.searchForm.layout().value() &&
-          card.front.includes(this.searchForm.word().value())
+          card.front.toLowerCase().includes(this.searchForm.word().value().toLowerCase())
         )
       );
     }else{
       this.cardsToDisplay.update(() => 
         this.cardList.filter((card) => 
-          card.front.includes(this.searchForm.word().value())
+          card.front.toLowerCase().includes(this.searchForm.word().value().toLowerCase())
         )
       );
+    }
+
+    if(this.cardsToDisplay().length === 0){
+      this.emptyCardsMessage.set(this.emptySearchMess);
     }
   }
 
@@ -124,7 +133,12 @@ export class DeckPage implements OnInit {
     this.studyService.getDeckCards(this.deckId).subscribe((resp) => {
       this.cardList = resp;
       this.cardsToDisplay.set(this.cardList);
-      this.execSearch();
+      if(this.cardList.length !== 0){
+        this.execSearch();
+      }else{
+        this.onSearch.set(false);
+        this.emptyCardsMessage.set(this.noCardsMess);
+      }
     })
   }
 

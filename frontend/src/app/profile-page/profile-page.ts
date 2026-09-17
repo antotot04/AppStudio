@@ -23,24 +23,6 @@ export class ProfilePage {
     this.close.emit();
   }
 
-  generalState = signal<string>('');
-  generalButtonText = computed<string>(() => {
-    if(this.generalState() === 'updated'){
-      return 'info updated';
-    }else{
-      return 'update';
-    }
-  })
-
-  passwordState = signal<string>('');
-  passwordButtonText = computed<string>(() => {
-    if(this.passwordState() === 'updated'){
-      return 'password updated';
-    }else{
-      return 'update password';
-    }
-  })
-
   formModelGeneral = signal<{email: string}>({
     email: ''
   });
@@ -58,7 +40,7 @@ export class ProfilePage {
   updateFormPassword = form(this.formModelPassword, (schemaPath) => {
     required(schemaPath.newPassword, {message: "a new password is required"});
     minLength(schemaPath.newPassword, 6, {message: "password is too short"});
-    pattern(schemaPath.newPassword, new RegExp(/^(?=.*[\d].*)(?=.*[^\d].*)(?=.*[^\n]$)/), {message: "password invalid"});
+    pattern(schemaPath.newPassword, new RegExp(/^(?=.*[\d].*$)(?=.*[^\d].*$)/), {message: "password invalid"});
   });
 
 
@@ -71,13 +53,17 @@ export class ProfilePage {
     }
   }
 
-  updateGeneralInfoError = signal('');
+  emailInUseError = signal<string | undefined>(undefined);
+
   onSubmitGeneral(event: Event){
     event.preventDefault();
 
     if(this.updateFormGeneral.email().invalid()){
-      this.generalState.set('not-valid');
       return;
+    }
+
+    if(this.emailInUseError() !== undefined){
+      this.emailInUseError.set(undefined);
     }
 
     const dataToSend = new FormData();
@@ -89,19 +75,14 @@ export class ProfilePage {
 
     this.userService.updateGeneralInfo(this.username, dataToSend).subscribe({
       next: () => {
-        this.updateGeneralInfoError.set('');
-        this.generalState.set('updated');
         alert("refresh to see changes");
-        setTimeout(() => {this.generalState.set('')}, 1000);
       },
       error: (resp) => {
-        if(resp.status === 404){
-          this.updateGeneralInfoError.set("User not found");
-        }else{
-          this.updateGeneralInfoError.set(resp.error.message);
+        if(resp.status === 400 && resp.error.message === "Email already in use by another user"){
+          this.emailInUseError.set(resp.error.message);
         }
       }
-    })
+    });
   }
 
   showPassForm = false;
@@ -135,12 +116,10 @@ export class ProfilePage {
     event.preventDefault();
 
     if(this.updateFormPassword.newPassword().invalid()){
-      this.passwordState.set('not-valid');
       return;
     }
 
     if(this.updateFormPassword.newPassword().value() !== this.updateFormPassword.confirmedPassword().value()){
-      this.passwordState.set('not-valid');
       return;
     }
 
@@ -148,9 +127,8 @@ export class ProfilePage {
     console.log(newPassword);
 
     this.userService.updatePassword(this.username, newPassword).subscribe(() => {
-      this.passwordState.set('updated');
-      setTimeout(() => this.passwordState.set(''), 1000);
-    })
+      alert("password updated successfully");
+    });
   }
 
   onLogOut(){
@@ -183,3 +161,7 @@ export class ProfilePage {
     }
   }
 }
+function next(value: Object): void {
+  throw new Error('Function not implemented.');
+}
+
