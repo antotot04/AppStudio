@@ -4,7 +4,6 @@ import { ActivityService } from '../service/activity/activity-service';
 import { form, FormField } from '@angular/forms/signals';
 import { ActivityDTO } from '../dto/activity-dto';
 import { ActivitySettings } from "../activity-settings/activity-settings";
-import { ActivityData } from '../dto/activity-data';
 
 @Component({
   selector: 'app-activity-page',
@@ -86,8 +85,8 @@ export class ActivityPage implements OnInit {
       return '';
     }
 
-    if(description.length > 40){
-      return description.slice(0, 40).concat("...");
+    if(description.length > 150){
+      return description.slice(0, 150).concat("...");
     }
 
     return description;

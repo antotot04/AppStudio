@@ -1,4 +1,4 @@
-h2 + select{
+h1 + select{
   position: relative;
   top: -90px;
   margin-left: 100%;
@@ -17,7 +17,7 @@ h2 + select{
   cursor: pointer;
 }
 
-h2 + select:hover{
+h1 + select:hover{
   background-color: #ef886b;
   transition-duration: 300ms;
 }
