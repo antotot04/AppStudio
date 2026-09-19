@@ -7,6 +7,7 @@ import { StudyZone } from './study-zone/study-zone';
 import { DeckPage } from './deck-page/deck-page';
 import { StudyDeck } from './study-deck/study-deck';
 import { ActivityPage } from './activity-page/activity-page';
+import { FaqPage } from './faq-page/faq-page';
 
 export const routes: Routes = [
     {
@@ -52,6 +53,10 @@ export const routes: Routes = [
             {
                 path: 'activities',
                 component: ActivityPage
+            },
+            {
+                path: 'faq',
+                component: FaqPage
             }
         ]
     }

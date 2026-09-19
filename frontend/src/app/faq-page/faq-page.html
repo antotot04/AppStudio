@@ -1,0 +1,46 @@
+<h1>Frequently Asked Questions</h1>
+
+<form class="search" (submit)="onSubmit($event)">
+        <div id="search-icon-overlay">
+            <img
+                src="/SearchIcon.svg"
+                width="35"
+                height="35"
+                alt="search icon"
+            />
+        </div>
+    <input type="search" id="search-content" placeholder="search by title..." [formField]="this.searchForm.word">
+    <button type="submit">Search</button>
+</form>
+
+<div class="faq-content">
+    <ul>
+        @for (faq of faqToDisplay(); track $index) {
+            <li>
+                <details>
+                    <summary>{{ faq.question }}</summary>
+                    <div class="details-response">{{ faq.answer }}</div>
+                </details>
+            </li>
+        }
+    </ul>
+
+    @if (faqToDisplay().length === 0) {
+        <div id="err-img-wrapper">
+            <img 
+                id="no-deck-cards"
+                src="/unhappy-result.svg"
+                width="200"
+                height="200"
+                alt="big lens with an unhappy face inside it"
+            />
+        </div>
+        <p id="empty-list-message">no results found</p>
+    }
+
+    <p class="contact-cta">
+        <span>You didn't find your question?</span> 
+        You can contact us at our <a href="mailto:antonio.totaro@edu.unife.it">official email</a> to let us know about your problem.
+        Thanks for using Pomo!
+    </p>
+</div>
