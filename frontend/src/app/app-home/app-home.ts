@@ -40,10 +40,11 @@ export class AppHome implements OnInit {
   extractFromURL(): string{
     const startIndex = this.url.indexOf(`${this.username}/`)+ (this.username.length + 1);
     const endIndex = this.url.indexOf('/', this.url.indexOf(`${this.username}/`) + (this.username.length + 1));
-  
     if(endIndex !== -1){
+      console.log(this.url.slice(startIndex, endIndex).toUpperCase());
       return this.url.slice(startIndex, endIndex).toUpperCase();
     }else{
+      console.log(this.url.slice(startIndex).toUpperCase());
       return this.url.slice(startIndex).toUpperCase();
     }
   }
@@ -63,13 +64,14 @@ export class AppHome implements OnInit {
     this.currArea.set(newCurrArea);
   }
 
-  /* style the border of the current selected area */
+  /* style the border of the current selected area in the navigation bar */
   styleNavArea(event: Event | null){
     this.setCurrArea(event);
     const navEle = document.querySelectorAll("nav ul li a") as NodeList;
     navEle.forEach((aEle) => {
       const currInput = aEle as HTMLAnchorElement;
 
+      /* styles the border ONLY if the current selected area is in the nav bar */
       if(currInput.textContent.includes(this.currArea())){
         currInput.style.border = "solid 2px black";
       }else{
