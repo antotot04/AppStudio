@@ -5,6 +5,10 @@
     border-radius: 100px;
 }
 
+.pop-up-container h1.enter-page-title{
+    top: 0px;
+}
+
 .log-in-content{
     display: grid;
     grid-template-columns: 510px 510px;
