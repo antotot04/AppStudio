@@ -1,5 +1,5 @@
 # App Studio Project
-Pomo is (will be) a study centered application designed to help folks study a little bit better. 
+Pomo is a study centered application designed to help folks study a little bit better. 
 
 Features:
 - Pomodoro Timer: a timer based on the famous pomodoro tecnique
