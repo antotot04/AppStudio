@@ -1,0 +1,10 @@
+Link Miro (punto di partenza iniziale e bozza schema logico applicazione):
+https://miro.com/app/board/uXjVG0RFmos=/?share_link_id=364514277068
+
+Link Figma (UI/UX): 
+https://www.figma.com/design/1E3WV42vdpuUx4za0Gkicn/Antonio-Totaro-s-team-library?node-id=0-1&t=yin43ZC3ppVNPaVU-1
+
+Link Trello (timeline tasks generali svolte):
+https://trello.com/invite/b/69b5a9a7222cad9c24cafedb/ATTIe4e0740715f6c53cc727a54e26c829542EA46298/progetto-app-studio
+NOTA: per visualizzare in modo completo tutte le task svolte nel dettaglio e in sequenza temporale
+è possibile visualizzare su github i singoli commit e PL relative a questo repo.
