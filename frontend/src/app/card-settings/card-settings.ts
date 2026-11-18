@@ -38,6 +38,8 @@ export class CardSettings implements OnInit {
   optionFormList = signal<QuizOption[]>([]);
   /* temporary id's of new options to register on db */
   tempOptIds = signal<String[]>([]);
+  /* options to delete */
+  optsToDelete = signal<string[]>([]);
   /* DTO to send to backend */
   prepareDTO = computed<QuizCard | QuizCardData | TrueFalseCard | DoubleSidedCard>(() => {
     switch(this.layoutEdited()){
@@ -156,37 +158,38 @@ export class CardSettings implements OnInit {
   }
 
   deleteShallowOption(optToDelete: QuizOption){
+    if(this.tempOptIds().find((id) => id === optToDelete.idOption) === undefined){
+      this.optsToDelete.update((list) => {
+        list.push(optToDelete.idOption);
+        return list;
+      });
+    }else{
+      this.tempOptIds.update((list) => {
+        return list.filter((id) => id !== optToDelete.idOption);
+      });
+    }
+
     this.optionFormList.update((list) => {
       return list.filter((opt) => opt.idOption !== optToDelete.idOption);
-    });
-
-    this.tempOptIds.update((list) => {
-      return list.filter((id) => id !== optToDelete.idOption);
-    })
-  }
-
-  deleteFullOption(opt: QuizOption){
-    this.cardService.deleteQuizOption(this.cardId()!, opt.idOption).subscribe(() => {
-      console.log("deleteRemoteOption: ok");
-      this.deleteShallowOption(opt);
     });
   }
 
   onDeleteOption(index: string){
-    if(!confirm("Do you really want to delete this option?\n(this option will be deleted even if you exit without saving your changes)")){
+    if(this.pageFunc() === "edit" && this.optionFormList().length === 1){
+      alert("You cannot delete this option yet. Create another option first");
       return;
     }
 
-    const option= this.optionFormList().find((opt) => opt.idOption === index);
+    if(!confirm("Do you really want to delete this option?")){
+      return;
+    }
+
+    const option = this.optionFormList().find((opt) => opt.idOption === index);
     if(option === undefined){
       throw new Error("option index is undefined");
     }
 
-    if(this.tempOptIds().find((id) => id === option.idOption) === undefined){
-      this.deleteFullOption(option);
-    }else{
-      this.deleteShallowOption(option);
-    }
+    this.deleteShallowOption(option);
   }
 
   /* Note on "edit" mode: new options are left out */
@@ -238,6 +241,17 @@ export class CardSettings implements OnInit {
     })
   }
 
+  deleteOldOptions(){
+    const cardId = this.cardId();
+    if(cardId === undefined){
+      throw new Error("cardId is undefined");
+    }
+
+    this.optsToDelete().forEach(id => {
+      this.cardService.deleteQuizOption(cardId, id).subscribe();
+    })
+  }
+
   /* CARD RELATED CALLS */
 
   registerCard(data: QuizCardData | TrueFalseCard | DoubleSidedCard){
@@ -250,8 +264,15 @@ export class CardSettings implements OnInit {
 
   editCard(data: QuizCard | TrueFalseCard | DoubleSidedCard){
     this.cardService.updateCard(this.cardId()!, this.layoutEdited(), data).subscribe(() => {
-      if(this.layoutEdited() === "quiz" && this.tempOptIds().length !== 0){
-        this.registerNewOptions();
+      if(this.layoutEdited() === "quiz"){
+        if(this.optsToDelete().length !== 0){
+          this.deleteOldOptions();
+        }
+        if(this.tempOptIds().length !== 0){
+          this.registerNewOptions();
+        }else{
+          this.hasTerminated.emit(true);
+        }
       }else{
         this.hasTerminated.emit(true);
       }
@@ -400,6 +421,10 @@ export class CardSettings implements OnInit {
     }
   }
 
+  cloneOptions(options: QuizOption[]): QuizOption[] {
+    return options.map((opt) => ({ ...opt }));
+  }
+
   loadCard(){
     const thisId = this.cardId();
     const thisLayout = this.layout();
@@ -432,7 +457,7 @@ export class CardSettings implements OnInit {
               back: '',
               validity: "true"
             });
-            this.optionFormList.set((resp as QuizCard).options);
+            this.optionFormList.set(this.cloneOptions((resp as QuizCard).options));
             break;
         }
       })
